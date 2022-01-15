@@ -13,7 +13,7 @@ import pt from '../../../assets/i18n/pt.json';
 import fr from '../../../assets/i18n/fr.json';
 
 setTranslations({ en, es, pt, fr });
-setDefaultLanguage('en');
+setDefaultLanguage('es');
 setLanguageCookie();
 
 const Language = () => {
@@ -34,7 +34,7 @@ const Language = () => {
                             <i className="flag-icon flag-icon-um"></i> {Spanish}
                         </a>
                     </li>
-                    <li onClick={() => handleSetLanguage('pt')}>
+                    {/* <li onClick={() => handleSetLanguage('pt')}>
                         <a href="#javascript" data-lng="pt">
                             <i className="flag-icon flag-icon-uy"></i> {Portuguese}
                         </a>
@@ -43,7 +43,7 @@ const Language = () => {
                         <a href="#javascript" data-lng="fr">
                             <i className="flag-icon flag-icon-nz"></i> {French}
                         </a>
-                    </li>
+                    </li> */}
                 </ul>
             </div>
         </Fragment>

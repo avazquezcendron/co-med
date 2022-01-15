@@ -1,5 +1,5 @@
 {
-    "Dashboard": "Tablero",
+    "Dashboard": "Dashboard",
     "Default": "Defecto",
     "E-Commerce":"Comercio electronico",
     "University":"Universidad",
@@ -158,5 +158,7 @@
     "Coming Simple": "Coming Simple",
     "Coming with Bg Image": "Viniendo con Bg Image",
     "Coming with Bg video": "Viniendo con Bg video",
-    "Maintenance": "Mantenimiento"
+    "Maintenance": "Mantenimiento",
+    "Patients": "Pacientes",
+    "Appointments": "Turnos"
 }
