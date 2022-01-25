@@ -13,14 +13,14 @@ const Breadcrumb = props => {
                     <div className="row">
                         <div className="col">
                             <div className="page-header-left">
-                                <h3>{breadcrumb.title}</h3>
+                                <h3>{breadcrumb.header || breadcrumb.title}</h3>
                                 <ol className="breadcrumb pull-right">
                                     <li className="breadcrumb-item">
                                         <Link to={`${process.env.PUBLIC_URL}/dashboard/default`}>
                                             <Home />
                                         </Link>
                                     </li>
-                                    <li className="breadcrumb-item">{breadcrumb.parent}</li>
+                                    {breadcrumb.parent ? <li className="breadcrumb-item">{breadcrumb.parent}</li> : ""}
                                     <li className="breadcrumb-item active">{breadcrumb.title}</li>
                                 </ol>
                             </div>

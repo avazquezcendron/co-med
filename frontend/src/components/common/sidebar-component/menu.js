@@ -14,7 +14,7 @@ import {
 
 export const MENUITEMS = [
     {
-        title: 'Dashboard', icon: Home, type: 'link', path: '/dashboard/project', badgeType: 'primary', active: false
+        title: 'Dashboard', icon: Home, type: 'link', path: '/dashboard/default', badgeType: 'primary', active: false
         // children: [
         //     { path: '/dashboard/default', title: 'Default', type: 'link' },
         //     { path: '/dashboard/ecommerce', title: 'E-Commerce', type: 'link' },
@@ -195,10 +195,10 @@ export const MENUITEMS = [
     //     ]
     // },
     {
-        title: 'Patients', icon: Users, type: 'sub', active: false, children: [
-            { path: '/users/userProfile', type: 'link', title: 'Users Profile ' },
-            { path: '/users/userEdit', type: 'link', title: 'Users Edit' },
-            { path: '/users/userCards', type: 'link', title: 'Users Cards' },
+        title: 'Users', icon: Users, type: 'sub', active: false, children: [
+            { path: '/users/patientList', type: 'link', title: 'Patients' },
+            { path: '/users/doctorList', type: 'link', title: 'Doctors' },
+            { path: '/users/secretaryList', type: 'link', title: 'Secretaries' },
         ]
     },
     {
@@ -316,7 +316,7 @@ export const MENUITEMS = [
     //         { path: '/pages/comingsoonVideo', title: 'Coming With Bg Video', type: 'link' },
     //     ]
     // },
-    // {
-    //     title: 'Maintenance', icon: Settings, path: '/pages/maintenance', type: 'link', active: false
-    // }
+    {
+        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'link', active: false
+    }
 ]

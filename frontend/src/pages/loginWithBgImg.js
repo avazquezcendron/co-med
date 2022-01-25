@@ -8,9 +8,9 @@ const LoginWithBgImg = () => {
             <div className="page-wrapper">
                 <div className="auth-bg">
                     <div className="authentication-box">
-                        <div className="text-center"><img src={logo} alt="" /></div>
+                        <div className="text-center bg-primary"> <img src={logo} alt="" /></div>
                         <div className="card mt-4">
-                            <div className="card-body">
+                            <div className="card-body">                                       
                                 <div className="text-center">
                                     <h4>{LOGIN}</h4>
                                     <h6>{"Enter your Username and Password"} </h6>
@@ -31,7 +31,7 @@ const LoginWithBgImg = () => {
                                     <div className="form-group form-row mt-3 mb-0">
                                         <button className="btn btn-primary btn-block" type="submit">{Login}</button>
                                     </div>
-                                    <div className="login-divider"></div>
+                                    {/* <div className="login-divider"></div>
                                     <div className="social mt-3">
                                         <div className="form-group btn-showcase d-flex">
                                             <button className="btn social-btn btn-fb d-inline-block"> <i className="fa fa-facebook"></i></button>
@@ -39,7 +39,7 @@ const LoginWithBgImg = () => {
                                             <button className="btn social-btn btn-google d-inline-block"><i className="fa fa-twitter"></i></button>
                                             <button className="btn social-btn btn-github d-inline-block"><i className="fa fa-github"></i></button>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </form>
                             </div>
                         </div>

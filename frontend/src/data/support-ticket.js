@@ -20,7 +20,10 @@ export const supportDB  = [
             office: "Edinburgh",
             skill: <div className="progress-showcase"><div className="progress sm-progress-bar" ><div className="progress-bar custom-progress-width bg-primary" style={{width:"80%"}} role="progressbar"></div></div></div>,
             extn: 5421,
-            email: "t.nixon@datatables.net"
+            email: "t.nixon@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -30,7 +33,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill: <div className="progress-showcase"><div className="progress sm-progress-bar" ><div className="progress-bar custom-progress-width bg-secondary" role="progressbar" style={{width:"50%"}}></div></div></div>,
             extn: 1562,
-            email: "a.cox@datatables.net"
+            email: "a.cox@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -40,7 +46,10 @@ export const supportDB  = [
             office: "London",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' style={{width:"60%"}} role='progressbar'></div></div></div>,
             extn: 2558,
-            email: "b.greer@datatables.net"
+            email: "b.greer@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -50,7 +59,10 @@ export const supportDB  = [
             office: "New York",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' role='progressbar' style={{width:"70%"}}></div></div></div>,
             extn: 4804,
-            email: "b.williamson@datatables.net"
+            email: "b.williamson@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -60,7 +72,10 @@ export const supportDB  = [
             office: "New York",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' role='progressbar' style={{width:"20%"}}></div></div></div>,
             extn: 8330,
-            email: "c.vance@datatables.net"
+            email: "c.vance@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -70,7 +85,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' role='progressbar' style={{width:"10%"}}></div></div></div>,
             extn: 1562,
-            email: "a.cox@datatables.net"
+            email: "a.cox@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -80,7 +98,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-secondary' style={{width:"90%"}} role='progressbar'></div></div></div>,
             extn: 6224,
-            email: "c.kelly@datatables.net"
+            email: "c.kelly@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -90,7 +111,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-secondary' role='progressbar' style={{width:"60%"}}></div></div></div>,
             extn: 6224,
-            email: "c.kelly@datatables.net"
+            email: "c.kelly@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
         {
             image: <img src={user8} className="img-50 img-fluid" alt="" />,
@@ -99,7 +123,10 @@ export const supportDB  = [
             office: "Tokyo",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' role='progressbar' style={{width:"50%"}}></div></div></div>,
             extn: 5407,
-            email: "a.satou@datatables.net"
+            email: "a.satou@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -109,7 +136,10 @@ export const supportDB  = [
             office: "New York",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-info' role='progressbar' style={{width:"40%"}}></div></div></div>,
             extn: 4804,
-            email: "b.williamson@datatables.net"
+            email: "b.williamson@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -119,7 +149,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-warning' style={{width:"60%"}} role='progressbar'></div></div></div>,
             extn: 9608,
-            email: "h.chandler@datatables.net"
+            email: "h.chandler@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -129,7 +162,10 @@ export const supportDB  = [
             office: "Tokyo",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-secondary' style={{width:"80%"}} role='progressbar'></div></div></div>,
             extn: 6200,
-            email: "r.davidson@datatables.net"
+            email: "r.davidson@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -139,7 +175,10 @@ export const supportDB  = [
             office: "San Francisco",
             skill:<div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-success' role='progressbar' style={{width:"50%"}}></div></div></div>,
             extn: 2360,
-            email: "c.hurst@datatables.net"
+            email: "c.hurst@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -149,7 +188,10 @@ export const supportDB  = [
             office: "Edinburgh",
             skill: <div className="progress-showcase"><div className="progress sm-progress-bar"><div className="progress-bar custom-progress-width bg-primary" role="progressbar" style={{width:"35%"}}></div></div></div>,
             extn: 1667,
-            email: "s.frost@datatables.net"
+            email: "s.frost@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -159,7 +201,10 @@ export const supportDB  = [
             office: "London",
             skill:<div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-warning' role='progressbar' style={{width:"55%"}}></div></div></div>,
             extn: 3814,
-            email: "j.gaines@datatables.net"
+            email: "j.gaines@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
 
         {
@@ -169,14 +214,17 @@ export const supportDB  = [
             office: "Edinburgh",
             skill: <div className='progress-showcase'><div className='progress sm-progress-bar'><div className='progress-bar custom-progress-width bg-danger' role='progressbar' style={{width:"93%"}}></div></div></div>,
             extn: 9497,
-            email: "q.flynn@datatables.net"
+            email: "q.flynn@datatables.net",
+            action: <div><span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+            <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+            </div>
         },
     ]
 export const supportColumns = [
     {
         name: 'Image',
         selector: 'image',
-        sortable: true,
+        sortable: false,
         center:true,
     },
     {
@@ -215,5 +263,11 @@ export const supportColumns = [
         selector: 'email',
         sortable: true,
         center:true,
+    },
+    {
+      name:"Action",
+      selector: 'action',
+      sortable: false,
+      center:true,
     },
   ];

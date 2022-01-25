@@ -139,6 +139,9 @@ import Editor3 from './components/editor/aceCodeEditor';
 import UserProfile from './components/users/userProfile';
 import UserEdit from './components/users/userEdit';
 import UserCards from './components/users/user-cards';
+import DoctorList from './components/users/doctors/doctorList';
+import PatientList from './components/users/patients/patientList';
+import SecretaryList from './components/users/secretaries/secretaryList';
 
 // Calender
 import Calender1 from './components/calender/calender1';
@@ -399,6 +402,7 @@ const Root = () => {
                                     {/* Charts */}
                                     <Route path={`${process.env.PUBLIC_URL}/charts/googleChart`} component={GoogleChart} />
                                     <Route path={`${process.env.PUBLIC_URL}/charts/chartJs`} component={ChartJs} />
+
                                     <Route path={`${process.env.PUBLIC_URL}/charts/chartistComponent`} component={ChartistComponent} />
                                     <Route path={`${process.env.PUBLIC_URL}/knob/knob-charts`} component={Knobcharts} />
 
@@ -415,6 +419,9 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/users/userProfile`} component={UserProfile} />
                                     <Route path={`${process.env.PUBLIC_URL}/users/userEdit`} component={UserEdit} />
                                     <Route path={`${process.env.PUBLIC_URL}/users/userCards`} component={UserCards} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/doctorList`} component={DoctorList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/patientList`} component={PatientList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/secretaryList`} component={SecretaryList} />
 
                                     {/* Calender */}
                                     <Route path={`${process.env.PUBLIC_URL}/calender/calender1`} component={Calender1} />

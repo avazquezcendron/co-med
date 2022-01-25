@@ -7,9 +7,9 @@ import { withRouter } from "react-router";
 import  {firebase_app, googleProvider, facebookProvider, twitterProvider, githubProvider,Jwt_token } from "../data/config";
 import { handleResponse } from "../services/fack.backend";
 import { useAuth0 } from '@auth0/auth0-react'
-import { Login,LOGIN,YourName,Password,RememberMe,LoginWithAuth0,LoginWithJWT } from '../constant';
+import { translate } from 'react-switch-lang';
 
-const Signin = ({ history }) => {
+const Signin = ({ t, history }) => {
 
     const {loginWithRedirect} = useAuth0()
     const [email, setEmail] = useState("test@gmail.com");
@@ -129,28 +129,27 @@ const Signin = ({ history }) => {
                     <div className="authentication-main">
                         <div className="row">
                             <div className="col-md-12">
-                                <div className="auth-innerright">
+                                <div className="auth-innerright auth-bg">
                                     <div className="authentication-box">
                                         <div className="text-center">
                                             <img src={logo} alt="" /></div>
                                         <div className="card mt-4">
                                             <div className="card-body">
                                                 <div className="text-center">
-                                                    <h4>{LOGIN}</h4>
-                                                    <h6>{"Enter your Username and Password"} </h6>
+                                                    <h4>{t('Login')}</h4>
+                                                    <h6>{t('LoginCredentialsMessage')} </h6>
                                                 </div>
                                                 <form className="theme-form" >
                                                     <div className="form-group">
-                                                        <label className="col-form-label pt-0">{YourName}</label>
+                                                        <label className="col-form-label pt-0">{t('User')}</label>
                                                         <input className="form-control" type="email" name="email"
                                                             value={email}
                                                             onChange={e => setEmail(e.target.value)}
-                                                            placeholder="Email address"
                                                         />
                                                        
                                                     </div>
                                                     <div className="form-group">
-                                                        <label className="col-form-label">{Password}</label>
+                                                        <label className="col-form-label">{t('Password')}</label>
                                                         <input className="form-control" type="password" name="password"
                                                             value={password}
                                                             onChange={e => setPassword(e.target.value)} />
@@ -158,20 +157,20 @@ const Signin = ({ history }) => {
                                                     </div>
                                                     <div className="checkbox p-0">
                                                         <input id="checkbox1" type="checkbox" />
-                                                        <label htmlFor="checkbox1">{RememberMe}</label>
+                                                        <label htmlFor="checkbox1">{t('RememberMe')}</label>
                                                     </div>
                                                     <div className="form-group form-row mt-3 mb-0">
-                                                        <button className="btn btn-primary btn-block" type="button" onClick={() => loginAuth()} >{Login}</button>
+                                                        <button className="btn btn-primary btn-block" type="button" onClick={() => loginWithJwt(email,password)} >{t('Login')}</button>
                                                     </div>
-                                                    <div className="form-group form-row mt-3 mb-0 button-auth">
+                                                    {/* <div className="form-group form-row mt-3 mb-0 button-auth">
                                                         <div className="col-md-6">
                                                             <button className="btn btn-secondary btn-block" type="button" onClick={() => loginWithJwt(email,password)} >{LoginWithJWT}</button>
                                                         </div>
                                                         <div className="col-md-6">
                                                             <button className="btn btn-success btn-block" type="button" onClick={loginWithRedirect} >{LoginWithAuth0}</button>
                                                         </div>
-                                                    </div>
-                                                    <div className="login-divider"></div>
+                                                    </div> */}
+                                                    {/* <div className="login-divider"></div>
                                                     <div className="social mt-3">
                                                         <div className="form-group btn-showcase d-flex">
                                                             <button className="btn social-btn btn-fb d-inline-block" type="button" onClick={facebookAuth}> <i className="fa fa-facebook"></i></button>
@@ -179,7 +178,7 @@ const Signin = ({ history }) => {
                                                             <button className="btn social-btn btn-google d-inline-block" type="button" onClick={twitterAuth}><i className="fa fa-twitter"></i></button>
                                                             <button className="btn social-btn btn-github d-inline-block" type="button" onClick={githubAuth}><i className="fa fa-github"></i></button>
                                                         </div>
-                                                    </div>
+                                                    </div> */}
                                                 </form>
                                             </div>
                                         </div>
@@ -196,4 +195,4 @@ const Signin = ({ history }) => {
     );
 };
 
-export default withRouter(Signin);
+export default withRouter(translate(Signin));

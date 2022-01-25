@@ -8,16 +8,16 @@ import {Customize,Customizer,Color,Pattern,Image,LayoutType,RTLLayout,LTRLayout,
 
 const ThemeCustomizer = () => {
 
+    const configDB = useSelector(content => content.Customizer.customizer);
     const primary_color = localStorage.getItem('primary_color');
     const secondary_color = localStorage.getItem('secondary_color');
     const layout_version = localStorage.getItem('layout_version');
-    const sidebar_type = localStorage.getItem('wrapper')
-    const body_sidebar_type = localStorage.getItem('bodyWrapper');
+    const sidebar_type = localStorage.getItem('wrapper') || configDB.settings.sidebar.wrapper;
+    const body_sidebar_type = localStorage.getItem('bodyWrapper') || configDB.settings.sidebar.bodyWrapper;
     const [modal, setModal] = useState();
     const [rightSidebar, setRightSidebar] = useState(true);
     const [activeTab, setActiveTab] = useState('1');
     const [activeTab1, setActiveTab1] = useState('1');
-    const configDB = useSelector(content => content.Customizer.customizer);
     const color = localStorage.getItem('color')
     const mix_layout = configDB.color.mix_layout;
     const [layout_type, setLayout_type] = useState(configDB.settings.layout_type);
@@ -26,8 +26,7 @@ const ThemeCustomizer = () => {
     const config_secondary = configDB.color.secondary_color;
     const config_color = configDB.color.color;
     const config_layout_version = configDB.color.layout_version;
-    configDB.settings.sidebar.wrapper = sidebar_type;
-    configDB.settings.sidebar.bodyWrapper = body_sidebar_type;
+    
 
     useEffect(() => {
         dispatch({ type: 'ADD_COSTOMIZER' });
@@ -271,8 +270,8 @@ const ThemeCustomizer = () => {
                                             <div>       {"layout_type"}&#58; '{configDB.settings.layout_type}',</div>
 
                                             <div>   {"sidebar"}&#58; &#123;</div>
-                                            <div>       {"type"}&#58; '{configDB.settings.sidebar.wrapper}',</div>
-                                            <div>       {"body_type"}&#58; '{configDB.settings.sidebar.bodyWrapper}' </div>
+                                            <div>       {"wrapper"}&#58; '{configDB.settings.sidebar.wrapper}',</div>
+                                            <div>       {"bodyWrapper"}&#58; '{configDB.settings.sidebar.bodyWrapper}' </div>
                                             <div>   &#125;,</div>
                                             <div>       {"sidebar_setting"}&#58; '{configDB.settings.sidebar_setting}', </div>
                                             <div>       {"sidebar_backround"}&#58; '{configDB.settings.sidebar_backround}' </div>

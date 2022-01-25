@@ -3,7 +3,7 @@
 ==========================**/
 //urls
 $url_0: url(../../images/other-images/auth-layer.png);
-$url_1: url(../../images/other-images/auth-bg-1.jpg);
+$url_1: url(../../images/other-images/auth-bg-2.png);
 
 %auth-mixin1 {
   display: flex;
@@ -16,7 +16,7 @@ $url_1: url(../../images/other-images/auth-bg-1.jpg);
 }
 .authentication-main {
   background: $light-color;
-  padding: 15px 100px;
+  padding: 0px 0px;
   .auth-innerright {
     @extend %auth-mixin1;
   }

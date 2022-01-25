@@ -1,11 +1,13 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { translate } from 'react-switch-lang';
 import Breadcrumb from '../../common/breadcrumb';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import {ADD_NEW_ITEM,REMOVE_ITEM,MARK_ALL_ITEMS,SELECTED_ITEM,WATCH_TODO_LIST} from '../../../redux/actionTypes'
 import {ToDo, AddNewTask,AddTask,Close} from '../../../constant'
+import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
-const Todo = () => {
+const Todo = (props) => {
 
     const todoList = useSelector(content => content.TodoApp.allTodoItems.filter((item) => item.isStatus !== "deleted"));
     const dispatch = useDispatch();
@@ -14,6 +16,20 @@ const Todo = () => {
     const [task, setTask] = useState('');
     const [status, setStatus] = useState('pending')
     const [markAll, setMarkAll] = useState(false);
+
+    const pageSize = 6;
+    const pagesCount = Math.ceil(todoList.length / pageSize);
+    
+    const [currentPage, setCurrentPage] = useState(0);
+    
+
+    const handleAgendaPaginationClick = (e, index) => {
+    
+        e.preventDefault();
+
+        setCurrentPage(index);
+    
+    }
 
     useEffect(() => {
         dispatch({ type: WATCH_TODO_LIST });
@@ -77,13 +93,13 @@ const Todo = () => {
 
     return (
         <Fragment>
-            <Breadcrumb title="To-do" parent="To-do" />
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-xl-12">
+            {/* <Breadcrumb title="To-do" parent="To-do" /> */}
+            {/* <div className="container-fluid"> */}
+                {/* <div className="row"> */}
+                    {/* <div className="col-xl-12"> */}
                         <div className="card">
                             <div className="card-header">
-                                <h5>{ToDo}</h5>
+                                <h5>{props.t('Notes')}</h5>
                             </div>
                             <div className="card-body">
                                 <div className="todo">
@@ -92,7 +108,7 @@ const Todo = () => {
                                             <div className="mark-all-tasks">
                                                 <div className="mark-all-tasks-container">
                                                     <span className="mark-all-btn" id="mark-all-finished" role="button">
-                                                        <span className="btn-label">{"Mark all as finished"}</span>
+                                                        <span className="btn-label">{props.t('CrossOutAll')}</span>
                                                         <span className="action-box completed" onClick={markAllStatus}>
                                                             {markAll &&
                                                                 <i className="icon"><i className="icon-check"></i></i>}
@@ -109,7 +125,10 @@ const Todo = () => {
                                             <div className="todo-list-body">
                                                 <ul id="todo-list">
                                                     {todoList.length > 0 ?
-                                                        todoList.map((todo, index) =>
+                                                        todoList.slice(
+                                                            currentPage * pageSize,
+                                                            (currentPage + 1) * pageSize
+                                                          ).map((todo, index) =>
                                                             <li className={"task " + todo.status} key={index} >
                                                                 <div className="task-container">
                                                                     <h4 className="task-label">{todo.title}</h4>
@@ -149,7 +168,7 @@ const Todo = () => {
                                     </div>
                                 </div>
                                 {/* <!-- HTML Template for tasks--> */}
-                                <script id="task-template" type="tect/template">
+                                {/* <script id="task-template" type="tect/template">
                                     <li className="task">
                                         <div className="task-container">
                                             <h4 className="task-label">{"HEllo"}</h4>
@@ -163,14 +182,35 @@ const Todo = () => {
                                             </span>
                                         </div>
                                     </li>
-                                </script>
+                                </script> */}
+                                 <Pagination aria-label="ToDo Pagination" className="pagination justify-content-center pagination-primary">
+                                    <PaginationItem disabled={currentPage <= 0}>
+                                        <PaginationLink first href="#javascript" onClick={e => handleAgendaPaginationClick(e, 0)}/>
+                                    </PaginationItem>
+                                    <PaginationItem disabled={currentPage <= 0}>
+                                        <PaginationLink previous href="#javascript" onClick={e => handleAgendaPaginationClick(e, currentPage - 1)}/>
+                                    </PaginationItem>
+                                    {[...Array(pagesCount)].map((page, i) => 
+                                        <PaginationItem active={i === currentPage} key={i}>
+                                            <PaginationLink onClick={e => handleAgendaPaginationClick(e, i)} href="#">
+                                            {i + 1}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    )}
+                                    <PaginationItem disabled={currentPage >= pagesCount - 1}>
+                                        <PaginationLink next href="#javascript" onClick={e => handleAgendaPaginationClick(e, currentPage + 1)}/>
+                                    </PaginationItem>
+                                    <PaginationItem disabled={currentPage >= pagesCount - 1}>
+                                        <PaginationLink last href="#javascript" onClick={e => handleAgendaPaginationClick(e, pagesCount - 1)}/>
+                                    </PaginationItem>
+                                </Pagination>
                             </div>
                         </div>
-                    </div>
+                    {/* </div> 
                 </div>
-            </div>
+            </div>*/}
         </Fragment>
     );
 };
 
-export default Todo;
+export default translate(Todo);
