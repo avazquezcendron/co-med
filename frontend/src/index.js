@@ -141,6 +141,7 @@ import UserEdit from './components/users/userEdit';
 import UserCards from './components/users/user-cards';
 import DoctorList from './components/users/doctors/doctorList';
 import PatientList from './components/users/patients/patientList';
+import PatientProfile from './components/users/patients/patientProfile';
 import SecretaryList from './components/users/secretaries/secretaryList';
 
 // Calender
@@ -419,9 +420,10 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/users/userProfile`} component={UserProfile} />
                                     <Route path={`${process.env.PUBLIC_URL}/users/userEdit`} component={UserEdit} />
                                     <Route path={`${process.env.PUBLIC_URL}/users/userCards`} component={UserCards} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/doctorList`} component={DoctorList} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/patientList`} component={PatientList} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/secretaryList`} component={SecretaryList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/doctors`} component={DoctorList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/users/patients`} component={PatientList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/patients/:id`} component={PatientProfile} />
+                                    <Route path={`${process.env.PUBLIC_URL}/users/secretaries`} component={SecretaryList} />
 
                                     {/* Calender */}
                                     <Route path={`${process.env.PUBLIC_URL}/calender/calender1`} component={Calender1} />

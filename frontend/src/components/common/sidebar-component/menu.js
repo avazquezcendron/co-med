@@ -1,10 +1,11 @@
 import {
     Home,
+    PieChart,
     Box,
     DollarSign,
     UserPlus,
     Users,
-    Chrome,
+    TrendingUp,
     Settings,
     Airplay,
     FolderPlus,
@@ -196,9 +197,9 @@ export const MENUITEMS = [
     // },
     {
         title: 'Users', icon: Users, type: 'sub', active: false, children: [
-            { path: '/users/patientList', type: 'link', title: 'Patients' },
-            { path: '/users/doctorList', type: 'link', title: 'Doctors' },
-            { path: '/users/secretaryList', type: 'link', title: 'Secretaries' },
+            { path: '/users/patients', type: 'link', title: 'Patients' },
+            { path: '/users/doctors', type: 'link', title: 'Doctors' },
+            { path: '/users/secretaries', type: 'link', title: 'Secretaries' }
         ]
     },
     {
@@ -207,6 +208,25 @@ export const MENUITEMS = [
         //     { path: '/calender/calender1', type: 'link', title: 'Calender', },
         //     { path: '/calender/calender2', type: 'link', title: 'Draggable Calender' },
         // ]
+    },
+    {
+        title: 'Reports', icon: TrendingUp, type: 'sub', active: false, children: [
+            { path: '/dashboard/project', type: 'link', title: 'General' },
+            { path: '/widgets/chart', type: 'link', title: 'Various' }
+        ]
+    },
+    {
+        title: 'Graphics', icon: PieChart, type: 'sub', active: false, children: [
+            { path: '/charts/googleChart', type: 'link', title: 'Graphics1' },
+            { path: '/charts/chartJs', type: 'link', title: 'Graphics2' },
+            { path: '/charts/chartistComponent', type: 'link', title: 'Graphics3' }
+        ]
+    },
+    {
+        title: 'Forms', icon: FileText, type: 'sub', active: false, children: [
+            { path: '/form-layout/formDefault', title: 'Prescriptions', type: 'link' },
+            { path: '/form-layout/FormWizard', title: 'Templates', type: 'link' }
+        ]
     },
     // {
     //     title: 'Blog', icon: Edit, type: 'sub', active: false, children: [

@@ -197,5 +197,15 @@
   "Secretaries": "Secretaries",
   "DoctorList": "List of Doctors",
   "PatientList": "List of Patients",
-  "SecretaryList": "List of Secretaries"
+  "SecretaryList": "List of Secretaries",
+  "Reports": "Reports",
+  "General": "General",
+  "Graphics": "Graphics",
+  "Graphics1": "Graphics 1",
+  "Graphics2": "Graphics 2",
+  "Graphics3": "Graphics 3",
+  "Various": "Various",
+  "New": "New",
+  "Prescriptions": "Prescriptions",
+  "Templates": "Templates"
 }
