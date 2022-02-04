@@ -11,10 +11,10 @@ import { supportDB,supportColumns } from '../../../data/support-ticket';
 
 const PatientList = (props) => {
 
-    const [cards,setCards] = useState([])
+    const [patients,setPatients] = useState([])
 
     useEffect(() => {
-        axios.get(`${process.env.PUBLIC_URL}/api/usercard.json`).then(res => setCards(res.data))
+        axios.get(`${process.env.PUBLIC_URL}/api/patients.json`).then(res => setPatients(res.data))
     }, [])
     
     const [filterText, setFilterText] = React.useState("");
@@ -24,7 +24,7 @@ const PatientList = (props) => {
     // const filteredItems = data.filter(
     //   item => item.name && item.name.includes(filterText)
     // );
-    const filteredUsers = supportDB.filter(
+    const filteredUsers = patients.filter(
         item =>
         {
             // const dataToFilter = { position: item.position, salary: item.salary, office: item.office, email: item.email };

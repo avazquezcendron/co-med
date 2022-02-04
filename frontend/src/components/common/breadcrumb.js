@@ -24,7 +24,7 @@ const Breadcrumb = props => {
                                     {breadcrumb.parent ?
                                         <li className="breadcrumb-item">
                                             {breadcrumb.parent.url ?
-                                                <Link Link to={`${process.env.PUBLIC_URL}/${breadcrumb.parent.url}`}>
+                                                <Link to={`${process.env.PUBLIC_URL}/${breadcrumb.parent.url}`}>
                                                     {breadcrumb.parent.title}
                                                 </Link>    
                                             : breadcrumb.parent}

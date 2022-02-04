@@ -337,19 +337,20 @@ export const supportColumns = [
         selector: 'image',
         sortable: false,
         center:true,
-        width: '80px'
+        width: '80px',
+        cell: (row, index, column, id) => <img src={`${process.env.PUBLIC_URL}/assets/images/${row.image}`} className="img-50 img-fluid" alt="" />
     },
     {
         name: 'Nombre y Apellido',
         selector: 'name',
         sortable: true,
-        center:true,
+        left:true,
     },
     {
         name: 'Documento',
         selector: 'nationalId',
         sortable: true,
-        center:true,
+        left:true,
      
     },
     {
@@ -368,13 +369,14 @@ export const supportColumns = [
         name: 'Nro. Historia Clínica',
         selector: 'healthRecordId',
         sortable: true,
-        center:true,
+        left:true,
     },
     {
         name: 'Email',
         selector: 'email',
         sortable: true,
         center:true,
+        cell: (row, index, column, id) => <a href={`mailto:${row.email}`}>{row.email}</a>
     },
     {
         name: 'Última Visita',
