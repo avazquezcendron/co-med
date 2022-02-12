@@ -3,11 +3,12 @@ import { Container, Row, Col, FormGroup, CardHeader, CardFooter, Media } from 'r
 import {Link} from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import { translate } from 'react-switch-lang';
+import CustomMaterialMenu from '../../../components/common/data-table/customMaterialMenu';
 import { Target, Info, CheckCircle, PlusCircle } from 'react-feather';
+import SweetAlert from 'sweetalert2'
 import axios from 'axios'
 import Breadcrumb from '../../common/breadcrumb';
 import DataTableFilterComponent from '../../common/data-table/dataTableFilterComponent';
-import { supportDB,supportColumns } from '../../../data/support-ticket';
 
 const PatientList = (props) => {
 
@@ -18,9 +19,7 @@ const PatientList = (props) => {
     }, [])
     
     const [filterText, setFilterText] = React.useState("");
-    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(
-        false
-    );
+    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
     // const filteredItems = data.filter(
     //   item => item.name && item.name.includes(filterText)
     // );
@@ -89,9 +88,123 @@ const PatientList = (props) => {
     };
     
     const handleRowClick = (row, event) => {
-        props.history.push(`${process.env.PUBLIC_URL}/users/patients/${row.id}`)
+        props.history.push(`${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=browse`)
     }
 
+    const handleEditPatientClick = (row, event) => {
+        props.history.push(`${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=edit`)
+    }
+
+    const handleDeletePatientClick = (patient) => {
+        SweetAlert.fire({
+          title: 'Está seguro?',
+          text: `El patiente ${patient.name} será dado de baja.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Aceptar',
+          cancelButtonText: 'Cancelar',
+          cancelButtonColor: '#ff0000',
+          reverseButtons: true
+        }).then((result) => {
+          if (result.value) {
+            // dispatch(removeTask(taskId));
+            SweetAlert.fire(
+              'Acción completada!',
+              `El patiente ${patient.name} ha sido dado de baja.`,
+              'success'
+            )
+          }
+          else {
+              SweetAlert.fire(
+                '',
+                `La acción de eliminar al paciente ${patient.name} ha sido descartada.`,
+                'info'
+            )
+          }
+        })
+    }
+    
+    const olumnsConfig = [
+        // {
+        // 	cell: () => <i className="fa fa-th text-success" />, 
+        // 	width: '56px', // custom width for icon button
+        // 	style: {
+        // 		borderBottom: '1px solid #FFFFFF',
+        // 		marginBottom: '-1px',
+        // 	},
+        // },
+        {
+            name: 'Foto',
+            selector: 'image',
+            sortable: false,
+            center:true,
+            width: '80px',
+            cell: (row, index, column, id) => <img src={`${process.env.PUBLIC_URL}/assets/images/${row.image}`} className="img-50 img-fluid" alt="" />
+        },
+        {
+            name: 'Nombre y Apellido',
+            selector: 'name',
+            sortable: true,
+            left:true,
+        },
+        {
+            name: 'Documento',
+            selector: 'nationalId',
+            sortable: true,
+            left:true,
+         
+        },
+        {
+            name: 'Fec. Nacimiento',
+            selector: 'birthDate',
+            sortable: true,
+            center:true,
+        },
+        {
+            name: 'Obra Social',
+            selector: 'healthInsurance',
+            sortable: true,
+            center:true,
+        },
+        {
+            name: 'Nro. Historia Clínica',
+            selector: 'healthRecordId',
+            sortable: true,
+            left:true,
+        },
+        {
+            name: 'Email',
+            selector: 'email',
+            sortable: true,
+            center:true,
+            cell: (row, index, column, id) => <a href={`mailto:${row.email}`}>{row.email}</a>
+        },
+        {
+            name: 'Última Visita',
+            selector: 'lastVisit',
+            sortable: true,
+            center:true,
+        },
+        {
+            name:"Estado",
+            selector: 'status',
+            sortable: true,
+            center: true,
+            cell: (row, index, column, id) => row.status === 'active' ? <span className="badge badge-success">Activo</span> : row.status === 'pending' ? <span className="badge badge-warning">Pendiente</span> : <span className="badge badge-light">Inactivo</span>
+        },
+        {
+          sortable: false,
+          allowOverflow: true,
+          ignoreRowClick: true,
+          cell: (row, index, column, id) =>
+                        <div>
+                            <span onClick={() => handleDeletePatientClick(row)}><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
+                            <span onClick={() => handleEditPatientClick(row)}><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
+                            <CustomMaterialMenu size="small" row={row} menuItems={[{ actionName: 'Ver Historia Clínica', actionIcon: 'fa fa-medkit' }, { actionName: 'Próx. Turnos', actionIcon: 'fa fa-calendar' }]} />
+                        </div>
+        },    
+    ];
+    
     return (
         <Fragment>
             <Breadcrumb parent={props.t('Users')} title={props.t('Patients')} />
@@ -115,7 +228,7 @@ const PatientList = (props) => {
                             <div className="card-body datatable-react">
                                 <div className="table-responsive support-table">
                                     <DataTable
-                                        columns={supportColumns}
+                                        columns={olumnsConfig}
                                         data={filteredUsers}
                                         // striped={true}
                                         // center={true}

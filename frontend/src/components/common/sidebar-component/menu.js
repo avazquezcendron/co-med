@@ -203,7 +203,7 @@ export const MENUITEMS = [
         ]
     },
     {
-        title: 'Appointments', path: '/calender/calender1', icon: Calendar, type: 'link', active: false, bookmark: true
+        title: 'Appointments', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
         // children: [
         //     { path: '/calender/calender1', type: 'link', title: 'Calender', },
         //     { path: '/calender/calender2', type: 'link', title: 'Draggable Calender' },

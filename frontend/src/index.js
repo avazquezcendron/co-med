@@ -148,6 +148,9 @@ import SecretaryList from './components/users/secretaries/secretaryList';
 import Calender1 from './components/calender/calender1';
 import Calender2 from './components/calender/calender2';
 
+//agenda
+import Appointments from './components/agenda/appointments';
+
 // blog
 import BlogDetail from './components/blog/blogDetail';
 import BlogSingle from './components/blog/blogSingle';
@@ -426,7 +429,7 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/users/secretaries`} component={SecretaryList} />
 
                                     {/* Calender */}
-                                    <Route path={`${process.env.PUBLIC_URL}/calender/calender1`} component={Calender1} />
+                                    <Route path={`${process.env.PUBLIC_URL}/agenda/appointments`} component={Appointments} />
                                     <Route path={`${process.env.PUBLIC_URL}/calender/calender2`} component={Calender2} />
 
                                     {/* Blog */}

@@ -23,6 +23,7 @@ const PatientHealthRecord = (props) => {
   const [isAntecedentesPsico, setisAntecedentesPsico] = useState(false);
   const [isAntecedentesNutri, setisAntecedentesNutri] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [isHealthRecord, setisHealthRecord] = useState(true);
 
 
   useEffect(() => {
@@ -52,6 +53,27 @@ const PatientHealthRecord = (props) => {
   };
 
   return (
+    <div className="card">
+      <div className="card-header">
+        <div className="row m-b-2">
+          <div className="col-md-9">
+            <h4 className="card-title mb-0">{'Historia Clínica'}</h4>
+          </div>
+          <div className="col-md-3">
+            <button
+              className="btn btn-link pl-0"
+              onClick={() => setisHealthRecord(!isHealthRecord)}
+              data-toggle="collapse"
+              data-target="#collapseicon2"
+              aria-expanded={isHealthRecord}
+              aria-controls="collapseicon2"
+            >
+              {''}
+            </button>
+          </div>
+        </div>
+      </div> 
+    <Collapse isOpen={isHealthRecord}>
     <div className="card-body">
       <ul className="nav nav-tabs nav-secondary m-b-30">
         <li className="nav-item">
@@ -266,12 +288,6 @@ const PatientHealthRecord = (props) => {
                                 </div>
                             </div>
                           </form>
-                        </div>
-                        <div className="card-footer">
-                          <span className="pull-right">
-                            <button className="btn btn-primary mr-1">{'Guardar'}</button>
-                            <button className="btn btn-outline-danger">{'Cancelar'}</button>
-                          </span>
                         </div>
                     </div>
                 </div>
@@ -737,6 +753,15 @@ const PatientHealthRecord = (props) => {
             </p>
             </TabPane>
         </TabContent>
+        
+        <div className="card-footer">
+          <span className="pull-right">
+            <button className="btn btn-primary mr-1">{'Guardar'}</button>
+            <button className="btn btn-outline-danger">{'Cancelar'}</button>
+          </span>
+        </div>
+      </div>
+      </Collapse>
     </div>
   );
 };

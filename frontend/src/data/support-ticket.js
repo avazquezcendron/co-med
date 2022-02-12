@@ -395,49 +395,11 @@ export const supportColumns = [
       sortable: false,
       allowOverflow: true,
       ignoreRowClick: true,
-    //   button: true,
-    //   width: '56px',
       cell: (row, index, column, id) =>
                     <div>
                         <span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
                         <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
                         <CustomMaterialMenu size="small" row={row} menuItems={[{ actionName: 'Ver Historia Clínica', actionIcon: 'fa fa-medkit' }, { actionName: 'Próx. Turnos', actionIcon: 'fa fa-calendar' }]} />
                     </div>
-    //   button: true
-    },
-    // {
-    //     name:"Acciones",
-    //     selector: 'action',
-    //     sortable: false,
-    //     center:true,
-    //     ignoreRowClick: true,
-    //     allowOverflow: true,
-    //     cell: (row, index, column, id) =>
-    //                   <div>
-    //                       <span><i className="fa fa-trash" style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}></i></span>
-    //                       <span><i className="fa fa-pencil" style={{ width: 35, fontSize: 16, padding: 11, color: 'rgb(40, 167, 69)' }}></i></span>
-    //                       <span className="onhover-dropdown navs-dropdown">                            
-    //                               <i className="fa fa-ellipsis-v" style={{ width: 35, fontSize: 16, padding: 11 }} title="Más"></i>
-    //                               <div className="onhover-show-div" style={{ right: -50,
-    //                                                                           left: 'inherit',
-    //                                                                           width: 140,
-    //                                                                           zIndex: 20,
-    //                                                                           top: 23,}}>
-    //                                   <ul className="icon-lists navs-icon o-visible">
-    //                                       <li >
-    //                                           <a href="#javascript">
-    //                                               <i className="fa fa-medkit"></i> {'Historia Clínica'}
-    //                                           </a>
-    //                                       </li>
-    //                                       <li>
-    //                                           <a href="#javascript">
-    //                                               <i className="fa fa-bell-o"></i> {'Spanish'}
-    //                                           </a>
-    //                                       </li>
-    //                                   </ul>
-    //                               </div>
-    //                       </span>
-    //                   </div>
-    //   //   button: true
-    //   },
+    },    
   ];
