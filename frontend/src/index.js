@@ -247,7 +247,7 @@ const Root = () => {
         const requestOptions = { method: 'GET', headers: authHeader() };
         fetch('/users', requestOptions).then(handleResponse)
         const color = localStorage.getItem('color')
-        console.log(color);
+        //console.log(color);
         const layout = localStorage.getItem('layout_version') || configDB.data.color.layout_version
         firebase_app.auth().onAuthStateChanged(setCurrentUser);
         setAuthenticated(JSON.parse(localStorage.getItem("authenticated")))

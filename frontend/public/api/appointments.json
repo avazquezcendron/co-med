@@ -1,8 +1,11 @@
 [
     {
         "id": 1,
-        "startTime": "08:00 AM",
-        "startDate": "11/02/2022",
+        "title": "Jesica Alba - Presencial",
+        "startTime": "08:30 AM",
+        "endTime": "09:00 AM",
+        "start": "2022-02-11",
+        "end": "2022-02-11",
         "patientName": "Jesica Alba",
         "patientAge": "35",
         "patientSex": "f",
@@ -18,8 +21,10 @@
     },
     {
         "id": 2,
-        "startTime": "08:40 AM",
-        "startDate": "11/02/2022",
+        "title": "Manuel Mandeb - Presencial",
+        "startTime": "09:00 AM",
+        "endTime": "09:30 AM",
+        "start": "2022-02-12",
         "patientName": "Manuel Mandeb",
         "patientAge": "31",
         "patientSex": "m",
@@ -36,8 +41,10 @@
 
     {
         "id": 3,
-        "startTime": "09:20 AM",
-        "startDate": "11/02/2022",
+        "title": "Agustina Cherri - Presencial",
+        "startTime": "09:30 AM",
+        "endTime": "10:00 AM",
+        "start": "11/02/2022",
         "patientName": "Agustina Cherri",
         "patientAge": "22",
         "patientSex": "f",
@@ -54,8 +61,10 @@
 
     {
         "id": 4,
+        "title": "Sandra Velzquez - Presencial",
         "startTime": "10:00 AM",
-        "startDate": "11/02/2022",
+        "endTime": "10:30 AM",
+        "start": "11/02/2022",
         "patientName": "Sandra Velzquez",
         "patientAge": "66",
         "patientSex": "f",
@@ -72,8 +81,10 @@
 
     {
         "id": 5,
-        "startTime": "10:40 AM",
-        "startDate": "11/02/2022",
+        "title": "Agustín Vázquez - Presencial",
+        "startTime": "10:30 AM",
+        "endTime": "11:00 AM",
+        "start": "11/02/2022",
         "patientName": "Agustín Vázquez",
         "patientAge": "31",
         "patientSex": "m",
@@ -90,8 +101,10 @@
 
     {
         "id": 6,
-        "startTime": "11:20 AM",
-        "startDate": "11 Feb. 2022",
+        "title": "Serapio Garcia - Presencial",
+        "startTime": "11:00 AM",
+        "endTime": "11:30 AM",
+        "start": "11 Feb. 2022",
         "patientName": "Serapio Garcia",
         "patientAge": "78",
         "patientSex": "m",

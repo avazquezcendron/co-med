@@ -230,7 +230,7 @@ const PatientsAgenda = (props) => {
                 {' '}
                 {row.patientHealthInsuranceId}
               </span> */}
-              {/* <span className="p-l-10 text-muted">{row.startDate}</span> */}
+              {/* <span className="p-l-10 text-muted">{row.start}</span> */}
               <p className="f-12">
                 <i className="icofont icofont-doctor-alt"></i> {row.doctorName} | {row.doctorSpeciality}
               </p>
@@ -272,11 +272,11 @@ const PatientsAgenda = (props) => {
     // },
     {
       name: '',
-      selector: 'startDate',
+      selector: 'start',
       sortable: true,
       center: true,
       cell: (row, index, column, id) => (
-        <span className="text-muted">{row.startDate}</span>
+        <span className="text-muted">{row.start}</span>
       ),
     },
     {
