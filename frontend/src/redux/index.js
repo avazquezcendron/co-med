@@ -10,18 +10,21 @@ import Bookmarkapp from './bookmark/reducer'
 import Taskapp from './task/reducer'
 import Projectapp from './project/reducer'
 import Customizer from './customizer/reducer';
+import { AppointmentsReducer, AppointmentFormReducer } from './appointments/reducer';
 
 const reducers = combineReducers({
     TodoApp,
-    EmailApp,
-    ChatApp,
-    Product: Ecommerce,
-    Wishlist,
-    Cart,
-    Filters,
-    Bookmarkapp,
-    Taskapp,
-    Projectapp,
+    Appointments: AppointmentsReducer,
+    AppointmentForm: AppointmentFormReducer,
+    // EmailApp,
+    // ChatApp,
+    // Product: Ecommerce,
+    // Wishlist,
+    // Cart,
+    // Filters,
+    // Bookmarkapp,
+    // Taskapp,
+    // Projectapp,
     Customizer
 });
 

@@ -7,12 +7,12 @@ import {
     SELECTED_ITEM
 } from '../../redux/actionTypes'
 
-const INIT_STATE = {
+const INITIAL_STATE = {
     allTodoItems: [],
     todoItems: [],
     loading: false
 };
-export default (state = INIT_STATE, action) => {
+const TodoReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
 
         case GET_TODO_LIST:
@@ -67,3 +67,5 @@ export default (state = INIT_STATE, action) => {
         default: return { ...state };
     }
 }
+
+export default TodoReducer;

@@ -1,26 +1,60 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import * as appointmentService from '../../../services/appointment.service';
+import { useDispatch } from 'react-redux';
+
+import {
+  clearAppointmentForm,
+  setDataAppointmentForm,
+} from '../../../redux/appointments/actions';
 import NewAppointmentWizardComponent from './newAppointmentWizardComponent';
+import AppointmentResumeComponent from './appointmentResumeComponent';
 
 const AppointmentModalComponent = (props) => {
+  const dispatch = useDispatch();
+  if (!props.appointmentData.new) {
+    dispatch(setDataAppointmentForm(props.appointmentData));
+  }
+
   return (
     <Modal
       isOpen={props.appointmentModal}
       toggle={props.appointmentModalToggle}
       size="lg"
+      onClosed={() => dispatch(clearAppointmentForm())}
     >
       <ModalHeader toggle={props.appointmentModalToggle}>
-        {
-          props.appointmentData.new
-            ? 'Nuevo Turno'
-            : `Turno ${props.appointmentData.start}`
-        }
+        {props.appointmentData.new
+          ? 'Nuevo Turno'
+          : 'Turno ' +
+            (props.appointmentData.start
+              ? props.appointmentData.start.toLocaleDateString('es-AR', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                }) +
+                ' - ' +
+                props.appointmentData.title
+              : '')}
       </ModalHeader>
       <ModalBody>
-        <NewAppointmentWizardComponent
-          appointmentData={props.appointmentData}
-        />
+        {props.appointmentData.new ? (
+          <NewAppointmentWizardComponent
+            appointmentData={props.appointmentData}
+            modalToggle={props.appointmentModalToggle}
+          />
+        ) : (
+          <div className="card">
+            <div className="card-body">
+                <AppointmentResumeComponent />
+            </div>
+            <div className="card-footer text-center">
+              <button type="button" className="btn btn-secondary" onClick={props.appointmentModalToggle}>
+                {'Aceptar'}
+              </button>
+            </div>
+          </div>
+        )}
       </ModalBody>
     </Modal>
   );

@@ -1,21 +1,21 @@
 import React, { Fragment,useState,useEffect, useMemo } from 'react';
-import { Container, Row, Col, FormGroup, CardHeader, CardFooter, Media } from 'reactstrap'
+import { Container, Row, Col } from 'reactstrap'
 import {Link} from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import { translate } from 'react-switch-lang';
 import CustomMaterialMenu from '../../../components/common/data-table/customMaterialMenu';
-import { Target, Info, CheckCircle, PlusCircle } from 'react-feather';
+import { PlusCircle } from 'react-feather';
 import SweetAlert from 'sweetalert2'
-import axios from 'axios'
 import Breadcrumb from '../../common/breadcrumb';
 import DataTableFilterComponent from '../../common/data-table/dataTableFilterComponent';
+import * as patientService from '../../../services/patient.service';
 
 const PatientList = (props) => {
 
     const [patients,setPatients] = useState([])
 
     useEffect(() => {
-        axios.get(`${process.env.PUBLIC_URL}/api/patients.json`).then(res => setPatients(res.data))
+        patientService.getAll().then((res) => setPatients(res.data));
     }, [])
     
     const [filterText, setFilterText] = React.useState("");

@@ -1,5 +1,8 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import StepZilla from 'react-stepzilla';
+
+import { setDataAppointmentForm } from '../../../redux/appointments/actions';
 import * as appointmentService from '../../../services/appointment.service';
 import AppointmentAndPatientDataComponent from './appointmentAndPatientDataComponent';
 import SelectDoctorComponent from './selectDoctorComponent';
@@ -7,19 +10,25 @@ import SelectDateAndTimeSlotComponent from './selectDateAndTimeSlotComponent';
 import AppointmentConfirmComponent from './appointmentConfirmComponent';
 
 const NewAppointmentWizardComponent = (props) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setDataAppointmentForm(props.appointmentData));
+  },[dispatch])
+
   const steps = [
-    { name: 'Doctor', component: <SelectDoctorComponent appointmentData={props.appointmentData}/> },
+    { name: 'Doctor', component: <SelectDoctorComponent /> },
     {
       name: 'Datos',
-      component: <AppointmentAndPatientDataComponent appointmentData={props.appointmentData}/>,
+      component: <AppointmentAndPatientDataComponent />,
     },
     {
       name: 'Día y Hora',
-      component: <SelectDateAndTimeSlotComponent appointmentData={props.appointmentData}/>,
+      component: <SelectDateAndTimeSlotComponent />,
     },
     {
       name: 'Resumen',
-      component: <AppointmentConfirmComponent appointmentData={props.appointmentData}/>,
+      component: <AppointmentConfirmComponent modalToggle={props.modalToggle}/>,
     },
   ];
   return (
@@ -32,9 +41,8 @@ const NewAppointmentWizardComponent = (props) => {
             showNavigation={true}
             stepsNavigation={true}
             prevBtnOnLastStep={false}
-            dontValidate={true}
             preventEnterSubmission={true}
-            hocValidationAppliedTo={[3]}
+            // hocValidationAppliedTo={[1]}
             nextButtonText="Siguiente"
             backButtonText="Anterior"
           />

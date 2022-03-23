@@ -1,17 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { Form, FormGroup, Input, Label } from 'reactstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { setDataAppointmentForm } from '../../../redux/appointments/actions';
 import * as patientService from '../../../services/patient.service';
 
-const AppointmentAndPatientDataComponent = ({appointmentData}) => {
-  const { register, errors } = useForm();
-  const [patients, setPatients] = useState([]);
+const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
+  const { register, errors, setError, clearErrors } = useForm();
 
+  const appointment = useSelector((store) => store.AppointmentForm);
+  const dispatch = useDispatch();
+
+  const [patient, setPatient] = useState(appointment.patient || {});
+  const [type, setType] = useState(appointment.type || 'turno');
+  const [mode, setMode] = useState(appointment.mode || 'presencial');
+  const [description, setDescription] = useState(appointment.description || '');
+
+  const [patients, setPatients] = useState([]);
   useEffect(() => {
-      setPatients(patientService.getAllPatients());//.map(x => x.name));
+    patientService.getAll().then((res) => setPatients(res.data));
   }, []);
-    
+
+  useImperativeHandle(ref, () => ({
+    isValidated() {
+      if (!patient.name) {
+        setError('patient', {});
+        return false;
+      } else {
+        clearErrors('patient');
+      }
+      dispatch(setDataAppointmentForm({ patient: patient, type: type, mode: mode, description: description }));
+      return true;
+    },
+  }));
+
+  const handlePatientChange = (selected) => {
+    let patient = selected.length > 0 ? selected[0] : {};
+    setPatient(patient);
+    if (selected.length <= 0) {
+      setError('patient', {});
+    } else {
+      clearErrors('patient');
+    }
+  };
+
   return (
     <Form className="form-bookmark needs-validation">
       <div className="form-row m-50">
@@ -25,15 +64,17 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
           <Label>{'Paciente'} </Label>
           <Typeahead
             id="patient"
-            name="paciente"
+            name="patient"
             options={patients}
             labelKey="name"
             filterBy={['nationalId', 'healthRecordId']}
             minLength={3}
-            innerRef={register({ required: true })}
+            onChange={(selected) => handlePatientChange(selected)}
+            selected={patients.length > 0 ? patients.filter((x) => x.name === patient.name) : null}
+            {...register('patient', { required: true })}
           />
           <span style={{ color: 'red' }}>
-            {errors.paciente && 'Debe ingresar el paciente'}
+            {errors.patient && 'Debe ingresar el paciente'}
           </span>
         </FormGroup>
         <FormGroup className="col-md-12 mt-4">
@@ -48,8 +89,9 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
                     name="turnoSobreturno"
                     type="radio"
                     value="turno"
-                    defaultChecked
-                    innerRef={register({ required: true })}
+                    onChange={(e) => setType(e.target.value)}
+                    checked={type === 'turno'}
+                    {...register({ required: true })}
                   ></Input>
                   <Label htmlFor="turnoSobreturno1">{'Turno'}</Label>
                 </div>
@@ -60,6 +102,8 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
                     name="turnoSobreturno"
                     type="radio"
                     value="sobreturno"
+                    checked={type === 'sobreturno'}
+                    onChange={(e) => setType(e.target.value)}
                     innerRef={register({ required: true })}
                   ></Input>
                   <Label htmlFor="turnoSobreturno2">{'Sobreturno'}</Label>
@@ -76,7 +120,8 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
                     type="radio"
                     value="presencial"
                     innerRef={register({ required: true })}
-                    defaultChecked
+                    onChange={(e) => setMode(e.target.value)}
+                    checked={mode === 'presencial'}
                   ></Input>
                   <Label htmlFor="tipoTurno1">{'Consulta Presencial'}</Label>
                 </div>
@@ -87,7 +132,9 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
                     name="tipoTurno"
                     type="radio"
                     value="videoconsulta"
+                    checked={mode === 'videoconsulta'}
                     innerRef={register({ required: true })}
+                    onChange={(e) => setMode(e.target.value)}
                     disabled
                   ></Input>
                   <Label htmlFor="tipoTurno2">{'Videoconsulta'}</Label>
@@ -100,6 +147,8 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
           <Label>{'Descripción'}</Label>
           <Input
             className="form-control"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             name="desc"
             type="textarea"
             innerRef={register({ required: true })}
@@ -111,6 +160,6 @@ const AppointmentAndPatientDataComponent = ({appointmentData}) => {
       </div>
     </Form>
   );
-};
+});
 
 export default AppointmentAndPatientDataComponent;

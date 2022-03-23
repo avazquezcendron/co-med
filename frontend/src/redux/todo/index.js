@@ -7,6 +7,6 @@ function* fetchTodoAsyn() {
     yield put({type : GET_TODO_LIST, list:data});
 }
 
-export function* watchTodoList() {
+export function* WatcherTodoList() {
     yield takeLatest(WATCH_TODO_LIST,fetchTodoAsyn)
 }

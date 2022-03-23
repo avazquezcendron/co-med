@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -8,19 +9,22 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import 'react-big-calendar/lib/sass/styles.scss';
+
 import { BasicCalendars } from '../../constant';
+import { getAppointmentsWatcher } from '../../redux/appointments/actions';
 import * as appointmentService from '../../services/appointment.service';
 import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 
 const Calender = () => {
-
+  const appointments = useSelector((store) => store.Appointments.appointments);
+  const dispatch = useDispatch();
 
   const slotsConfig = appointmentService.getAppointmentSlotsConfig();
   const { configSlotHours, configSlotMinutes, configSlotPreparation, timeArr } = slotsConfig;
 
   const slotDuration = configSlotHours.toString() + ':' + configSlotMinutes.toString();
 
-  const [appointments, setAppointments] = useState([]);
+  // const [appointments, setAppointments] = useState([]);
   const [appointmentData, setAppointmentData] = useState({});
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
@@ -28,8 +32,8 @@ const Calender = () => {
   };
 
   useEffect(() => {
-    setAppointments(appointmentService.getAllAppointments());
-  }, []);
+    dispatch(getAppointmentsWatcher())
+}, [dispatch]);
 
   const businessHours = [
     // specify an array instead
@@ -48,70 +52,28 @@ const Calender = () => {
 
   const handleDateSelect = (selectInfo) => {
     setAppointmentData({
-      start: selectInfo.startStr,
-      end: selectInfo.endStr,
+      startTime: selectInfo.start,
+      start: selectInfo.start,
+      end: selectInfo.end,
       new: true
     });
     appointmentModalToggle();
   };
 
-  /**
-   * adding dragable properties to external events through javascript
-   */
-  const componentDidMount = () => {
-    let draggableEl = document.getElementById('external-events');
-    new Draggable(draggableEl, {
-      itemSelector: '.fc-event',
-      eventData: function (eventEl) {
-        let title = eventEl.getAttribute('title');
-        let id = eventEl.getAttribute('data');
-        return {
-          title: title,
-          id: id,
-        };
-      },
-    });
-  };
 
   /**
    * when we click on event we are displaying event details
    */
   const eventClick = (eventClick) => {
-    Swal.fire({
+    setAppointmentData({
+      startTime: eventClick.event.start,
+      start: eventClick.event.start,
+      end: eventClick.event.end,
       title: eventClick.event.title,
-      html:
-        `<div class="table-responsive">
-      <table class="table">
-      <tbody>
-      <tr >
-      <td>Title</td>
-      <td><strong>` +
-        eventClick.event.title +
-        `</strong></td>
-      </tr>
-      <tr >
-      <td>Start Time</td>
-      <td><strong>
-      ` +
-        eventClick.event.start +
-        `
-      </strong></td>
-      </tr>
-      </tbody>
-      </table>
-      </div>`,
-
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Remove Event',
-      cancelButtonText: 'Close',
-    }).then((result) => {
-      if (result.value) {
-        eventClick.event.remove(); // It will remove event from the calendar
-        Swal.fire('Deleted!', 'Your Event has been deleted.', 'success');
-      }
+      new: false,
+      ...eventClick.event.extendedProps
     });
+    appointmentModalToggle();
   };
 
   return (

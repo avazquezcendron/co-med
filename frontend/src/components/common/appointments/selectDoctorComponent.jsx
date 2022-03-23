@@ -1,19 +1,54 @@
-import React, { useState, useEffect }  from 'react';
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormGroup, Input, Label } from 'reactstrap';
+import { useSelector, useDispatch } from 'react-redux';
+import { Form, FormGroup, Label } from 'reactstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import * as patientService from '../../../services/patient.service';
 
-const SelectDoctorComponent = ({ appointmentData}) => {
-  const { register, errors } = useForm();
-  const [patients, setPatients] = useState([]);
+import { setDataAppointmentForm } from '../../../redux/appointments/actions';
+import * as doctorService from '../../../services/doctor.service';
 
+const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
+  const { register, errors, setError, clearErrors } = useForm();
+
+  const appointment = useSelector((store) => store.AppointmentForm);
+  const dispatch = useDispatch();
+
+  const [doctor, setDoctor] = useState(appointment.doctor || {});
+
+  const [doctors, setDoctors] = useState([]);
   useEffect(() => {
-    setPatients(patientService.getAllPatients());
+    doctorService.getAll().then((res) => setDoctors(res.data));
   }, []);
 
+  useImperativeHandle(ref, () => ({
+    isValidated() {
+      if (!doctor.name) {
+        if(!errors.doctor)
+          setError("doctor", {});
+        return false;        
+      }
+      return true;
+    },
+  }));
+
+  const handleDoctorChange = (selected) => {
+    let doctor = selected.length > 0 ? selected[0] : {};
+    if (selected.length <= 0) {
+      setError("doctor", {});
+    } else {
+      clearErrors('doctor');
+    }
+    setDoctor(doctor);
+    dispatch(setDataAppointmentForm({ doctor: doctor }));
+  };
+
   return (
-    <Form className="form-bookmark needs-validation ">
+    <Form className="form-bookmark needs-validation">
       <div className="form-row m-50">
         <p className="text-muted f-12 col-md-12">
           Ingrese el nombre o DNI para buscar al doctor.
@@ -23,12 +58,14 @@ const SelectDoctorComponent = ({ appointmentData}) => {
           <Typeahead
             id="doctor"
             name="doctor"
-            options={patients}
+            options={doctors}
             labelKey="name"
-            filterBy={['nationalId', 'healthRecordId']}            
+            filterBy={['nationalId', 'healthRecordId']}
             minLength={3}
-            value={appointmentData.doctorName}
-            innerRef={register({ required: true })}
+            clearButton
+            onChange={(selected) => handleDoctorChange(selected)}
+            selected={doctors.length > 0 ? doctors.filter((x) => x.name === doctor.name) : null}
+            {...register('doctor', {required: true })}
           />
           <span style={{ color: 'red' }}>
             {errors.doctor && 'Debe ingresar el doctor'}
@@ -37,6 +74,6 @@ const SelectDoctorComponent = ({ appointmentData}) => {
       </div>
     </Form>
   );
-};
+});
 
 export default SelectDoctorComponent;

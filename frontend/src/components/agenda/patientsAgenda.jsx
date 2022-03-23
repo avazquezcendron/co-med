@@ -214,9 +214,9 @@ const PatientsAgenda = (props) => {
           <div className="media">
             <h6>{row.startTime}</h6>
             <div className="media-body">
-              <span className="f-18 p-r-10">{`${row.patientName}`}</span>
+              <span className="f-18 p-r-10">{`${row.patient.name}`}</span>
               <span className="f-16 p-l-10 text-muted" style={{ borderLeft: '2px solid #999' }}>
-                <i className={`fa fa-${row.patientSex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patientAge} años`}</span>
+                <i className={`fa fa-${row.patient.sex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patient.age} años`}</span>
               {/* <span
                 className="p-l-10 p-r-10 text-muted"
                 style={{ borderRight: '2px solid #999' }}
@@ -232,7 +232,7 @@ const PatientsAgenda = (props) => {
               </span> */}
               {/* <span className="p-l-10 text-muted">{row.start}</span> */}
               <p className="f-12">
-                <i className="icofont icofont-doctor-alt"></i> {row.doctorName} | {row.doctorSpeciality}
+                <i className="icofont icofont-doctor-alt"></i> {row.doctor.name} | {row.doctor.speciality}
               </p>
             </div>
           </div>
@@ -249,14 +249,14 @@ const PatientsAgenda = (props) => {
         <div>
           <span className="p-r-10 text-muted">
             <i className="fa fa-medkit">  </i>
-            {' ' + row.patientHealthInsurance}
+            {' ' + row.patient.healthInsurance}
           </span>
           <span
             className="p-l-10 text-muted"
             style={{ borderLeft: '2px solid #999' }}
           >
             {'Nro. de Credencial '}
-            <strong>{row.patientHealthInsuranceId}</strong>
+            <strong>{row.patient.healthInsuranceId}</strong>
           </span>
         </div>
       ),

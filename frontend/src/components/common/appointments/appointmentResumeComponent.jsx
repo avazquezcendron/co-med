@@ -1,38 +1,63 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const AppointmentResumeComponent = (props) => {
+  const appointment = useSelector((store) => store.AppointmentForm);
+
   return (
     <div className="row">
-      <h4 className="col-md-12 b-b-light text-muted">Resumen del Turno</h4>
+      <h4 className="col-md-12 b-b-light text-muted text-center">Resumen del Turno</h4>
       <div className="col-md-12">
         <span className="f-w-600">Doctor/a</span>
       </div>
       <div className="col-md-12 ">
-        <p>Tayhana Ortolá</p>
+        <p>{appointment.doctor ? appointment.doctor.name : ''}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Paciente</span>
       </div>
       <div className="col-md-12 ">
-        <p>Agustín Vázquez</p>
+        <p>{appointment.patient ? appointment.patient.name : ''}</p>
+      </div>
+      <div className="col-md-12">
+        <span className="f-w-600">Tipo</span>
+      </div>
+      <div className="col-md-12 ">
+        <p>{appointment.type}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Modalidad</span>
       </div>
       <div className="col-md-12 ">
-        <p>Presencial</p>
+        <p>{appointment.mode}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Día y Hora</span>
       </div>
       <div className="col-md-12 ">
-        <p>Jueves 10 de Marzo, 18:00hs</p>
+        <p>
+          {appointment.start
+            ? appointment.start.toLocaleDateString('es-AR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }) +
+              ', ' +
+              appointment.startTime.toLocaleTimeString('es', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: false,
+              }) +
+              'hs'
+            : ''}
+        </p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Descripción</span>
       </div>
       <div className="col-md-12 ">
-        <p>Bla bla bla bla...</p>
+        <p>{appointment.description}</p>
       </div>
     </div>
   );

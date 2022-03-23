@@ -2,17 +2,18 @@ import { all } from "redux-saga/effects";
 import { WatcherEcommerceApp } from '../redux/ecommerce'
 import { WatcherChatApp } from '../redux/chat'
 import { WatcherEmailApp } from '../redux/email'
-import { watchTodoList } from '../redux/todo';
+import { WatcherTodoList } from '../redux/todo';
 import { watchBookmarkList } from "../redux/bookmark";
-import { watcherTaskApp } from "../redux/task";
+import { WatcherAppointments } from "../redux/appointments";
 
 export default function* rootSagas() {
     yield all([
-        WatcherEcommerceApp(),
-        WatcherChatApp(),
-        WatcherEmailApp(),
-        watchTodoList(),
-        watchBookmarkList(),
-        watcherTaskApp()
+        // WatcherEcommerceApp(),
+        // WatcherChatApp(),
+        // WatcherEmailApp(),
+        WatcherTodoList(),
+        WatcherAppointments()
+        // watchBookmarkList(),
+        // watcherTaskApp()
     ])
 }

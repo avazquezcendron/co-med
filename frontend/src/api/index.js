@@ -28,3 +28,6 @@ export const fetchTaskApi = () => {
     return axios.get(`${process.env.PUBLIC_URL}/api/task.json`);
 };
 
+export const fetchAppointmentApi = () => {
+    return axios.get(`${process.env.PUBLIC_URL}/api/appointments.json`);
+};
