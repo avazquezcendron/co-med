@@ -212,7 +212,11 @@ const PatientsAgenda = (props) => {
           onClick={() => handleRowClick(row)}
         >
           <div className="media">
-            <h6>{row.startTime}</h6>
+            <h6>{new Date(row.start).toLocaleTimeString('es', {
+                hour: '2-digit',
+                minute: 'numeric',
+                hour12: false,
+              })}</h6>
             <div className="media-body">
               <span className="f-18 p-r-10">{`${row.patient.name}`}</span>
               <span className="f-16 p-l-10 text-muted" style={{ borderLeft: '2px solid #999' }}>
@@ -276,7 +280,7 @@ const PatientsAgenda = (props) => {
       sortable: true,
       center: true,
       cell: (row, index, column, id) => (
-        <span className="text-muted">{row.start}</span>
+        <span className="text-muted">{new Date(row.start).toLocaleDateString('es')}</span>
       ),
     },
     {

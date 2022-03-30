@@ -1,6 +1,8 @@
 [
     {
         "id": 1,
+        "age": "35",
+        "sex": "f",
         "image": "user/1.jpg",
         "name": "Jesica Alba",
         "nationalId": "35769315",
@@ -13,6 +15,8 @@
     },
     {
         "id": 2,
+        "age": "35",
+        "sex": "m",
         "image": "user/2.png",
         "name": "Manuel Mandeb",
         "nationalId": "35569315",
@@ -26,6 +30,8 @@
 
     {
         "id": 3,
+        "age": "35",
+        "sex": "f",
         "image": "user/3.png",
         "name": "Agustina Cherri",
         "nationalId": "24569315",
@@ -39,6 +45,8 @@
 
     {
         "id": 4,
+        "age": "35",
+        "sex": "f",
         "image": "user/4.jpg",
         "name": "Sandra Velzquez",
         "nationalId": "33129315",
@@ -52,6 +60,8 @@
 
     {
         "id": 5,
+        "age": "35",
+        "sex": "m",
         "image": "user/5.png",
         "name": "Agustín Vázquez",
         "nationalId": "35569315",
@@ -65,6 +75,8 @@
 
     {
         "id": 6,
+        "age": "35",
+        "sex": "m",
         "image": "user/6.jpg",
         "name": "Serapio Garcia",
         "nationalId": "11569315",
@@ -78,6 +90,8 @@
 
     {
         "id": 7,
+        "age": "35",
+        "sex": "m",
         "image": "user/7.jpg",
         "name": "Kevin Kostner",
         "nationalId": "29569315",
@@ -91,6 +105,8 @@
 
     {
         "id": 8,
+        "age": "35",
+        "sex": "m",
         "image": "user/8.jpg",
         "name": "Al Pacino",
         "nationalId": "16341441",
@@ -103,6 +119,8 @@
     },
     {
         "id": 9,
+        "age": "35",
+        "sex": "m",
         "image": "user/9.jpg",
         "name": "Robert De Niro",
         "nationalId": "16123781",
@@ -116,6 +134,8 @@
 
     {
         "id": 10,
+        "age": "35",
+        "sex": "f",
         "image": "user/9.jpg",
         "name": "Elba Gallo",
         "nationalId": "23781951",
@@ -129,6 +149,8 @@
 
     {
         "id": 11,
+        "age": "35",
+        "sex": "f",
         "image": "user/10.jpg",
         "name": "Mara Lerchundi",
         "nationalId": "15569315",
@@ -142,6 +164,8 @@
 
     {
         "id": 12,
+        "age": "35",
+        "sex": "f",
         "image": "user/11.jpg",
         "name": "Moria Casanova",
         "nationalId": "10342519",
@@ -155,6 +179,8 @@
 
     {
         "id": 13,
+        "age": "35",
+        "sex": "m",
         "image": "user/12.png",
         "name": "Cesar Feü",
         "nationalId": "33898122",
@@ -168,6 +194,8 @@
 
     {
         "id": 14,
+        "age": "35",
+        "sex": "f",
         "image": "user/3.png",
         "name": "Marcela Baum",
         "nationalId": "357810231",
@@ -181,6 +209,8 @@
 
     {
         "id": 15,
+        "age": "35",
+        "sex": "f",
         "image": "user/4.jpg",
         "name": "Erica Rivas",
         "nationalId": "25123918",
@@ -194,6 +224,8 @@
 
     {
         "id": 16,
+        "age": "35",
+        "sex": "f",
         "image": "user/1.jpg",
         "name": "Mónica Galindo",
         "nationalId": "12456123",
@@ -207,6 +239,8 @@
 
     {
         "id": 17,
+        "age": "35",
+        "sex": "m",
         "image": "user/6.jpg",
         "name": "Diego Caruso",
         "nationalId": "33415789",
@@ -220,6 +254,8 @@
 
     {
         "id": 18,
+        "age": "35",
+        "sex": "m",
         "image": "user/7.jpg",
         "name": "Guillermo Compuertas",
         "nationalId": "11323451",
@@ -232,6 +268,8 @@
     },
     {
         "id": 19,
+        "age": "35",
+        "sex": "m",
         "image": "user/8.jpg",
         "name": "Carlos Santana",
         "nationalId": "223135123",
@@ -245,6 +283,8 @@
 
     {
         "id": 20,
+        "age": "35",
+        "sex": "f",
         "image": "user/4.jpg",
         "name": "Nerea Salvato",
         "nationalId": "391231092",
@@ -258,6 +298,8 @@
 
     {
         "id": 21,
+        "age": "35",
+        "sex": "m",
         "image": "user/5.png",
         "name": "Augusto García",
         "nationalId": "32415678",
@@ -271,6 +313,8 @@
 
     {
         "id": 22,
+        "age": "35",
+        "sex": "m",
         "image": "user/5.png",
         "name": "Marcos Mata",
         "nationalId": "21456123",
@@ -284,6 +328,8 @@
 
     {
         "id": 23,
+        "age": "35",
+        "sex": "m",
         "image": "user/6.jpg",
         "name": "Eduardo Díaz",
         "nationalId": "15424678",
@@ -297,6 +343,8 @@
 
     {
         "id": 24,
+        "age": "35",
+        "sex": "m",
         "image": "user/7.jpg",
         "name": "Esteban Quito",
         "nationalId": "423231909",

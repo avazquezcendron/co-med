@@ -29,14 +29,14 @@ const Appointments = (props) => {
               <Tab>
                 <Users />
                 {'Por Pacientes'}
-              </Tab>
-            </TabList>
-            <div className="tab-content-cls">
+              </Tab>              
+            </TabList>            
+            <div className="tab-content-cls">              
               <TabPanel>
                 <Calender />
               </TabPanel>
               <TabPanel>
-                <PatientsAgenda history={props.history}/>
+                <PatientsAgenda history={props.history} />
               </TabPanel>
             </div>
           </Tabs>

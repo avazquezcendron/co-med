@@ -46,11 +46,24 @@ const AppointmentModalComponent = (props) => {
         ) : (
           <div className="card">
             <div className="card-body">
-                <AppointmentResumeComponent />
+              <AppointmentResumeComponent />
             </div>
             <div className="card-footer text-center">
-              <button type="button" className="btn btn-secondary" onClick={props.appointmentModalToggle}>
-                {'Aceptar'}
+              <button
+                type="button"
+                className="btn btn-outline-danger"
+                onClick={props.appointmentModalToggle}
+              >
+                <i className="fa fa-trash mr-2"></i>
+                {'Eliminar'}
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary ml-4"
+                onClick={props.appointmentModalToggle}
+              >
+                <i className="fa fa-pencil mr-2"></i>
+                {'Editar'}
               </button>
             </div>
           </div>

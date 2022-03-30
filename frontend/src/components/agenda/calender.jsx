@@ -1,5 +1,4 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -7,8 +6,8 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
-import Swal from 'sweetalert2/dist/sweetalert2.js';
-import 'react-big-calendar/lib/sass/styles.scss';
+import SweetAlert from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 import { BasicCalendars } from '../../constant';
 import { getAppointmentsWatcher } from '../../redux/appointments/actions';
@@ -20,9 +19,10 @@ const Calender = () => {
   const dispatch = useDispatch();
 
   const slotsConfig = appointmentService.getAppointmentSlotsConfig();
-  const { configSlotHours, configSlotMinutes, configSlotPreparation, timeArr } = slotsConfig;
-
-  const slotDuration = configSlotHours.toString() + ':' + configSlotMinutes.toString();
+  const { configSlotHours, configSlotMinutes } = slotsConfig;
+  const slotDuration =
+    configSlotHours.toString() + ':' + configSlotMinutes.toString();
+  const businessHours = appointmentService.getBussinesHours();
 
   // const [appointments, setAppointments] = useState([]);
   const [appointmentData, setAppointmentData] = useState({});
@@ -32,95 +32,127 @@ const Calender = () => {
   };
 
   useEffect(() => {
-    dispatch(getAppointmentsWatcher())
-}, [dispatch]);
+    dispatch(getAppointmentsWatcher());
+  }, [dispatch]);
 
-  const businessHours = [
-    // specify an array instead
-    {
-      daysOfWeek: [1, 2, 3, 4, 5], 
-      startTime: timeArr[0].startTime, //'08:30', 
-      endTime: timeArr[0].endTime,
-    },
-    {
-      daysOfWeek: [1, 2, 3, 4, 5],
-      startTime: timeArr[1].startTime, //'08:30', 
-      endTime: timeArr[1].endTime,
-    },
-  ];
-  
-
-  const handleDateSelect = (selectInfo) => {
+  const handleNewAppointment = (appointmentData) => {
     setAppointmentData({
-      startTime: selectInfo.start,
-      start: selectInfo.start,
-      end: selectInfo.end,
-      new: true
+      // startTime: appointmentData.start,
+      start: appointmentData?.start,
+      end: appointmentData?.end,
+      new: true,
     });
     appointmentModalToggle();
   };
 
-
   /**
    * when we click on event we are displaying event details
    */
-  const eventClick = (eventClick) => {
+  const handleAppointmentClick = (eventClick) => {
     setAppointmentData({
-      startTime: eventClick.event.start,
+      // startTime: eventClick.event.start,
       start: eventClick.event.start,
       end: eventClick.event.end,
       title: eventClick.event.title,
+      ...eventClick.event.extendedProps,
       new: false,
-      ...eventClick.event.extendedProps
     });
     appointmentModalToggle();
+  };
+
+  const handleEventOverlap = (stillEvent, movingEvent) => {
+    if (!stillEvent.extendedProps.doctor || !stillEvent.extendedProps.patient)
+      return true;
+    return (
+      movingEvent.extendedProps.doctor.id !==
+        stillEvent.extendedProps.doctor.id &&
+      movingEvent.extendedProps.patient.id !==
+        stillEvent.extendedProps.patient.id
+    );
+  };
+
+  const handleEventDrop = (info) => {
+    SweetAlert.fire({
+      title: 'Atención',
+      text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
+        'es-AR',
+        {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }
+      )} a las ${info.event.start.toLocaleTimeString('es', {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      })}hs`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#ff0000',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.value) {
+        // dispatch(
+        //   saveAppointmentWatcher({
+        //     ...appointmentData,
+        //     title: appointmentData.patient.name + ' - ' + appointmentData.mode,
+        //     resourceId: appointmentData.doctor.id,
+        //     id: 2,
+        //   })
+        // );
+        toast.success('Turno reprogramado con éxito.', {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        });
+      } else {
+        info.revert();
+      }
+    });
   };
 
   return (
     <Fragment>
       <div className="container-fluid">
         <div className="row">
-          <AppointmentModalComponent appointmentModal={appointmentModal} appointmentModalToggle={appointmentModalToggle} appointmentData={appointmentData} setAppointmentModal={setAppointmentModal}/>
+          <AppointmentModalComponent
+            appointmentModal={appointmentModal}
+            appointmentModalToggle={appointmentModalToggle}
+            appointmentData={appointmentData}
+            setAppointmentModal={setAppointmentModal}
+          />
           <div className="col-sm-12">
             <div className="card">
               <div className="card-header">
+                <div className="pull-right">
+                  <button
+                    type="button"
+                    className="btn btn-primary ml-4"
+                    onClick={handleNewAppointment}
+                  >
+                    <i className="fa fa-plus mr-2"></i>
+                    {'Nuevo Turno'}
+                  </button>
+                </div>
                 <h5>{BasicCalendars}</h5>
               </div>
               <div className="card-body">
-                {/* <Calendar
-                                    localizer={localizer}
-                                    scrollToTime={new Date(1970, 1, 1, 6)}
-                                    defaultDate={new Date(2019, 3, 12)}
-                                    onSelectEvent={event => alert(event.title)}
-                                    views={allViews}
-                                    events={myEventsList}
-                                    eventOverlap
-                                    dragRevertDuration={500}
-                                    dragScroll
-                                    showMultiDayTimes
-                                    step={60}
-                                    startAccessor="start"
-                                    endAccessor="end"
-                                /> */}
-
                 <FullCalendar
                   initialView="timeGridWeek"
                   themeSystem="standar"
                   locale={esLocale}
-                  //   customButtons={{
-                  //     myCustomButton: {
-                  //       text: 'custom',
-                  //       click: function () {
-                  //         alert('clicked the custom button!');
-                  //       },
-                  //     },
-                  //   }}
                   headerToolbar={{
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
                   }}
-                  weekends={false}
+                  views={{
+                    listDay: { buttonText: "Agenda del día"},
+                    listWeek: { buttonText: "Agenda semanal"},
+                    listMonth: { buttonText: "Agenda mensual"}
+                  }}
+                  weekends={true}
                   businessHours={businessHours}
                   slotDuration={slotDuration}
                   slotLabelInterval={slotDuration}
@@ -134,9 +166,13 @@ const Calender = () => {
                   editable={true}
                   droppable={true}
                   dayMaxEvents={true}
+                  dayMaxEventRows={2}
+                  eventOverlap={handleEventOverlap}
+                  eventDrop={handleEventDrop}
+                  eventResize={handleEventDrop}
                   selectable={true}
                   selectMirror={true}
-                  select={handleDateSelect}
+                  select={handleNewAppointment}
                   plugins={[
                     listPlugin,
                     dayGridPlugin,
@@ -148,30 +184,19 @@ const Calender = () => {
                       ...appointments,
                       {
                         groupId: 'testGroupId',
-                        startTime: timeArr[0].startTime,
-                        endTime: timeArr[0].endTime,
+                        startTime: businessHours[0].startTime,
+                        endTime: businessHours[0].endTime,
                         display: 'background',
                       },
                       {
                         groupId: 'testGroupId2',
-                        startTime: timeArr[1].startTime,
-                        endTime: timeArr[1].endTime,
+                        startTime: businessHours[1].startTime,
+                        endTime: businessHours[1].endTime,
                         display: 'background',
                       },
                     ]
-                    // 'https://fullcalendar.io/api/demo-feeds/events.json?overload-day'
-                  }
-                  //   ref={calendarComponentRef}
-                  //   weekends={calendarWeekends}
-                  //   eventDrop={drop}
-                  //   eventReceive={eventReceive}
-                  //   eventTimeFormat={{
-                  //     // like '14:30:00'
-                  //     hour: 'numeric',
-                  //     minute: '2-digit',
-                  //     meridiem: 'short',
-                  //   }}
-                  eventClick={eventClick}
+                  }                  
+                  eventClick={handleAppointmentClick}
                 />
               </div>
             </div>

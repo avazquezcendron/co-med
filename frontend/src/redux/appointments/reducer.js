@@ -47,7 +47,10 @@ export const AppointmentsReducer = (
       return {
         ...state,
         status: statusTypes.LOADED,
-        appointments: [...action.payload],
+        appointments: [
+          ...action.payload,
+          ...state.appointments.filter((x) => x.new),//TODO: quitar esto: los appointments vienen desde back todos.
+        ],
       };
 
     case SAVE_APPOINTMENT_REQUEST:

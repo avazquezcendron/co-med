@@ -4,6 +4,22 @@ export const getAllAppointments = () => {
   return axios.get(`${process.env.PUBLIC_URL}/api/appointments.json`);
 };
 
+export const getBussinesHours = () => {
+  const slotConfig = getAppointmentSlotsConfig();
+  return [
+    {
+      daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+      startTime: slotConfig.timeArr[0].startTime, //'08:30',
+      endTime: slotConfig.timeArr[0].endTime,
+    },
+    {
+      daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+      startTime: slotConfig.timeArr[1].startTime, //'08:30',
+      endTime: slotConfig.timeArr[1].endTime,
+    },
+  ];
+};
+
 export const getAppointmentSlotsConfig = () => {
   return {
     configSlotHours: 0,
@@ -79,7 +95,7 @@ export const getAppointmentSessions = () => {
           id: slotId,
           startTime: new Date(_startSlot),
           endTime: _endSlot,
-          available: i % 2 === 0 ? true : false, //TODO: remove this
+          available: i % 2 === 0 ? true : false, //TODO: remove this. This must be setted based on doctor's availability
         });
       }
 

@@ -22,24 +22,23 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
   const appointment = useSelector((store) => store.AppointmentForm);
   const dispatch = useDispatch();
 
-  // const [startTime, setStartTime] = useState(appointment.startTime || null);
-  // const [endTime, setEndTime] = useState('');
   const [selectedSlot, setSelectedSlot] = useState({});
   const [startDate, setStartDate] = useState(
-    appointment.start ? appointment.start : null
+    appointment.start ? appointment.start : new Date()
   );
 
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
   useEffect(() => {
     const sessions = appointmentService.getAppointmentSessions();
     setAppointmentsSessions(sessions);
-    if (appointment.startTime) {
+    const startTime = new Date(appointment.start);
+    if (startTime) {
       sessions.forEach((session) => {
         const activeSlot = session.slots.filter(
           (slot) =>
-            slot.startTime.getHours() === appointment.startTime.getHours() &&
-            slot.startTime.getMinutes() === appointment.startTime.getMinutes()
-            // && slot.available
+            slot.startTime.getHours() === startTime.getHours() &&
+            slot.startTime.getMinutes() === startTime.getMinutes()
+          // && slot.available
         );
         if (activeSlot && activeSlot.length > 0) setSelectedSlot(activeSlot[0]);
       });
@@ -60,8 +59,6 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
     if (!slot.available) return;
 
     setSelectedSlot(slot);
-    // setStartTime(slot.timeSlotStart);
-    // setEndTime(slot.timeSlotEnd);
     document.querySelectorAll('.slotButton').forEach((item) => {
       item.classList.remove('active');
     });
@@ -92,10 +89,20 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
 
       dispatch(
         setDataAppointmentForm({
-          start: startDate,
-          end: startDate,
-          startTime: selectedSlot.startTime,
-          endTime: selectedSlot.endTime,
+          start: new Date(
+            startDate.setHours(
+              selectedSlot.startTime.getHours(),
+              selectedSlot.startTime.getMinutes(),
+              0
+            )
+          ),
+          end: new Date(
+            startDate.setHours(
+              selectedSlot.endTime.getHours(),
+              selectedSlot.endTime.getMinutes(),
+              0
+            )
+          ),
         })
       );
       return true;
@@ -103,8 +110,6 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
   }));
 
   const isActiveSlot = (slot) => {
-    // return slot.timeSlotStart.getHours() === startTime.getHours() &&
-    //   slot.timeSlotStart.getMinutes() === startTime.getMinutes() && slot.available;
     return slot.id === selectedSlot.id;
   };
 
@@ -113,19 +118,21 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
       <div className="form-row m-50">
         <FormGroup className="col-md-12">
           <div className="row">
-            <p className="text-muted col-md-12">
-              * Turnos disponibles para el{' '}
-              <mark>
-                <u>
-                  {startDate.toLocaleDateString('es-AR', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </u>
-              </mark>
-            </p>
+            {startDate &&
+              <p className="text-muted col-md-12">
+                * Turnos disponibles para el{' '}
+                <mark>
+                  <u>
+                    {startDate.toLocaleDateString('es-AR', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </u>
+                </mark>
+              </p>
+            }
             <div className="col-md-6">
               <Label>{'Día'}</Label>
               <DatePicker

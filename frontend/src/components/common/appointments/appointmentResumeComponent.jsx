@@ -44,7 +44,7 @@ const AppointmentResumeComponent = (props) => {
                 day: 'numeric',
               }) +
               ', ' +
-              appointment.startTime.toLocaleTimeString('es', {
+              appointment.start.toLocaleTimeString('es', {
                 hour: 'numeric',
                 minute: 'numeric',
                 hour12: false,

@@ -7,12 +7,15 @@ import { GET_APPOINTMENTS_WATCHER, SAVE_APPOINTMENT_WATCHER } from "../actionTyp
 function* fetchAppointmentsAsync() {
     yield put(getAppointmentsRequest());
     const response = yield call(appointmentService.getAllAppointments);
-    yield put(getAppointmentsSuccess(response.data));
+    const appointments = response.data.map(appointmentData => {
+        return { ...appointmentData, resourceId: appointmentData.doctor.id, constraint: 'businessHours' };//TODO: analizar dónde setear las properties netamente de front, relacionadas a plugins de calendarios y demás.
+    })
+    yield put(getAppointmentsSuccess(appointments));
 }
 
 function* saveAppointmentsAsync({ payload }) {
     yield put(saveAppointmentRequest());
-    // Save to BBDD through API
+    // TODO: Save to BBDD through API
     yield put(saveAppointmentSuccess(payload.id, payload));
 }
 
