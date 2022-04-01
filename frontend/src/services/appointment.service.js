@@ -8,12 +8,12 @@ export const getBussinesHours = () => {
   const slotConfig = getAppointmentSlotsConfig();
   return [
     {
-      daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+      daysOfWeek: slotConfig.timeArr[0].daysOfWeek,
       startTime: slotConfig.timeArr[0].startTime, //'08:30',
       endTime: slotConfig.timeArr[0].endTime,
     },
     {
-      daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+      daysOfWeek: slotConfig.timeArr[1].daysOfWeek,
       startTime: slotConfig.timeArr[1].startTime, //'08:30',
       endTime: slotConfig.timeArr[1].endTime,
     },
@@ -26,8 +26,8 @@ export const getAppointmentSlotsConfig = () => {
     configSlotMinutes: 30,
     configSlotPreparation: 0,
     timeArr: [
-      { sessionName: 'Mañana', startTime: '08:30', endTime: '13:00' },
-      { sessionName: 'Tarde', startTime: '14:00', endTime: '16:00' },
+      { sessionType: 'morning', sessionName: 'Mañana', startTime: '08:30', endTime: '13:00', daysOfWeek: [1, 2, 3, 4, 5, 6, 7] },
+      { sessionType: 'evening', sessionName: 'Tarde', startTime: '14:00', endTime: '16:00', daysOfWeek: [1, 2, 3, 4, 5, 6, 7] },
     ],
   };
 };

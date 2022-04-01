@@ -1,8 +1,15 @@
 {
   "name": "co-med",
   "version": "0.1.0",
+  "proxy": "http://127.0.0.1:8000",
   "private": true,
   "homepage": "",
+  "scripts": {
+    "start": "react-scripts --max_old_space_size=8096 start",
+    "build": "react-scripts --max_old_space_size=8096 build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@auth0/auth0-react": "^1.1.0",
     "@fullcalendar/core": "^5.10.1",
@@ -92,12 +99,6 @@
     "sweetalert2": "^9.14.0",
     "weather-icons-react": "^1.2.0",
     "world-map-geojson": "^1.0.2"
-  },
-  "scripts": {
-    "start": "react-scripts --max_old_space_size=8096 start",
-    "build": "react-scripts --max_old_space_size=8096 build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app",

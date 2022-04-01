@@ -6,6 +6,8 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import {Customize,Customizer,Color,Pattern,Image,LayoutType,RTLLayout,LTRLayout,SidebarBackgroundSetting,PreviewRealTime,CopyText,ModalTitle,SidebarType,Default,Border,IconColor,DarkLayout,MixLayout,LightLayout,Cancel,Configuration,SidebarSettings} from '../../constant'
 
+import PatientQuickAdd from './patientQuickAdd';
+
 const ThemeCustomizer = () => {
 
     const configDB = useSelector(content => content.Customizer.customizer);
@@ -306,7 +308,7 @@ const ThemeCustomizer = () => {
                     </div>
                     <div className="customizer-body custom-scrollbar">
                         <TabContent activeTab={activeTab1}>
-                            <TabPane tabId="1">
+                            {/* <TabPane tabId="1">
                                 <h6>{LayoutType}</h6>
                                 <ul className="main-layout layout-grid">
                                     <li data-attr="ltr" className={`${layout_type === 'ltr' ? 'active' : ''}`} onClick={() => handleLayout('ltr')}>
@@ -446,6 +448,9 @@ const ThemeCustomizer = () => {
                                         </div>
                                     </li>
                                 </ul>
+                            </TabPane> */}
+                            <TabPane tabId="1">
+                                <PatientQuickAdd />                               
                             </TabPane>
                             <TabPane tabId="2">
                                 <h6>{LightLayout}</h6>

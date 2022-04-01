@@ -65,7 +65,7 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
             clearButton
             onChange={(selected) => handleDoctorChange(selected)}
             selected={doctors.length > 0 ? doctors.filter((x) => x.name === doctor.name) : null}
-            {...register('doctor', {required: true })}
+            innerRef={register('doctor', {required: true })}
           />
           <span style={{ color: 'red' }}>
             {errors.doctor && 'Debe ingresar el doctor'}
