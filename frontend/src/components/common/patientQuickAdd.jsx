@@ -44,10 +44,12 @@ const PatientQuickAdd = (props) => {
           //     id: 2,
           //   })
           // );
-          toast.success('Paciente dado de alta con éxito.', {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          });
-          if (props.modalToggle) props.modalToggle();
+          patientService.savePatient(data).then(res => {
+            toast.success('Paciente dado de alta con éxito.', {
+              position: toast.POSITION.BOTTOM_RIGHT,
+            });
+            if (props.modalToggle) props.modalToggle();
+          });          
         } else {
           toast.error('Se canceló el alta del paciente.', {
             position: toast.POSITION.BOTTOM_RIGHT,

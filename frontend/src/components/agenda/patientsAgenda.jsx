@@ -84,13 +84,13 @@ const PatientsAgenda = (props) => {
 
   const handleRowClick = (row, event) => {
     props.history.push(
-      `${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=browse`
+      `${process.env.PUBLIC_URL}/patient/${row.id}?mode=browse`
     );
   };
 
   const handleEditPatientClick = (row, event) => {
     props.history.push(
-      `${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=edit`
+      `${process.env.PUBLIC_URL}/patient/${row.id}?mode=edit`
     );
   };
 

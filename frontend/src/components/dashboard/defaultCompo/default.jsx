@@ -23,7 +23,7 @@ const Default = (props) => {
     const [currentPage, setCurrentPage] = useState(0);
     
     const handlePatientsClick = (today) => {
-        props.history.push(`${process.env.PUBLIC_URL}/users/patients${today ? '?filter=today' : ''}`)
+        props.history.push(`${process.env.PUBLIC_URL}/patient${today ? '?filter=today' : ''}`)
     }
 
     const handleAppointmentsClick = (filter) => {

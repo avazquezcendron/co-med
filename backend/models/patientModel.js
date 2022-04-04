@@ -1,30 +1,34 @@
 import mongoose from 'mongoose';
 
-import emailSchema from './emailSchema.js';
 import healthInsurancePlanSchema from './healthInsurancePlanSchema.js';
 
 const PatientSchema = mongoose.Schema(
   {
-    profile: {
-      firstName: { type: String, required: true },
-      lastName: { type: String, required: true },
-      nationalId: { type: Number, required: true, unique: true },
-      nationalIdType: { type: String, required: true },
-      nationality: { type: String, required: false },
-      gender: { type: String, required: false },
-      email: { type: emailSchema, required: false, unique: true },
-      biologicalSex: { type: String, required: false },
-      dateOfBirth: { type: Date, required: false },
-      phoneNumber: Number,
-      avatar: String,
-      bio: String,
-      address: {
-        street: String,
-        city: String,
-        state: String,
-        country: String,
-        zip: String,
-      },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    nationalId: { type: Number, required: true, unique: true },
+    nationalIdType: { type: String, required: true },
+    nationality: { type: String, required: false },
+    gender: { type: String, required: false },
+    email: {
+      type: String,
+      lowercase: true,
+      match: [/\S+@\S+\.\S+/, 'is invalid'],
+      index: true,
+      // Change the default to true if you don't need to validate a new user's email address
+      validated: { type: Boolean, default: false },
+    },
+    biologicalSex: { type: String, required: false },
+    dateOfBirth: { type: Date, required: false },
+    phoneNumber: Number,
+    avatarUrl: String,
+    bio: String,
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      country: String,
+      zip: String,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -57,6 +61,7 @@ const PatientSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    optimisticConcurrency: true
   }
 );
 

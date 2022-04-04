@@ -44,7 +44,7 @@ const UserMenu = ({ history }) => {
                     </div>
                 </div>
                 <ul className="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
-                    <li><Link to={`${process.env.PUBLIC_URL}/users/userEdit`}><User />{EditProfile}</Link></li>
+                    <li><Link to={`${process.env.PUBLIC_URL}/user/0`}><User />{EditProfile}</Link></li>
                     <li><Link to={`${process.env.PUBLIC_URL}/email-app/emailDefault`}><Mail />{Inbox}</Link></li>
                     <li><a href="#javascript"><Lock />{LockScreen}</a></li>
                     <li><a href="#javascript"><Settings />{"Settings"}</a></li>

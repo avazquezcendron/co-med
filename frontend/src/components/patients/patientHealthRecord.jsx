@@ -756,8 +756,8 @@ const PatientHealthRecord = (props) => {
         
         <div className="card-footer">
           <span className="pull-right">
-            <button className="btn btn-primary mr-1">{'Guardar'}</button>
             <button className="btn btn-outline-danger">{'Cancelar'}</button>
+            <button className="btn btn-primary ml-1">{'Guardar'}</button>
           </span>
         </div>
       </div>

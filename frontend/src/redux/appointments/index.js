@@ -1,8 +1,7 @@
 import { call, put, takeLatest } from "redux-saga/effects";
 
 import * as appointmentService from '../../services/appointment.service';
-import { saveAppointmentRequest, saveAppointmentSuccess, getAppointmentsRequest, getAppointmentsSuccess } from "./actions";
-import { GET_APPOINTMENTS_WATCHER, SAVE_APPOINTMENT_WATCHER } from "../actionTypes";
+import { saveAppointmentRequest, saveAppointmentSuccess, getAppointmentsRequest, getAppointmentsSuccess,GET_APPOINTMENTS_WATCHER, SAVE_APPOINTMENT_WATCHER } from "./actions";
 
 function* fetchAppointmentsAsync() {
     yield put(getAppointmentsRequest());

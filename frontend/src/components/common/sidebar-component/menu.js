@@ -196,11 +196,10 @@ export const MENUITEMS = [
     //     ]
     // },
     {
-        title: 'Users', icon: Users, type: 'sub', active: false, children: [
-            { path: '/users/patients', type: 'link', title: 'Patients' },
-            { path: '/users/doctors', type: 'link', title: 'Doctors' },
-            { path: '/users/secretaries', type: 'link', title: 'Secretaries' }
-        ]
+        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: true, path: '/patient'
+    },
+    {
+        title: 'Doctors', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
     },
     {
         title: 'Appointments', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
@@ -337,6 +336,9 @@ export const MENUITEMS = [
     //     ]
     // },
     {
-        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'link', active: false
+        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
+        children: [
+            { path: '/user', icon: Users, title: 'Users', type: 'link' },
+        ]
     }
 ]

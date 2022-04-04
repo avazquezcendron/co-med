@@ -2,15 +2,10 @@ import React, { Fragment, useState, useEffect } from 'react';
 import { Collapse } from 'reactstrap';
 import { translate } from 'react-switch-lang';
 import { useParams } from 'react-router-dom';
-import Breadcrumb from '../../common/breadcrumb';
 import axios from 'axios';
-import {
-  Bio,
-  Password,
-  Website,
-  Save,
-} from '../../../constant';
+
 import PatientCard from './patientCard';
+import Breadcrumb from '../common/breadcrumb';
 import PatientHealthRecord from './patientHealthRecord';
 import PatientVisitHistory from './patientVisitHistory';
 
@@ -32,8 +27,8 @@ const PatientProfile = (props) => {
   return (
     <Fragment>
       <Breadcrumb
-        parent={{ title: props.t('Patients'), url: 'users/patients' }}
-        title={patient.name}
+        parent={{ title: props.t('Patients'), url: 'patient' }}
+        title={id === '0' ? 'Nuevo Paciente' : patient.name}
       />
       <div className="container-fluid">
         <div className="edit-profile  ">

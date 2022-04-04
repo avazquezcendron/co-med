@@ -11,11 +11,14 @@ import Taskapp from './task/reducer'
 import Projectapp from './project/reducer'
 import Customizer from './customizer/reducer';
 import { AppointmentsReducer, AppointmentFormReducer } from './appointments/reducer';
+import { UserLoginReducer, UsersReducer } from './user/reducer';
 
 const reducers = combineReducers({
     TodoApp,
     Appointments: AppointmentsReducer,
     AppointmentForm: AppointmentFormReducer,
+    UserLogin: UserLoginReducer,
+    Users: UsersReducer,
     // EmailApp,
     // ChatApp,
     // Product: Ecommerce,

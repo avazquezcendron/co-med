@@ -27,6 +27,7 @@ const laboratoryOrderSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    optimisticConcurrency: true
   }
 );
 

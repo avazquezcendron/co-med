@@ -7,14 +7,11 @@ import {
   DELETE_APPOINTMENT_SUCCESS,
   GET_APPOINTMENTS_REQUEST,
   GET_APPOINTMENTS_SUCCESS,
-} from '../../redux/actionTypes';
+} from './actions';
 import * as statusTypes from '../statusTypes';
 
 const INITIAL_STATE_APPOINTMENTS = {
   appointments: [],
-  filters: {
-    status: 'active',
-  },
   status: statusTypes.LOADING,
 };
 export const AppointmentsReducer = (

@@ -3,12 +3,13 @@ import { Container, Row, Col } from 'reactstrap'
 import {Link} from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import { translate } from 'react-switch-lang';
-import CustomMaterialMenu from '../../../components/common/data-table/customMaterialMenu';
 import { PlusCircle } from 'react-feather';
 import SweetAlert from 'sweetalert2'
-import Breadcrumb from '../../common/breadcrumb';
-import DataTableFilterComponent from '../../common/data-table/dataTableFilterComponent';
-import * as patientService from '../../../services/patient.service';
+
+import CustomMaterialMenu from '../common/data-table/customMaterialMenu';
+import Breadcrumb from '../common/breadcrumb';
+import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
+import * as patientService from '../../services/patient.service';
 
 const PatientList = (props) => {
 
@@ -18,8 +19,8 @@ const PatientList = (props) => {
         patientService.getAll().then((res) => setPatients(res.data));
     }, [])
     
-    const [filterText, setFilterText] = React.useState("");
-    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+    const [filterText, setFilterText] = useState("");
+    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     // const filteredItems = data.filter(
     //   item => item.name && item.name.includes(filterText)
     // );
@@ -88,11 +89,11 @@ const PatientList = (props) => {
     };
     
     const handleRowClick = (row, event) => {
-        props.history.push(`${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=browse`)
+        props.history.push(`${process.env.PUBLIC_URL}/patient/${row.id}?mode=browse`)
     }
 
     const handleEditPatientClick = (row, event) => {
-        props.history.push(`${process.env.PUBLIC_URL}/users/patients/${row.id}?mode=edit`)
+        props.history.push(`${process.env.PUBLIC_URL}/patient/${row.id}?mode=edit`)
     }
 
     const handleDeletePatientClick = (patient) => {
@@ -207,7 +208,7 @@ const PatientList = (props) => {
     
     return (
         <Fragment>
-            <Breadcrumb parent={props.t('Users')} title={props.t('Patients')} />
+            <Breadcrumb title={props.t('Patients')} />
             <Container fluid={true}>
                 <Row>
                     <Col md="12" lg="12" xl="12">
@@ -220,7 +221,7 @@ const PatientList = (props) => {
                                     <Col md="6">
                                         <div className="text-right">
                                             {/* <FormGroup className="mb-0 mr-0"></FormGroup> */}
-                                            <Link className="btn btn-primary" to={`${process.env.PUBLIC_URL}/users/patients/0`}> <PlusCircle/>{props.t('New')}</Link>
+                                            <Link className="btn btn-primary" to={`${process.env.PUBLIC_URL}/patient/0`}> <PlusCircle/>{props.t('New')}</Link>
                                         </div>
                                     </Col>
                                 </Row>                                    

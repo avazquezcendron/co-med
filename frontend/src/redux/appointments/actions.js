@@ -1,15 +1,14 @@
-import {
-  GET_APPOINTMENTS_WATCHER,
-  SAVE_APPOINTMENT_WATCHER,
-  CLEAR_APPOINTMENT_FORM,
-  SET_DATA_APPOINTMENT_FORM,
-  SAVE_APPOINTMENT_REQUEST,
-  SAVE_APPOINTMENT_SUCCESS,
-  DELETE_APPOINTMENT_REQUEST,
-  DELETE_APPOINTMENT_SUCCESS,
-  GET_APPOINTMENTS_REQUEST,
-  GET_APPOINTMENTS_SUCCESS,
-} from '../../redux/actionTypes';
+// Appointments Action Types
+export const GET_APPOINTMENTS_WATCHER = "appointments/getAppointmentsWatcher"
+export const SAVE_APPOINTMENT_WATCHER = "appointments/saveAppointmentWatcher"
+export const SAVE_APPOINTMENT_REQUEST = "appointments/saveAppointmentRequest"
+export const SAVE_APPOINTMENT_SUCCESS = "appointments/saveAppointmentSuccess"
+export const DELETE_APPOINTMENT_REQUEST = "appointments/deleteAppointmentRequest"
+export const DELETE_APPOINTMENT_SUCCESS = "appointments/deleteAppointmentSuccess"
+export const GET_APPOINTMENTS_REQUEST = "appointments/getAppointmentsRequest"
+export const GET_APPOINTMENTS_SUCCESS = "appointments/getAppointmentsSuccess";
+export const SET_DATA_APPOINTMENT_FORM = "appointments/setDataAppointmentForm";
+export const CLEAR_APPOINTMENT_FORM = "appointments/clearAppointmentForm";
 
 export const getAppointmentsWatcher = () => {
   return {

@@ -2,11 +2,8 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcryptjs';
 
-import emailSchema from './emailSchema.js';
 
 const SALT_WORK_FACTOR = 10;
-
-
 
 const UserSchema = mongoose.Schema(
   {
@@ -19,7 +16,6 @@ const UserSchema = mongoose.Schema(
       index: true,
     },
     password: { type: String, required: true },
-    email: { type: emailSchema, required: true},
     roles: {
       type: [
         {
@@ -29,28 +25,40 @@ const UserSchema = mongoose.Schema(
       ],
       default: ['receptionist'],
     },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: {
+      type: String,
+      lowercase: true,
+      match: [/\S+@\S+\.\S+/, 'is invalid'],
+      index: true,
+      unique: true,
+      // Change the default to true if you don't need to validate a new user's email address
+      validated: { type: Boolean, default: false },
+    },
     phoneNumber: { type: Number },
-    profile: {
-      firstName: { type: String, required: true },
-      lastName: { type: String, required: true },
-      avatar: String,
-      bio: String,
-      address: {
-        street: String,
-        city: String,
-        state: String,
-        country: String,
-        zip: String,
-      },
+    avatarUrl: String,
+    bio: String,
+    address: {
+      street: String,
+      city: String,
+      state: String,
+      country: String,
+      zip: String,
     },
     status: { type: String, default: 'active' },
   },
   {
     timestamps: true,
+    optimisticConcurrency: true
   }
 );
 
-UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
+UserSchema.set('toJSON', {
+  virtuals: true
+});
+
+// UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 UserSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {

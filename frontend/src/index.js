@@ -137,12 +137,11 @@ import Editor3 from './components/editor/aceCodeEditor';
 
 // users
 import UserProfile from './components/users/userProfile';
-import UserEdit from './components/users/userEdit';
+import UserList from './components/users/userList';
 import UserCards from './components/users/user-cards';
-import DoctorList from './components/users/doctors/doctorList';
-import PatientList from './components/users/patients/patientList';
-import PatientProfile from './components/users/patients/patientProfile';
-import SecretaryList from './components/users/secretaries/secretaryList';
+import DoctorList from './components/doctors/doctorList';
+import PatientList from './components/patients/patientList';
+import PatientProfile from './components/patients/patientProfile';
 
 // Calender
 import Calender1 from './components/calender/calender1';
@@ -232,7 +231,7 @@ import configDB from './data/customizer/config'
 import Callback from './auth/callback'
 
 // setup fake backend
-configureFakeBackend();
+//configureFakeBackend();
 
 
 const Root = () => {
@@ -245,7 +244,7 @@ const Root = () => {
     useEffect(() => {
 
         const requestOptions = { method: 'GET', headers: authHeader() };
-        fetch('/users', requestOptions).then(handleResponse)
+        // fetch('/user', requestOptions).then(handleResponse)
         const color = localStorage.getItem('color')
         //console.log(color);
         const layout = localStorage.getItem('layout_version') || configDB.data.color.layout_version
@@ -420,13 +419,12 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/editor/acecodeEditor`} component={Editor3} />
 
                                     {/* Users */}
-                                    <Route path={`${process.env.PUBLIC_URL}/users/userProfile`} component={UserProfile} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/userEdit`} component={UserEdit} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/userCards`} component={UserCards} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/doctors`} component={DoctorList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/users/patients`} component={PatientList} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/patients/:id`} component={PatientProfile} />
-                                    <Route path={`${process.env.PUBLIC_URL}/users/secretaries`} component={SecretaryList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/user/:id`} component={UserProfile} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/user`} component={UserList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/userCards`} component={UserCards} />
+                                    <Route path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/patient`} component={PatientList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/patient/:id`} component={PatientProfile} />
 
                                     {/* Calender */}
                                     <Route path={`${process.env.PUBLIC_URL}/agenda/appointments`} component={Appointments} />
