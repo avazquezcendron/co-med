@@ -27,10 +27,13 @@ export const save = async (newUserData, loggedUser) => {
       err.response && err.response.data.message
         ? err.response.data.message
         : err.message;
-      toast.error(`Ocurrió un error al dar de alta al usuario. Detalle: ${errorMsg}`, {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      throw err;
+    toast.error(
+      `Ocurrió un error al dar de alta al usuario. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
   }
 };
 
@@ -41,7 +44,11 @@ export const update = async (userData, loggedUser) => {
         Authorization: `Bearer ${loggedUser?.token}`,
       },
     };
-    const { data } = await axios.put(`/api/user/${userData.id}`, userData, config);
+    const { data } = await axios.put(
+      `/api/user/${userData.id}`,
+      userData,
+      config
+    );
     toast.success('Usuario actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -51,10 +58,13 @@ export const update = async (userData, loggedUser) => {
       err.response && err.response.data.message
         ? err.response.data.message
         : err.message;
-      toast.error(`Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`, {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      throw err;
+    toast.error(
+      `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
   }
 };
 
@@ -76,10 +86,13 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
       err.response && err.response.data.message
         ? err.response.data.message
         : err.message;
-      toast.error(`Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`, {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      throw err;
+    toast.error(
+      `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
   }
 };
 
@@ -100,18 +113,35 @@ export const getById = async (id, loggedUser) => {
       err.response && err.response.data.message
         ? err.response.data.message
         : err.message;
-      toast.error(`Ocurrió un error al intentar obtener los datos del usuario. Detalle: ${errorMsg}`, {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
+    toast.error(
+      `Ocurrió un error al intentar obtener los datos del usuario. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
   }
 };
 
 export const login = async (userInfo) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-
-  return await axios.post('/api/auth/login', userInfo, config);
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/auth/login`, userInfo, config);
+    toast.success(`Bienvenid@ ${data.user.firstName}!`, {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg = err.response.status === 401 ? 'Usuario o Contraseña inválidos.' : '';
+    toast.error(
+      `Error al intentar ingresar al sistema. 
+      Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+  }
 };

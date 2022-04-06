@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import SweetAlert from 'sweetalert2';
 
 import defaultuser from '../../assets/images/user/user.png';

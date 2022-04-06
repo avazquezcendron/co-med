@@ -39,13 +39,13 @@ const create = asyncHandler(async (req, res) => {
 // @access Private
 const update = asyncHandler(async (req, res) => {
   let user = await User.findById(req.params.id);
-  if (user.__v !== req.body.__v) {
-    res.status(409);
-    res.json('The user has been modified by another transaction.');
-    return;
-  }
-    
   if (user) {
+    if (user.__v !== req.body.__v) {
+      res.status(409);
+      res.json('The user has been modified by another transaction.');
+      return;
+    }
+
     for (const [key, value] of Object.entries(req.body)) {
       user[key] = value;
     }
@@ -96,13 +96,14 @@ const login = asyncHandler(async (req, res, next) => {
   const { username, password } = req.body;
 
   const user = await User.findOne({ username });
-  if (user.status === 'inactive') {
-    res.status(403);
-    res.json(`The user ${user.username} has been deactivated. .`);
-    return;
-  }
 
   if (user && (await user.matchPassword(password))) {
+    if (user.status === 'inactive') {
+      res.status(403);
+      res.json(`The user ${user.username} has been deactivated. .`);
+      return;
+    }
+
     const token = generateToken({ userId: user._id });
     res.status(200).json({
       token,

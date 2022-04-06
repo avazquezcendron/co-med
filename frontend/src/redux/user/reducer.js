@@ -1,14 +1,21 @@
 import {
-USER_LOGIN_REQUEST,
-USER_LOGIN_SUCCESS,
-USER_LOGIN_FAILURE,
-USER_LOGOUT,
-USER_GET_ALL_REQUEST,
-USER_GET_ALL_SUCCESS
-} from './actions'
+  USER_LOGIN_REQUEST,
+  USER_LOGIN_SUCCESS,
+  USER_LOGIN_FAILURE,
+  USER_LOGOUT,
+  USER_GET_ALL_REQUEST,
+  USER_GET_ALL_SUCCESS,
+} from './actions';
 import * as statusTypes from '../statusTypes';
 
-export const UserLoginReducer = (state = {}, action) => {
+const loggedUserFromStorage = localStorage.getItem('loggedUser')
+  ? JSON.parse(localStorage.getItem('loggedUser'))
+  : null;
+
+export const UserLoginReducer = (
+  state = { loggedUser: loggedUserFromStorage },
+  action
+) => {
   switch (action.type) {
     case USER_LOGIN_REQUEST:
       return { status: statusTypes.LOADING };
@@ -16,20 +23,20 @@ export const UserLoginReducer = (state = {}, action) => {
     case USER_LOGIN_SUCCESS:
       return {
         status: statusTypes.SUCCEEDED,
-        loggedUser: action.payload
+        loggedUser: action.payload,
       };
     case USER_LOGIN_FAILURE:
       return {
         status: statusTypes.LOADED,
-        error: action.payload
+        error: action.payload,
       };
 
     case USER_LOGOUT:
-      return {}
+      return {};
     default:
-      return state
+      return state;
   }
-}
+};
 
 export const UsersReducer = (state = [], action) => {
   switch (action.type) {
@@ -39,10 +46,10 @@ export const UsersReducer = (state = [], action) => {
     case USER_GET_ALL_SUCCESS:
       return {
         status: statusTypes.SUCCEEDED,
-        ...action.payload
+        ...action.payload,
       };
 
     default:
-      return state
+      return state;
   }
-}
+};

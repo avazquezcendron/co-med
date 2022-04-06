@@ -4,6 +4,8 @@ import * as userService from '../../services/user.service';
 import { getLoggedUser } from '../selectors';
 import {
   USER_LOGIN_WATCHER,
+  USER_LOGOUT_WATCHER,
+  userLogout,
   userLoginRequest,
   userLoginSuccess,
   userLoginFailure,
@@ -16,17 +18,22 @@ import {
   userGetAllSuccess
 } from './actions';
 
+
+function* logout({ payload }) {
+  localStorage.removeItem('loggedUser')
+  yield put(userLogout());
+  document.location.href = `${process.env.PUBLIC_URL}/login`
+}
+
 function* loginUserAsync({ payload }) {
   try {
     yield put(userLoginRequest());
-    const [username, password] = payload;
-    const response = yield call(userService.login, payload);
-
-    const { data } = response;
-
-    yield put(userLoginSuccess(data));
-
-    localStorage.setItem('loggedUser', JSON.stringify(data));
+    const data = yield call(userService.login, payload);
+    if (data) {
+      yield put(userLoginSuccess(data));
+      localStorage.setItem('loggedUser', JSON.stringify(data));
+      document.location.href = `${process.env.PUBLIC_URL}/`  
+    }    
   } catch (err) {
     const errMsg =
       err.response && err.response.data.message
@@ -72,5 +79,5 @@ function* fetchUsersAsync() {
 export function* WatcherUsers() {
   yield takeLatest(USER_LOGIN_WATCHER, loginUserAsync);
   yield takeLatest(USER_SAVE_WATCHER, saveUserAsync);
-  yield takeLatest(USER_GET_ALL_WATCHER, fetchUsersAsync);
+  yield takeLatest(USER_LOGOUT_WATCHER, logout);
 }

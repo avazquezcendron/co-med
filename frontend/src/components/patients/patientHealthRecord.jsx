@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import {TabContent,TabPane, Collapse} from 'reactstrap'
 import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import axios from 'axios'

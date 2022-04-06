@@ -20,6 +20,7 @@ import {
   PopoverBody,
 } from 'reactstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PatientQuickAdd from '../patientQuickAdd';

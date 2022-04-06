@@ -16,15 +16,41 @@ import {
 export const MENUITEMS = [
     {
         title: 'Dashboard', icon: Home, type: 'link', path: '/dashboard/default', badgeType: 'primary', active: false
-        // children: [
-        //     { path: '/dashboard/default', title: 'Default', type: 'link' },
-        //     { path: '/dashboard/ecommerce', title: 'E-Commerce', type: 'link' },
-        //     { path: '/dashboard/university', title: 'University', type: 'link' },
-        //     { path: '/dashboard/crypto', title: 'Crypto', type: 'link' },
-        //     { path: '/dashboard/server', title: 'Server', type: 'link' },
-        //     { path: '/dashboard/project', title: 'Project', type: 'link' }
-        // ]
     },
+    {
+        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: true, path: '/patient'
+    },
+    {
+        title: 'Doctors', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
+    },
+    {
+        title: 'Appointments', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
+    },
+    {
+        title: 'Reports', icon: TrendingUp, type: 'sub', active: false, children: [
+            { path: '/dashboard/project', type: 'link', title: 'General' },
+            { path: '/widgets/chart', type: 'link', title: 'Various' }
+        ]
+    },
+    {
+        title: 'Graphics', icon: PieChart, type: 'sub', active: false, children: [
+            { path: '/charts/googleChart', type: 'link', title: 'Graphics1' },
+            { path: '/charts/chartJs', type: 'link', title: 'Graphics2' },
+            { path: '/charts/chartistComponent', type: 'link', title: 'Graphics3' }
+        ]
+    },
+    {
+        title: 'Forms', icon: FileText, type: 'sub', active: false, children: [
+            { path: '/form-layout/formDefault', title: 'Prescriptions', type: 'link' },
+            { path: '/form-layout/FormWizard', title: 'Templates', type: 'link' }
+        ]
+    },
+    {
+        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
+        children: [
+            { path: '/user', icon: Users, title: 'Users', type: 'link' },
+        ]
+    }
     // {
     //     title: 'Widgets', icon: Airplay, type: 'sub', active: false, children: [
     //         { path: '/widgets/general', title: 'General', type: 'link' },
@@ -194,39 +220,7 @@ export const MENUITEMS = [
     //         { path: '/editor/mdeEditor', type: 'link', title: 'MDE Editor' },
     //         { path: '/editor/acecodeEditor', type: 'link', title: 'ACE Code Editor' },
     //     ]
-    // },
-    {
-        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: true, path: '/patient'
-    },
-    {
-        title: 'Doctors', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
-    },
-    {
-        title: 'Appointments', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
-        // children: [
-        //     { path: '/calender/calender1', type: 'link', title: 'Calender', },
-        //     { path: '/calender/calender2', type: 'link', title: 'Draggable Calender' },
-        // ]
-    },
-    {
-        title: 'Reports', icon: TrendingUp, type: 'sub', active: false, children: [
-            { path: '/dashboard/project', type: 'link', title: 'General' },
-            { path: '/widgets/chart', type: 'link', title: 'Various' }
-        ]
-    },
-    {
-        title: 'Graphics', icon: PieChart, type: 'sub', active: false, children: [
-            { path: '/charts/googleChart', type: 'link', title: 'Graphics1' },
-            { path: '/charts/chartJs', type: 'link', title: 'Graphics2' },
-            { path: '/charts/chartistComponent', type: 'link', title: 'Graphics3' }
-        ]
-    },
-    {
-        title: 'Forms', icon: FileText, type: 'sub', active: false, children: [
-            { path: '/form-layout/formDefault', title: 'Prescriptions', type: 'link' },
-            { path: '/form-layout/FormWizard', title: 'Templates', type: 'link' }
-        ]
-    },
+    // },    
     // {
     //     title: 'Blog', icon: Edit, type: 'sub', active: false, children: [
     //         { path: '/blog/blogDetail', title: 'Blog Details', type: 'link' },
@@ -335,10 +329,4 @@ export const MENUITEMS = [
     //         { path: '/pages/comingsoonVideo', title: 'Coming With Bg Video', type: 'link' },
     //     ]
     // },
-    {
-        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
-        children: [
-            { path: '/user', icon: Users, title: 'Users', type: 'link' },
-        ]
-    }
 ]

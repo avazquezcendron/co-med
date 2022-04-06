@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form, FormGroup, Label } from 'reactstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
 import * as doctorService from '../../../services/doctor.service';

@@ -1,4 +1,5 @@
 export const USER_LOGIN_WATCHER = 'user/loginWatcher'
+export const USER_LOGOUT_WATCHER = 'user/logoutWatcher'
 export const USER_LOGIN_REQUEST = 'user/loginRequest'
 export const USER_LOGIN_SUCCESS = 'user/loginSuccess'
 export const USER_LOGIN_FAILURE = 'user/loginFailure'
@@ -14,6 +15,13 @@ export const USER_SAVE_FAILURE = 'user/userSaveFailure'
 
 export const USER_LOGOUT = 'user/logout'
 
+
+export const userLoginWatcher = (userCredentials) => {
+  return {
+    type: USER_LOGIN_WATCHER,
+    payload: userCredentials,
+  }
+}
 
 export const userLoginRequest = () => {
   return {
@@ -40,13 +48,11 @@ export const userLogout = () => {
   }
 }
 
-export const logoutUser = () => (dispatch) => {
-  localStorage.removeItem('loggedUser')
-  dispatch(userLogout())
-  // dispatch(resetPatientsList())
-  document.location.href = '/user/auth'
+export const userLogoutWatcher = () => {
+  return {
+    type: USER_LOGOUT_WATCHER,
+  }
 }
-
 
 export const userGetAllWatcher = (user) => {
   return {
