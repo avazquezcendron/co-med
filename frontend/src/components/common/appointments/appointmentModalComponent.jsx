@@ -59,7 +59,7 @@ const AppointmentModalComponent = (props) => {
               </button>
               <button
                 type="button"
-                className="btn btn-primary ml-4"
+                className="btn btn-primary ml-1"
                 onClick={props.appointmentModalToggle}
               >
                 <i className="fa fa-pencil mr-2"></i>

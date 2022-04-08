@@ -7,8 +7,8 @@ import PatientCard from './patientCard';
 import Breadcrumb from '../common/breadcrumb';
 import PatientHealthRecord from './patientHealthRecord';
 import PatientVisitHistory from './patientVisitHistory';
-import { patientGetByIdWatcher } from '../../redux/patients/actions';
-import { LOADED, LOADING } from '../../redux/statusTypes';
+import { patientGetByIdWatcher, patientInitialize } from '../../redux/patients/actions';
+import { LOADED, LOADING, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import PatientPersonalData from './patientPersonalData';
 
@@ -31,8 +31,8 @@ const PatientProfile = (props) => {
 
   return (
     <Fragment>
-      {id === '0' || (status === LOADED && patient?.id) ? (
-        <Fragment>
+      {/* {status === LOADED || status === SUCCEEDED || mode === 'new' ? (
+        <Fragment> */}
           <Breadcrumb
             parent={{ title: props.t('Patients'), url: 'patient' }}
             title={id === '0' ? 'Nuevo Paciente' : patient?.firstName + ' ' + patient?.lastName}
@@ -42,32 +42,7 @@ const PatientProfile = (props) => {
               <div className="row">
                 {id === '0' ? (
                   <div className="col-md-12">
-                    <div className="card">
-                      <div className="card-header">
-                        <div className="row">
-                          <div className="col-md-6"></div>
-                          <div className="col-md-6">
-                            {mode === 'browse' ? (
-                              <div className="text-right">
-                                <Link
-                                  className="btn btn-primary"
-                                  to={`${process.env.PUBLIC_URL}/user/${patient.id}?mode=edit`}
-                                >
-                                  {' '}
-                                  <i className="fa fa-pencil mr-2" />
-                                  Editar
-                                </Link>
-                              </div>
-                            ) : (
-                              ''
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="card-body">
-                        <PatientPersonalData mode={mode} history={props.history} showAvatar={true}/>
-                      </div>
-                    </div>
+                        <PatientPersonalData history={props.history} showAvatar={true}/>
                   </div>
                 ) : (
                   <Fragment>
@@ -85,10 +60,10 @@ const PatientProfile = (props) => {
               </div>
             </div>
           </div>
-        </Fragment>
+        {/* </Fragment>
       ) : (
         <Loader show={status === LOADING} />
-      )}
+      )} */}
     </Fragment>
   );
 };

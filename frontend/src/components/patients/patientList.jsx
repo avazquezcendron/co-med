@@ -10,8 +10,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import CustomMaterialMenu from '../common/data-table/customMaterialMenu';
 import Breadcrumb from '../common/breadcrumb';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
-import { patientGetAllWatcher } from '../../redux/patients/actions';
-import { SUCCEEDED } from '../../redux/statusTypes';
+import { patientGetAllWatcher, patientInitialize } from '../../redux/patients/actions';
+import { LOADED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 
 const PatientList = (props) => {
@@ -92,6 +92,10 @@ const PatientList = (props) => {
     },
   };
 
+  const handleNewClick = () => {
+    dispatch(patientInitialize());
+  }
+
   const handleRowClick = (row, event) => {
     props.history.push(
       `${process.env.PUBLIC_URL}/patient/${row.id}?mode=browse`
@@ -152,44 +156,46 @@ const PatientList = (props) => {
       cell: (row, index, column, id) => `${row.firstName} ${row.lastName}`
     },
     {
-      name: 'Documento',
+      name: 'Nro. Documento',
       selector: 'nationalId',
       sortable: true,
       left: true,
-    },
-    {
-      name: 'Fec. Nacimiento',
-      selector: 'dateOfBirth',
-      sortable: true,
-      center: true,
-    },
-    {
-      name: 'Obra Social',
-      selector: 'healthInsurance',
-      sortable: true,
-      center: true,
-      cell: (row, index, column, id) => row.healthInsurances && row.healthInsurances.length > 0 ? row.healthInsurances[0].healthInsuranceCompany.description : ' - '
     },
     {
       name: 'Nro. Historia Clínica',
       selector: 'healthRecordId',
       sortable: true,
       left: true,
+      cell: (row, index, column, id) => row.healthRecord ? row.healthRecord.healthRecordNumber : ' - '
     },
     {
-      name: 'Email',
-      selector: 'email',
+      name: 'Obra Social',
+      selector: 'healthInsurance',
       sortable: true,
-      center: true,
-      cell: (row, index, column, id) => (
-        <a href={`mailto:${row.email}`}>{row.email}</a>
-      ),
+      left: true,
+      cell: (row, index, column, id) => row.healthInsurances && row.healthInsurances.length > 0 ? row.healthInsurances[0].healthInsuranceCompany.description : ' - '
     },
+    {
+      name: 'Nro. de Credencial',
+      selector: 'healthInsuranceId',
+      sortable: true,
+      left: true,
+      cell: (row, index, column, id) => row.healthInsurances && row.healthInsurances.length > 0 ? row.healthInsurances[0].cardNumber : ' - '
+    },
+    // {
+    //   name: 'Email',
+    //   selector: 'email',
+    //   sortable: true,
+    //   center: true,
+    //   cell: (row, index, column, id) => (
+    //     <a href={`mailto:${row.email}`}>{row.email}</a>
+    //   ),
+    // },
     {
       name: 'Última Visita',
       selector: 'lastVisit',
       sortable: true,
-      center: true,
+      left: true,
     },
     {
       name: 'Estado',
@@ -248,7 +254,7 @@ const PatientList = (props) => {
 
   return (
     <Fragment>
-      {status === SUCCEEDED ? (
+      {status === LOADED ? (
         <Fragment>
           <Breadcrumb title={props.t('Patients')} />
           <Container fluid={true}>
@@ -264,7 +270,8 @@ const PatientList = (props) => {
                         <div className="text-right">
                           <Link
                             className="btn btn-primary"
-                            to={`${process.env.PUBLIC_URL}/patient/0`}
+                            onClick={handleNewClick}
+                            to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
                           >
                             {' '}
                             <PlusCircle />

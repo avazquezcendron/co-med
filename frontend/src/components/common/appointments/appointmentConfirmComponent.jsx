@@ -29,7 +29,7 @@ const AppointmentConfirmComponent = (props) => {
             }) +
             'hs'
           : ''
-      } para el paciente ${appointmentData.patient.name} con el doctor/a ${
+      } para el paciente ${appointmentData.patient.firstName} ${appointmentData.patient.lastName} con el doctor/a ${
         appointmentData.doctor.name
       }.`,
       icon: 'warning',
@@ -44,7 +44,7 @@ const AppointmentConfirmComponent = (props) => {
         dispatch(
           saveAppointmentWatcher({
             ...appointmentData,
-            title: appointmentData.patient.name + ' - ' + appointmentData.mode,
+            title: `${appointmentData.patient.firstName} ${appointmentData.patient.lastName} - ${appointmentData.mode}`,
             resourceId: appointmentData.doctor.id,
             constraint: 'businessHours',
             id: 2,
@@ -76,7 +76,7 @@ const AppointmentConfirmComponent = (props) => {
       <div className="col-md-12 text-center">
         <button
           type="button"
-          className="btn btn-light text-dark"
+          className="btn btn-outline-danger"
           onClick={props.modalToggle}
         >
           <i className="fa fa-times mr-2"></i>
@@ -84,7 +84,7 @@ const AppointmentConfirmComponent = (props) => {
         </button>
         <button
           type="button"
-          className="btn btn-outline-success ml-4"
+          className="btn btn-primary ml-1"
           onClick={generateAppointment}
         >
           <i className="fa fa-check mr-2"></i>

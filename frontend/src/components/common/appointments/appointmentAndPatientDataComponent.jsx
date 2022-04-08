@@ -25,12 +25,13 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import PatientQuickAdd from '../patientQuickAdd';
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
-import * as patientService from '../../../services/patient.service';
+import { patientGetAllWatcher } from '../../../redux/patients/actions';
 
 const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
 
   const appointment = useSelector((store) => store.AppointmentForm);
+  const { patients, status } = useSelector((store) => store.Patients);
   const dispatch = useDispatch();
 
   const [patient, setPatient] = useState(appointment.patient || {});
@@ -44,14 +45,13 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const [popover, setPopover] = useState(false);
   const popoverNewPatientToggle = () => setPopover(!popover);
 
-  const [patients, setPatients] = useState([]);
   useEffect(() => {
-    patientService.getAll().then((res) => setPatients(res.data));
+    dispatch(patientGetAllWatcher());
   }, []);
 
   useImperativeHandle(ref, () => ({
     isValidated() {
-      if (!patient.name) {
+      if (!patient.id) {
         setError('patient', {});
         return false;
       } else {
@@ -92,8 +92,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       <Form className="form-bookmark needs-validation">
         <div className="form-row m-50">
           <p className="text-muted f-12 col-md-12">
-            Ingrese el nombre, DNI, Número de Historia Clínica o Número de
-            Carnet de Obra Social para buscar al paciente. Si no lo encuentra,
+            Ingrese el nombre, DNI o Número de Historia Clínica para buscar al paciente. Si no lo encuentra,
             haga click{' '}
             <a href="#javascript" id="popoverNewPatient">
               aquí
@@ -106,13 +105,13 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
               id="patient"
               name="patient"
               options={patients}
-              labelKey="name"
-              filterBy={['nationalId', 'healthRecordId']}
+              labelKey={(option) => option.firstName + ' ' + option.lastName}
+              filterBy={['firstName', 'option.lastName', 'nationalId', 'healthRecord.healthRecordId']}
               minLength={3}
               onChange={(selected) => handlePatientChange(selected)}
               selected={
                 patients.length > 0
-                  ? patients.filter((x) => x.name === patient.name)
+                  ? patients.filter((x) => x.id === patient.id)
                   : null
               }
               innerRef={register('patient', { required: true })}

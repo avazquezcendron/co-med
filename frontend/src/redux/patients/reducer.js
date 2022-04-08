@@ -11,6 +11,7 @@ import {
   PATIENT_DELETE_REQUEST,
   PATIENT_DELETE_SUCCESS,
   PATIENT_DELETE_FAILURE,
+  PATIENT_INITIALIZE
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -22,11 +23,11 @@ const INITIAL_STATE_PATIENTS = {
 export const PatientsReducer = (state = INITIAL_STATE_PATIENTS, action) => {
   switch (action.type) {
     case PATIENT_GET_ALL_REQUEST:
-      return { status: statusTypes.LOADING };
+      return { status: statusTypes.LOADING, patients: [] };
 
     case PATIENT_GET_ALL_SUCCESS:
       return {
-        status: statusTypes.SUCCEEDED,
+        status: statusTypes.LOADED,
         patients: action.payload,
       };
 
@@ -34,6 +35,7 @@ export const PatientsReducer = (state = INITIAL_STATE_PATIENTS, action) => {
       return {
         status: statusTypes.FAILED,
         error: action.payload,
+        patients: [] 
       };
 
     default:
@@ -47,6 +49,9 @@ const INITIAL_STATE_PATIENT = {
 };
 export const PatientReducer = (state = INITIAL_STATE_PATIENT, action) => {
   switch (action.type) {
+    case PATIENT_INITIALIZE:
+      return INITIAL_STATE_PATIENT;
+
     case PATIENT_GET_BY_ID_REQUEST:
       return { status: statusTypes.LOADING, patient: {} };
 

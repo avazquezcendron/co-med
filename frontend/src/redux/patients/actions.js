@@ -4,6 +4,8 @@ export const PATIENT_GET_ALL_WATCHER = 'patient/patientGetAllWatcher'
 export const PATIENT_GET_ALL_SUCCESS = 'patient/patientGetAllSuccess'
 export const PATIENT_GET_ALL_FAILURE = 'patient/patientGetAllFailure'
 
+export const PATIENT_INITIALIZE = 'patient/patientInitialize'
+
 export const PATIENT_GET_BY_ID_REQUEST = 'patient/patientGetByIdRequest'
 export const PATIENT_GET_BY_ID_WATCHER = 'patient/patientGetByIdWatcher'
 export const PATIENT_GET_BY_ID_SUCCESS = 'patient/patientGetByIdSuccess'
@@ -44,6 +46,12 @@ export const patientGetAllFailure = (error) => {
     payload: error,
   }
 }
+
+export const patientInitialize = (id) => {
+  return {
+    type: PATIENT_INITIALIZE,
+  };
+};
 
 export const patientGetByIdWatcher = (id) => {
   return {

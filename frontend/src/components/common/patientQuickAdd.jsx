@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import SweetAlert from 'sweetalert2';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import * as patientService from '../../services/patient.service';
+import { patientSavetWatcher } from '../../redux/patients/actions';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 
 const PatientQuickAdd = (props) => {
-
   const { loggedUser } = useSelector((store) => store.UserLogin);
+  const dispatch = useDispatch();
 
-  const [ healthInsurancesCompanies, setHealthInsurancesCompanies ] = useState();
+  const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
   useEffect(() => {
-    healthInsuranceService.getAll(loggedUser).then((res) => setHealthInsurancesCompanies(res.data));
+    healthInsuranceService
+      .getAll(loggedUser)
+      .then((res) => setHealthInsurancesCompanies(res.data));
   }, []);
-  const [ healthInsurancePlans, setHealthInsurancePlans ] = useState([]);
+  const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
 
   const { register, handleSubmit, errors } = useForm();
 
@@ -32,27 +33,9 @@ const PatientQuickAdd = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          //TODO: dispatch new patient
-          // dispatch(
-          //   saveAppointmentWatcher({
-          //     ...appointmentData,
-          //     title: appointmentData.patient.name + ' - ' + appointmentData.mode,
-          //     resourceId: appointmentData.doctor.id,
-          //     constraint: 'businessHours',
-          //     id: 2,
-          //   })
-          // );
-          patientService.save(data).then(res => {
-            toast.success('Paciente dado de alta con éxito.', {
-              position: toast.POSITION.BOTTOM_RIGHT,
-            });
-            if (props.modalToggle) props.modalToggle();
-          });          
-        } else {
-          toast.error('Se canceló el alta del paciente.', {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          });
-        }
+          dispatch(patientSavetWatcher(data));
+          props.modalToggle && props.modalToggle();
+        } 
       });
     } else {
       errors.showMessages();
@@ -61,13 +44,15 @@ const PatientQuickAdd = (props) => {
 
   const handleHealthInsuranceChange = (insuranceId) => {
     if (insuranceId) {
-      const healthInsurance = healthInsurancesCompanies.filter(x => x.id === insuranceId);
-      if(healthInsurance.length > 0)
+      const healthInsurance = healthInsurancesCompanies.filter(
+        (x) => x.id === insuranceId
+      );
+      if (healthInsurance.length > 0)
         setHealthInsurancePlans(healthInsurance[0].plans);
     } else {
       setHealthInsurancePlans([]);
     }
-  }
+  };
 
   return (
     <div>
@@ -117,9 +102,9 @@ const PatientQuickAdd = (props) => {
               defaultValue="DNI"
               ref={register({ required: true })}
             >
-              <option>{'DNI'}</option>
-              <option>{'LE'}</option>
-              <option>{'Otro'}</option>
+              <option value="DNI">{'DNI'}</option>
+              <option value="LE">{'LE'}</option>
+              <option value="OTRO">{'Otro'}</option>
             </select>
           </div>
           <label className="col-md-12 col-form-label" htmlFor="nationalId">
@@ -149,13 +134,19 @@ const PatientQuickAdd = (props) => {
               onChange={(e) => handleHealthInsuranceChange(e.target.value)}
               ref={register({ required: true })}
             >
-                <option value="">No Posee</option>
-                {healthInsurancesCompanies && healthInsurancesCompanies.map((company, i) => (
-                  <option key={company.id} value={company.id}>{company.description}</option>
+              <option value="">No Posee</option>
+              {healthInsurancesCompanies &&
+                healthInsurancesCompanies.map((company, i) => (
+                  <option key={company.id} value={company.id}>
+                    {company.description}
+                  </option>
                 ))}
             </select>
           </div>
-          <label className="col-md-12 col-form-label" htmlFor="healthInsurancePlan">
+          <label
+            className="col-md-12 col-form-label"
+            htmlFor="healthInsurancePlan"
+          >
             {'Plan'}
           </label>
           <div className="col-md-12">
@@ -166,7 +157,8 @@ const PatientQuickAdd = (props) => {
               defaultValue="-"
               ref={register({ required: true })}
             >
-                {healthInsurancePlans && healthInsurancePlans.map((company, i) => (
+              {healthInsurancePlans &&
+                healthInsurancePlans.map((company, i) => (
                   <option key={company.code}>{company.code}</option>
                 ))}
             </select>
@@ -175,7 +167,7 @@ const PatientQuickAdd = (props) => {
             className="col-md-12 col-form-label"
             htmlFor="healthInsuranceId"
           >
-            {'Nro. de Carnet'}
+            {'Nro. de Credencial'}
           </label>
           <div className="col-md-12">
             <input

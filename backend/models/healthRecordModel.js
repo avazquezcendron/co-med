@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const healthRecordSchema = mongoose.Schema(
   {
+    healthRecordNumber: { type: Number, required: true, unique: true },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

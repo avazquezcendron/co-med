@@ -17,19 +17,19 @@ const AppointmentResumeComponent = (props) => {
         <span className="f-w-600">Paciente</span>
       </div>
       <div className="col-md-12 ">
-        <p>{appointment.patient ? appointment.patient.name : ''}</p>
+        <p>{appointment.patient ? `${appointment.patient.firstName} ${appointment.patient.lastName}` : ''}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Tipo</span>
       </div>
       <div className="col-md-12 ">
-        <p>{appointment.type}</p>
+        <p>{appointment.type === 'turno' ? 'Turno' : 'Sobreturno'}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Modalidad</span>
       </div>
       <div className="col-md-12 ">
-        <p>{appointment.mode}</p>
+        <p>{appointment.mode === 'presencial' ? 'Presencial' : 'Virtual'}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Día y Hora</span>
