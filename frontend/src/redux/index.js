@@ -12,6 +12,7 @@ import Projectapp from './project/reducer'
 import Customizer from './customizer/reducer';
 import { AppointmentsReducer, AppointmentFormReducer } from './appointments/reducer';
 import { UserLoginReducer, UsersReducer } from './user/reducer';
+import { PatientsReducer, PatientReducer } from './patients/reducer';
 
 const reducers = combineReducers({
     TodoApp,
@@ -19,6 +20,8 @@ const reducers = combineReducers({
     AppointmentForm: AppointmentFormReducer,
     UserLogin: UserLoginReducer,
     Users: UsersReducer,
+    Patients: PatientsReducer,
+    Patient: PatientReducer,
     // EmailApp,
     // ChatApp,
     // Product: Ecommerce,

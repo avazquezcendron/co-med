@@ -25,6 +25,10 @@ const appointmentSchema = mongoose.Schema(
   }
 )
   
+appointmentSchema.set('toJSON', {
+  virtuals: true
+});
+
 const Appointment = mongoose.model('Appointment', appointmentSchema)
 
 export default Appointment

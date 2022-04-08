@@ -1,12 +1,12 @@
 // Appointments Action Types
 export const GET_APPOINTMENTS_WATCHER = "appointments/getAppointmentsWatcher"
+export const GET_APPOINTMENTS_REQUEST = "appointments/getAppointmentsRequest"
+export const GET_APPOINTMENTS_SUCCESS = "appointments/getAppointmentsSuccess";
 export const SAVE_APPOINTMENT_WATCHER = "appointments/saveAppointmentWatcher"
 export const SAVE_APPOINTMENT_REQUEST = "appointments/saveAppointmentRequest"
 export const SAVE_APPOINTMENT_SUCCESS = "appointments/saveAppointmentSuccess"
 export const DELETE_APPOINTMENT_REQUEST = "appointments/deleteAppointmentRequest"
 export const DELETE_APPOINTMENT_SUCCESS = "appointments/deleteAppointmentSuccess"
-export const GET_APPOINTMENTS_REQUEST = "appointments/getAppointmentsRequest"
-export const GET_APPOINTMENTS_SUCCESS = "appointments/getAppointmentsSuccess";
 export const SET_DATA_APPOINTMENT_FORM = "appointments/setDataAppointmentForm";
 export const CLEAR_APPOINTMENT_FORM = "appointments/clearAppointmentForm";
 

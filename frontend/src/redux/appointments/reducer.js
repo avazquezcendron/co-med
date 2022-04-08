@@ -12,7 +12,7 @@ import * as statusTypes from '../statusTypes';
 
 const INITIAL_STATE_APPOINTMENTS = {
   appointments: [],
-  status: statusTypes.LOADING,
+  status: statusTypes.SUCCEEDED,
 };
 export const AppointmentsReducer = (
   state = INITIAL_STATE_APPOINTMENTS,
@@ -43,7 +43,7 @@ export const AppointmentsReducer = (
     case GET_APPOINTMENTS_SUCCESS:
       return {
         ...state,
-        status: statusTypes.LOADED,
+        status: statusTypes.SUCCEEDED,
         appointments: [
           ...action.payload,
           ...state.appointments.filter((x) => x.new),//TODO: quitar esto: los appointments vienen desde back todos.

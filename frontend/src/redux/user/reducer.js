@@ -8,17 +8,17 @@ import {
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
-const loggedUserFromStorage = localStorage.getItem('loggedUser')
-  ? JSON.parse(localStorage.getItem('loggedUser'))
-  : null;
+const loggedUserFromStorage = localStorage.getItem('loggedUser');
 
-export const UserLoginReducer = (
-  state = { loggedUser: loggedUserFromStorage },
-  action
-) => {
+const INITIAL_STATE_USER_LOGIN = {
+  loggedUser: loggedUserFromStorage ? JSON.parse(loggedUserFromStorage) : {},
+  status: statusTypes.LOADING,
+};
+
+export const UserLoginReducer = (state = INITIAL_STATE_USER_LOGIN, action) => {
   switch (action.type) {
     case USER_LOGIN_REQUEST:
-      return { status: statusTypes.LOADING };
+      return { status: statusTypes.LOADING, loggedUser: {} };
 
     case USER_LOGIN_SUCCESS:
       return {
@@ -27,12 +27,13 @@ export const UserLoginReducer = (
       };
     case USER_LOGIN_FAILURE:
       return {
-        status: statusTypes.LOADED,
+        status: statusTypes.FAILED,
         error: action.payload,
+        loggedUser: {},
       };
 
     case USER_LOGOUT:
-      return {};
+      return { loggedUser: {}, status: '' };
     default:
       return state;
   }

@@ -10,6 +10,10 @@ const studyTypeSchema = mongoose.Schema(
   }
 )
   
+studyTypeSchema.set('toJSON', {
+  virtuals: true
+});
+
 const StudyType = mongoose.model('StudyType', studyTypeSchema)
 
 export default StudyType

@@ -53,6 +53,10 @@ const visitSchema = mongoose.Schema(
   }
 );
 
+visitSchema.set('toJSON', {
+  virtuals: true
+});
+
 const Visit = mongoose.model('Visit', visitSchema);
 
 export default Visit;

@@ -115,18 +115,18 @@ const UserList = (props) => {
     });
   };
 
-  const labelKeyRenderRoles = (option) => {
+  const labelKeyRenderRoles = (option, index) => {
     switch (option) {
       case 'external':
-        return <span className="badge badge-light">Usuario Externo</span>;
+        return <span key={index} className="badge badge-light">Usuario Externo</span>;
       case 'patient':
-        return <span className="badge badge-info">Paciente</span>;
+        return <span key={index} className="badge badge-info">Paciente</span>;
       case 'admin':
-        return <span className="badge badge-danger">Administrador</span>;
+        return <span key={index} className="badge badge-danger">Administrador</span>;
       case 'receptionist':
-        return <span className="badge badge-secondary">Recepcionista</span>;
+        return <span key={index} className="badge badge-secondary">Recepcionista</span>;
       case 'doctor':
-        return <span className="badge badge-primary">Doctor</span>;
+        return <span key={index} className="badge badge-primary">Doctor</span>;
       default:
         break;
     }
@@ -178,7 +178,7 @@ const UserList = (props) => {
       sortable: true,
       left: true,
       cell: (row, index, column, id) =>
-        row.roles.map((rol) => labelKeyRenderRoles(rol)),
+        row.roles.map((rol, index) => labelKeyRenderRoles(rol, index)),
     },
     {
       name: 'Email',

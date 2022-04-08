@@ -1,17 +1,6 @@
-import React, { Fragment , useState , useEffect } from 'react';
+import React, { Fragment } from 'react';
 
-const Loader = () => {
-    const [show, setShow] = useState(true);
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            setShow(false)
-          }, 1000);
-        
-        return() => {
-            clearTimeout(timeout)
-        }
-        
-    },[show]);
+const Loader = ({ show }) => {
     return (
         <Fragment>
             <div className={`loader-wrapper ${show ? '' : 'loderhide'}`} >

@@ -2,24 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import SweetAlert from 'sweetalert2';
+import { useSelector } from 'react-redux';
 
 import * as patientService from '../../services/patient.service';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 
 const PatientQuickAdd = (props) => {
 
+  const { loggedUser } = useSelector((store) => store.UserLogin);
+
   const [ healthInsurancesCompanies, setHealthInsurancesCompanies ] = useState();
   useEffect(() => {
-    healthInsuranceService.getAll().then((res) => setHealthInsurancesCompanies(res.data));
+    healthInsuranceService.getAll(loggedUser).then((res) => setHealthInsurancesCompanies(res.data));
   }, []);
+  const [ healthInsurancePlans, setHealthInsurancePlans ] = useState([]);
 
   const { register, handleSubmit, errors } = useForm();
-
-  
-  const [ healthInsurancePlans, setHealthInsurancePlans ] = useState([]);
-  // const [ healthInsuranceCompany, setHealthInsuranceCompany ] = useState({});
-
-  
 
   const handleSubmitForm = (data) => {
     if (data !== '') {
@@ -44,7 +42,7 @@ const PatientQuickAdd = (props) => {
           //     id: 2,
           //   })
           // );
-          patientService.savePatient(data).then(res => {
+          patientService.save(data).then(res => {
             toast.success('Paciente dado de alta con éxito.', {
               position: toast.POSITION.BOTTOM_RIGHT,
             });
@@ -61,11 +59,13 @@ const PatientQuickAdd = (props) => {
     }
   };
 
-  const handleHealthInsuranceChange = (insuranceCode) => {
-    if (insuranceCode) {
-      const healthInsurance = healthInsurancesCompanies.filter(x => x.code === insuranceCode);
+  const handleHealthInsuranceChange = (insuranceId) => {
+    if (insuranceId) {
+      const healthInsurance = healthInsurancesCompanies.filter(x => x.id === insuranceId);
       if(healthInsurance.length > 0)
         setHealthInsurancePlans(healthInsurance[0].plans);
+    } else {
+      setHealthInsurancePlans([]);
     }
   }
 
@@ -145,12 +145,13 @@ const PatientQuickAdd = (props) => {
               className="form-control"
               name="healthInsurance"
               id="healthInsurance"
-              defaultValue="nn"
+              value={undefined}
               onChange={(e) => handleHealthInsuranceChange(e.target.value)}
               ref={register({ required: true })}
             >
+                <option value="">No Posee</option>
                 {healthInsurancesCompanies && healthInsurancesCompanies.map((company, i) => (
-                  <option key={company.code} value={company.code}>{company.description}</option>
+                  <option key={company.id} value={company.id}>{company.description}</option>
                 ))}
             </select>
           </div>
@@ -166,7 +167,7 @@ const PatientQuickAdd = (props) => {
               ref={register({ required: true })}
             >
                 {healthInsurancePlans && healthInsurancePlans.map((company, i) => (
-                  <option key={company.code}>{company.description}</option>
+                  <option key={company.code}>{company.code}</option>
                 ))}
             </select>
           </div>

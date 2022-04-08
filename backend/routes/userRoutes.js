@@ -1,24 +1,27 @@
 import { Router } from 'express'
-import { create, update, inactivate, activate, getById, getAll } from '../controllers/userControllers.js'
+import asyncHandler from 'express-async-handler'
+import UserController from '../controllers/UserController.js'
 import { checkUserAuth } from '../middleware/authMiddleware.js'
+
+const userController = new UserController();
 const router = Router()
 
 router
   .route('/')
-  .get(checkUserAuth, getAll)
-  .post(checkUserAuth, create)
+  .get(checkUserAuth, asyncHandler(userController.getAll))
+  .post(checkUserAuth, asyncHandler(userController.create))
 
 router
   .route('/:id')
-  .get(checkUserAuth, getById)
-  .put(checkUserAuth, update)
+  .get(checkUserAuth, asyncHandler(userController.getById))
+  .put(checkUserAuth, asyncHandler(userController.update))
 
 router
   .route('/:id/inactivate')
-  .get(checkUserAuth, inactivate)
+  .get(checkUserAuth, asyncHandler(userController.inactivate))
 
 router
   .route('/:id/activate')
-  .get(checkUserAuth, activate)
+  .get(checkUserAuth, asyncHandler(userController.activate))
 
 export default router

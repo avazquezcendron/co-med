@@ -10,6 +10,10 @@ const laboratoryTypeSchema = mongoose.Schema(
   }
 )
   
+laboratoryTypeSchema.set('toJSON', {
+  virtuals: true
+});
+
 const LaboratoryType = mongoose.model('LaboratoryType', laboratoryTypeSchema)
 
 export default LaboratoryType

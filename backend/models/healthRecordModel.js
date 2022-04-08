@@ -35,6 +35,10 @@ const healthRecordSchema = mongoose.Schema(
   }
 );
 
+healthRecordSchema.set('toJSON', {
+  virtuals: true
+});
+
 const HealthRecord = mongoose.model('HealthRecord', healthRecordSchema);
 
 export default HealthRecord;

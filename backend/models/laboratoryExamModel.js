@@ -19,6 +19,10 @@ const laboratoryExamSchema = mongoose.Schema(
   }
 )
   
+laboratoryExamSchema.set('toJSON', {
+  virtuals: true
+});
+
 const LaboratoryExam = mongoose.model('LaboratoryExam', laboratoryExamSchema)
 
 export default LaboratoryExam

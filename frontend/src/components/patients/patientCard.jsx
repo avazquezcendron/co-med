@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Collapse } from 'reactstrap';
+import { useSelector, useDispatch } from 'react-redux';
 
 const PatientCard = (props) => {
+  const { patient, status } = useSelector((store) => store.Patient);
+
   const [isProfile, setisProfile] = useState(true);
-  const patient = props.patient;
   const calculateAge = (dateString) => {
     var birthday = new Date(dateString);
     var ageDifMs = Date.now() - birthday.getTime();

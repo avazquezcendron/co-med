@@ -29,6 +29,10 @@ const prescriptionSchema = mongoose.Schema(
   }
 );
 
+prescriptionSchema.set('toJSON', {
+  virtuals: true
+});
+
 const Prescription = mongoose.model('Prescription', prescriptionSchema);
 
 export default Prescription;

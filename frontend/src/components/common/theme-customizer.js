@@ -6,8 +6,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { toast } from 'react-toastify';
 import {Customize,Customizer,Color,Pattern,Image,LayoutType,RTLLayout,LTRLayout,SidebarBackgroundSetting,PreviewRealTime,CopyText,ModalTitle,SidebarType,Default,Border,IconColor,DarkLayout,MixLayout,LightLayout,Cancel,Configuration,SidebarSettings} from '../../constant'
 
-import PatientQuickAdd from './patientQuickAdd';
-
 const ThemeCustomizer = () => {
 
     const configDB = useSelector(content => content.Customizer.customizer);
@@ -449,9 +447,6 @@ const ThemeCustomizer = () => {
                                     </li>
                                 </ul>
                             </TabPane> */}
-                            <TabPane tabId="1">
-                                <PatientQuickAdd />                               
-                            </TabPane>
                             <TabPane tabId="2">
                                 <h6>{LightLayout}</h6>
                                 <ul className="layout-grid customizer-color">

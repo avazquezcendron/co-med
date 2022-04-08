@@ -30,7 +30,7 @@ const UserProfile = (props) => {
   useEffect(() => {
     if (id !== '0')
       userService.getById(id, loggedUser).then((user) => setUser(user));
-  }, [mode]);
+  }, [mode, id]);
 
   const handleSubmitForm = (data) => {
     if (!user.roles || user.roles.length == 0) {
@@ -185,7 +185,6 @@ const UserProfile = (props) => {
                   </div>
                   <fieldset disabled={mode === 'browse'}>
                     <div className="card-body">
-                      <h6>{'Infromación Personal'}</h6>
                       <div className="form-group row contact-profile m-b-50">
                         <div className="col-md-4 offset-md-4 text-center">
                           <img
@@ -205,6 +204,7 @@ const UserProfile = (props) => {
                           </div>
                         </div>
                       </div>
+                      <h6>{'Infromación Personal'}</h6>
                       <div className="form-group row">
                         <label
                           className="col-md-2 col-form-label"

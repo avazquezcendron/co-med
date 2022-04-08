@@ -23,6 +23,17 @@ const PatientSchema = mongoose.Schema(
     phoneNumber: Number,
     avatarUrl: String,
     bio: String,
+    contactPerson: {
+      firstName: { type: String },
+      lastName: { type: String },
+      email: {
+        type: String,
+        lowercase: true,
+      },
+      phoneNumber: Number,
+      address: String,
+      bond: String,
+    },
     address: {
       street: String,
       city: String,
@@ -58,12 +69,17 @@ const PatientSchema = mongoose.Schema(
         ref: 'Appointment',
       },
     ],
+    status: { type: String, default: 'active' }
   },
   {
     timestamps: true,
     optimisticConcurrency: true
   }
 );
+
+PatientSchema.set('toJSON', {
+  virtuals: true
+});
 
 const Patient = mongoose.model('Patient', PatientSchema);
 

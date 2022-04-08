@@ -60,6 +60,10 @@ const DoctorSchema = mongoose.Schema(
   }
 );
 
+DoctorSchema.set('toJSON', {
+  virtuals: true
+});
+
 const Doctor = mongoose.model('Doctor', DoctorSchema);
 
 export default Doctor;

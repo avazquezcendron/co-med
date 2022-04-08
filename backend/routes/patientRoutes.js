@@ -1,20 +1,27 @@
 import { Router } from 'express'
-import {
-  addPatient,
-  editPatient,
-  getPatientDetails,
-  getPatientsList,
-} from '../controllers/patientControllers.js'
+import asyncHandler from 'express-async-handler'
 import { checkUserAuth } from '../middleware/authMiddleware.js'
+import PatientController from '../controllers/PatientController.js'
+
+const patientController = new PatientController();
 const router = Router()
 
 router
   .route('/')
-  .get(checkUserAuth, getPatientsList)
-  .post(checkUserAuth, addPatient)
+  .get(checkUserAuth, asyncHandler(patientController.getAll))
+  .post(checkUserAuth, asyncHandler(patientController.create))
+
 router
   .route('/:id')
-  .get(checkUserAuth, getPatientDetails)
-  .put(checkUserAuth, editPatient)
+  .get(checkUserAuth, asyncHandler(patientController.getById))
+  .put(checkUserAuth, asyncHandler(patientController.update))
+
+router
+  .route('/:id/inactivate')
+  .get(checkUserAuth, asyncHandler(patientController.inactivate))
+
+router
+  .route('/:id/activate')
+  .get(checkUserAuth, asyncHandler(patientController.activate))
 
 export default router

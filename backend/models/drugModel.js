@@ -10,6 +10,10 @@ const drugSchema = mongoose.Schema(
   }
 )
   
+drugSchema.set('toJSON', {
+  virtuals: true
+});
+
 const Drug = mongoose.model('Drug', drugSchema)
 
 export default Drug

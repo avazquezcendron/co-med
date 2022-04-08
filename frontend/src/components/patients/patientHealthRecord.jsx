@@ -6,14 +6,14 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import axios from 'axios'
 
+import PatientPersonalData from './patientPersonalData';
+
 const PatientHealthRecord = (props) => {
   registerLocale('es', es);
 
   const patient = props.patient;
     
   const [dataTab, setdataTab] = useState('datos');
-  const [dobtDate, setdobDate] = useState(null)
-  const [osFecIngresoDate, setosFecIngresoDate] = useState(null)  
   const [alergias, setAlergias] = useState([])
   const [medicamentosActivos, setmedicamentosActivos] = useState([])
   const [isAlergias, setisAlergias] = useState(false);
@@ -33,15 +33,6 @@ const PatientHealthRecord = (props) => {
       setmedicamentosActivos(["Lexotanil", "Rivotril", "Acitromicina"]);
       axios.get(`${process.env.PUBLIC_URL}/api/sticky.json`).then(res => setNotes(res.data))
   },[])
-
-  const handleDoBChange = date => {
-    setdobDate(date);
-  };
-
-  const handleOsFecIngresoChange = date => {
-    setosFecIngresoDate(date);
-  };
-
 
   //Add new sticky note
   const addPrescription = () => {
@@ -115,182 +106,8 @@ const PatientHealthRecord = (props) => {
       </ul>
         <TabContent  activeTab={dataTab}>
             <TabPane  className="fade show" tabId="datos">
-                <div className="col-sm-12">
-                    <div className="card">
-                        <div className="card-header">
-                            <h5>{"Datos generales del paciente"}</h5><span>{"Información básica y de contacto."}</span>
-                        </div>
-                        <div className="card-body">
-                          <form className="theme-form mega-form">
-                            <h6>{'Infromación Personal'}</h6>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputName">{'Nombre'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputName" type="text"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputLastnames">{'Apellido'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputLastnames" type="text"  />
-                                </div>
-                            </div>                  
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputDocType">{'Tipo de Documento'}</label>
-                                <div className="col-md-3">
-                                    <select className="form-control" id="inputDocType" defaultValue="DNI">
-                                        <option>{"DNI"}</option>
-                                        <option>{"LE"}</option>
-                                        <option>{"Otro"}</option>
-                                    </select>
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputDocNumber">{'Nro. de Documento'}</label>
-                                <div className="col-md-3">
-                                  <input className="form-control" id="inputDocNumber" type="number"  />
-                                </div>
-                            </div>
-                            <fieldset className="form-group">
-                                <div className="row">
-                                    <label className="col-md-2 col-form-label" htmlFor="inputSex">{'Sexo Biológico'}</label>
-                                    <div className="col-md-3">
-                                        <div className="radio radio-primary ml-2">
-                                            <input id="radio11" type="radio" name="radio1" value="Masculino" />
-                                            <label htmlFor="radio11">{"Masculino"}</label>
-                                        </div>
-                                        <div className="radio radio-primary ml-2">
-                                            <input id="radio22" type="radio" name="radio1" value="Femenino" />
-                                            <label htmlFor="radio22">{"Femenino"}</label>
-                                        </div>
-                                    </div>
-                                            
-                                    <label className="col-md-2 col-form-label" htmlFor="inputPerceptGender">{'Género Percibido'}</label>
-                                    <div className="col-md-3">
-                                        <select className="form-control" id="inputPerceptGender" defaultValue="Cisgénero">
-                                            <option>{"Cisgénero"}</option>
-                                            <option>{"Transgénero"}</option>
-                                            <option>{"Transexual"}</option>
-                                            <option>{"No-binario"}</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </fieldset>
-                            <hr className="mt-4 mb-4" />
-                            <h6>{'Datos de Contacto'}</h6>                  
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputTel">{'Teléfono'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputTel" type="tel"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputEmail3">{'Email'}</label>
-                                <div className="col-md-3">
-                                    <input className="form-control" id="inputEmail3" type="email" />
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputNationality">{'Nacionalidad'}</label>
-                                <div className="col-md-3">
-                                    <input className="form-control" id="inputNationality" type="text" />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputFecNac">{'Fec. Nacimiento'}</label>
-                                <div className="col-md-3">
-                                    <div className="datepicker-here" data-language="es" id="inputFecNac">
-                                      <DatePicker
-                                        className="form-control digits"
-                                        placeholderText="dd/MM/yyyy"
-                                        selected={dobtDate}
-                                        locale="es"
-                                        dateFormat="dd/MM/yyyy"
-                                        onChange={handleDoBChange}
-                                      />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputDir">{'Dirección'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputDir" type="text"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputCity">{'Ciudad'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputCity" type="text"  />
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputState">{'Provincia'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputState" type="text"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputCountry">{'País'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputCountry" type="text"  />
-                                </div>
-                            </div>
-                            <hr className="mt-4 mb-4" />
-                            <h6>{'Cobertura Médica'}</h6>   
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputOS">{'Obra Social'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputOS" type="text"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputOSPlan">{'Plan'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputOSPlan" type="text"  />
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputOSNro">{`Nro. de Carnet ${patient.healthInsurance}`}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputOSNro" type="text"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputOSFecIngreso">{'Fec. Ingreso'}</label>
-                                <div className="col-md-3">
-                                  <div className="datepicker-here" data-language="es" id="inputOSFecIngreso">
-                                      <DatePicker
-                                        className="form-control digits"
-                                        placeholderText="dd/MM/yyyy"
-                                        selected={osFecIngresoDate}
-                                        locale="es"
-                                        dateFormat="dd/MM/yyyy"
-                                        onChange={handleOsFecIngresoChange}
-                                      />
-                                    </div>
-                                </div>
-                            </div>
-                            <hr className="mt-4 mb-4" />
-                            <h6>{'Persona de Contacto'}</h6>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputNameCP">{'Nombre'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputNameCP" type="text"  />
-                                </div>
-                                <label className="col-md-1 col-form-label" htmlFor="inputLastnamesCP">{'Apellido'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputLastnamesCP" type="text"  />
-                                </div>
-                                <label className="col-md-1 col-form-label" htmlFor="inputCpVin">{'Vínculo'}</label>
-                                <div className="col-md-2">
-                                <input className="form-control" id="inputCpVin" type="text"  />
-                                </div>
-                            </div>   
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputTelCP">{'Teléfono'}</label>
-                                <div className="col-md-3">
-                                <input className="form-control" id="inputTelCP" type="tel"  />
-                                </div>
-                                <label className="col-md-2 col-form-label" htmlFor="inputDirCP">{'Dirección'}</label>
-                                <div className="col-md-3">
-                                  <input className="form-control" id="inputDirCP" type="text"  />
-                                </div>
-                            </div>
-                            <hr className="mt-4 mb-4" />
-                            <h6>{'Información adicional'}</h6>
-                            <div className="form-group row">
-                                <label className="col-md-2 col-form-label" htmlFor="inputBio">{'Biografía'}</label>
-                                <div className="col-md-12">
-                                  <textarea className="form-control" id="inputBio" rows="5" spellcheck="false" />
-                                </div>
-                            </div>
-                          </form>
-                        </div>
-                    </div>
+                <div className="col-md-12">
+                    <PatientPersonalData />
                 </div>
             </TabPane>
             <TabPane tabId="antecedentes">

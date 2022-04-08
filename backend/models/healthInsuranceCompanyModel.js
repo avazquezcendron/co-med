@@ -4,7 +4,7 @@ import healthInsurancePlanSchema from './healthInsurancePlanSchema.js';
 
 const healthInsuranceCompanySchema = mongoose.Schema(
   {
-    code: { type: String, required: true },
+    code: { type: String, required: true, index: true, unique: true },
     description: { type: String, required: true },
     plans: [ healthInsurancePlanSchema ],
   },
@@ -13,6 +13,10 @@ const healthInsuranceCompanySchema = mongoose.Schema(
   }
 )
   
+healthInsuranceCompanySchema.set('toJSON', {
+  virtuals: true
+});
+
 const HealthInsuranceCompany = mongoose.model('HealthInsuranceCompany', healthInsuranceCompanySchema)
 
 export default HealthInsuranceCompany
