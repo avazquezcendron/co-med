@@ -21,6 +21,11 @@ export const PATIENT_DELETE_REQUEST = 'patient/patientDeleteRequest'
 export const PATIENT_DELETE_SUCCESS = 'patient/patientDeleteSuccess'
 export const PATIENT_DELETE_FAILURE = 'patient/patientDeleteFailure'
 
+export const PATIENT_CHANGE_STATUS_WATCHER = 'patient/patientChangeStatusWatcher'
+export const PATIENT_CHANGE_STATUS_REQUEST = 'patient/patientChangeStatuseRequest'
+export const PATIENT_CHANGE_STATUS_SUCCESS = 'patient/patientChangeStatuseSuccess'
+export const PATIENT_CHANGE_STATUS_FAILURE = 'patient/patientChangeStatuseFailure'
+
 
 export const patientGetAllWatcher = () => {
   return {
@@ -105,7 +110,7 @@ export const patientSaveFailure = (error) => {
   }
 }
 
-export const patientDeletetWatcher = (patient) => {
+export const patientDeleteWatcher = (patient) => {
   return {
     type: PATIENT_DELETE_WATCHER,
     payload: patient
@@ -127,6 +132,32 @@ export const patientDeleteSuccess = (patient) => {
 export const patientDeleteFailure = (error) => {
   return {
     type: PATIENT_DELETE_FAILURE,
+    payload: error,
+  }
+}
+
+export const patientChangeStatustWatcher = (patient) => {
+  return {
+    type: PATIENT_CHANGE_STATUS_WATCHER,
+    payload: patient
+  };
+};
+
+export const patientChangeStatusRequest = () => {
+  return {
+    type: PATIENT_CHANGE_STATUS_REQUEST,
+  }
+}
+export const patientChangeStatusSuccess = (patient) => {
+  return {
+    type: PATIENT_CHANGE_STATUS_SUCCESS,
+    payload: patient,
+  }
+}
+
+export const patientChangeStatusFailure = (error) => {
+  return {
+    type: PATIENT_CHANGE_STATUS_FAILURE,
     payload: error,
   }
 }

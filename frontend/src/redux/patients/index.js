@@ -14,7 +14,11 @@ import {
   PATIENT_GET_BY_ID_WATCHER,
   patientGetByIdRequest,
   patientGetByIdSuccess,
-  patientGetByIdFailure
+  patientGetByIdFailure,
+  PATIENT_CHANGE_STATUS_WATCHER,
+  patientChangeStatusRequest,
+  patientChangeStatusSuccess,
+  patientChangeStatusFailure,
 } from './actions';
 
 
@@ -35,6 +39,21 @@ function* savePatientAsync({ payload }) {
         ? err.response.data.message
         : err.message;
     yield put(patientSaveFailure(errMsg));
+  }
+}
+
+function* changeStatusPatientAsync({ payload }) {
+  try {
+    yield put(patientChangeStatusRequest());
+    const loggedUser = yield select(getLoggedUser);
+    const data = yield call(patientService.changeStatus, payload.id, payload.status, loggedUser );  
+    yield put(patientChangeStatusSuccess(data));
+  } catch (err) {
+    const errMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    yield put(patientChangeStatusFailure(errMsg));
   }
 }
 
@@ -72,4 +91,5 @@ export function* WatcherPatients() {
   yield takeLatest(PATIENT_SAVE_WATCHER, savePatientAsync);
   yield takeLatest(PATIENT_GET_ALL_WATCHER, fetchPatientsAsync);
   yield takeLatest(PATIENT_GET_BY_ID_WATCHER, fetchPatientAsync);
+  yield takeLatest(PATIENT_CHANGE_STATUS_WATCHER, changeStatusPatientAsync);
 }

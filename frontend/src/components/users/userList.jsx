@@ -238,6 +238,7 @@ const UserList = (props) => {
                 padding: 11,
                 color: 'rgb(40, 167, 69)',
               }}
+              title="Editar Usuario"
             ></i>
           </span>
         </div>

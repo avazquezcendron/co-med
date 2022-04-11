@@ -26,7 +26,7 @@ const CustomMaterialMenu = ({ row, onDeleteRow, size, menuItems }) => {
 
 	return (
 		<span>
-			<IconButton aria-label="more" aria-controls="long-menu" aria-haspopup="true" onClick={handleClick} size={size}>
+			<IconButton aria-label="more" aria-controls="long-menu" aria-haspopup="true" onClick={handleClick} size={size} title="Más opciones">
 				<MoreVertIcon />
 			</IconButton>
 			<Menu

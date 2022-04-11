@@ -10,23 +10,29 @@ import { useSelector, useDispatch } from 'react-redux';
 import CustomMaterialMenu from '../common/data-table/customMaterialMenu';
 import Breadcrumb from '../common/breadcrumb';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
-import { patientGetAllWatcher, patientInitialize } from '../../redux/patients/actions';
-import { LOADED } from '../../redux/statusTypes';
+import {
+  patientGetAllWatcher,
+  patientInitialize,
+  patientChangeStatustWatcher,
+} from '../../redux/patients/actions';
+import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 
 const PatientList = (props) => {
   const { patients, status } = useSelector((store) => store.Patients);
+  const { status: patientStoreStatus } = useSelector((store) => store.Patient);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(patientGetAllWatcher());
   }, []);
 
+  useEffect(() => {
+    if (patientStoreStatus === SUCCEEDED) dispatch(patientGetAllWatcher());
+  }, [patientStoreStatus]);
+
   const [filterText, setFilterText] = useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-  // const filteredItems = data.filter(
-  //   item => item.name && item.name.includes(filterText)
-  // );
   const filteredUsers = patients
     ? patients.filter((item) => {
         // const dataToFilter = { position: item.position, salary: item.salary, office: item.office, email: item.email };
@@ -94,7 +100,7 @@ const PatientList = (props) => {
 
   const handleNewClick = () => {
     dispatch(patientInitialize());
-  }
+  };
 
   const handleRowClick = (row, event) => {
     props.history.push(
@@ -109,9 +115,9 @@ const PatientList = (props) => {
   const handleUserChangeStatusClick = (patient) => {
     SweetAlert.fire({
       title: 'Atención!',
-      text: `Se cambiará el estado del usuario "${patient.firstName} ${patient.lastName}" a "${
-        patient.status === 'active' ? 'Inactivo' : 'Activo'
-      }".`,
+      text: `Se cambiará el estado del usuario "${patient.firstName} ${
+        patient.lastName
+      }" a "${patient.status === 'active' ? 'Inactivo' : 'Activo'}".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -120,7 +126,7 @@ const PatientList = (props) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.value) {
-        
+        dispatch(patientChangeStatustWatcher(patient));
       }
     });
   };
@@ -153,7 +159,7 @@ const PatientList = (props) => {
       selector: 'name',
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => `${row.firstName} ${row.lastName}`
+      cell: (row, index, column, id) => `${row.firstName} ${row.lastName}`,
     },
     {
       name: 'Nro. Documento',
@@ -166,21 +172,28 @@ const PatientList = (props) => {
       selector: 'healthRecordId',
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => row.healthRecord ? row.healthRecord.healthRecordNumber : ' - '
+      cell: (row, index, column, id) =>
+        row.healthRecord ? row.healthRecord.healthRecordNumber : ' - ',
     },
     {
       name: 'Obra Social',
       selector: 'healthInsurance',
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => row.healthInsurances && row.healthInsurances.length > 0 ? row.healthInsurances[0].healthInsuranceCompany.description : ' - '
+      cell: (row, index, column, id) =>
+        row.healthInsurances && row.healthInsurances.length > 0
+          ? row.healthInsurances[0].healthInsuranceCompany.description
+          : ' - ',
     },
     {
       name: 'Nro. de Credencial',
       selector: 'healthInsuranceId',
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => row.healthInsurances && row.healthInsurances.length > 0 ? row.healthInsurances[0].cardNumber : ' - '
+      cell: (row, index, column, id) =>
+        row.healthInsurances && row.healthInsurances.length > 0
+          ? row.healthInsurances[0].cardNumber
+          : ' - ',
     },
     // {
     //   name: 'Email',
@@ -222,7 +235,19 @@ const PatientList = (props) => {
               className={`fa fa-${
                 row.status === 'active' ? 'minus-circle' : 'plus-circle'
               }`}
-              style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}
+              style={{
+                width: 35,
+                fontSize: 16,
+                padding: 11,
+                color: `${
+                  row.status === 'active' ? '#e4566e' : 'rgb(40, 167, 69)'
+                }`,
+              }}
+              title={`${
+                row.status === 'active'
+                  ? 'Desactivar Paciente'
+                  : 'Activar Paciente'
+              }`}
             ></i>
           </span>
           <span onClick={() => handleEditPatientClick(row)}>
@@ -234,6 +259,7 @@ const PatientList = (props) => {
                 padding: 11,
                 color: 'rgb(40, 167, 69)',
               }}
+              title="Editar Paciente"
             ></i>
           </span>
           <CustomMaterialMenu
