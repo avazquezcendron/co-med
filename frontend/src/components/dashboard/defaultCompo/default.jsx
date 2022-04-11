@@ -1,4 +1,4 @@
-import React ,{useEffect, useState , Fragment} from 'react';
+import React ,{useEffect, useState , useRef, Fragment} from 'react';
 import Breadcrumb from '../../common/breadcrumb';
 import { CloudDrizzle, Navigation, Users, DollarSign, Tag, Calendar, ShoppingBag, MessageCircle, MinusCircle, ThumbsUp, MessageSquare, Briefcase, MoreHorizontal, Send, Activity, Anchor, Compass, Cpu, Slack, Umbrella, Box, Book } from 'react-feather';
 import { calcultionOptions, calcultionData } from '../../../data/default'
@@ -41,10 +41,13 @@ const Default = (props) => {
     const month = [props.t("January"), props.t("February"), props.t("March"), props.t("April"), props.t("May"), props.t("June"), props.t("July"), props.t("August"), props.t("September"),  props.t("October"), props.t("November"), props.t("December")];
     
     const [date, setDate] = useState(new Date());
+    const dateRef = useRef(null);
 
     useEffect(() => {
-        setInterval(() => setDate(new Date()), 1000);
-      }, []);
+        clearInterval(dateRef.current);
+        dateRef.current = setInterval(() =>setDate(new Date()), 1000);
+        return () => clearInterval(dateRef.current);
+      }, [date]);
     
     useEffect(() => {
         var appointmentsAvailablesToday = Knob({

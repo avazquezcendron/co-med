@@ -199,7 +199,7 @@ const PatientCard = (props) => {
 
                 <div className="col-md-6">
                   <div className="col-md-12">
-                                <span className="f-w-600">Nro. de Carnet {patient.healthInsurance}</span>
+                                <span className="f-w-600">Nro. de Credencial {patient.healthInsurance}</span>
                   </div>
                   <div className="col-md-12 m-b-10">
                     <p>8000012313123332123</p>

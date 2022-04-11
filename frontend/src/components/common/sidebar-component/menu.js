@@ -18,7 +18,7 @@ export const MENUITEMS = [
         title: 'Dashboard', icon: Home, type: 'link', path: '/dashboard/default', badgeType: 'primary', active: false
     },
     {
-        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: true, path: '/patient'
+        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: false, path: '/patient'
     },
     {
         title: 'Doctors', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'

@@ -8,7 +8,7 @@ import SweetAlert from 'sweetalert2';
 
 import defaultuser from '../../assets/images/user/user.png';
 import { patientSavetWatcher } from '../../redux/patients/actions';
-import { SUCCEEDED, LOADED } from '../../redux/statusTypes';
+import { SUCCEEDED, LOADED, LOADING } from '../../redux/statusTypes';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 import Loader from '../common/loader';
 
@@ -128,7 +128,11 @@ const PatientPersonalData = ({ history, showAvatar }) => {
         if (result.value) {
           const patientData = { ...patient, ...data, dateOfBirth };
           if (patientData.healthInsurances?.length > 0) {
-            patientData.healthInsurances[0].admissionDate = osFecIngresoDate;
+            if (!patientData.healthInsurances[0].healthInsuranceCompany) {
+              patientData.healthInsurances = [];
+            } else {
+              patientData.healthInsurances[0].admissionDate = osFecIngresoDate;
+            }
           }
           dispatch(patientSavetWatcher(patientData));
         }
@@ -164,7 +168,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   return (
     <Fragment>
-      {status === LOADED || status === SUCCEEDED || mode === 'new' ? (
+      {status === LOADED || status === SUCCEEDED || (mode === 'new' && status !== LOADING) ? (
         <div className="card">
           <div className="card-header">
             <h5>{'Datos generales del paciente'}</h5>

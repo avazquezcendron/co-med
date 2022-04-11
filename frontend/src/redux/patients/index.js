@@ -29,10 +29,11 @@ function* savePatientAsync({ payload }) {
     let data;
     if (payload.id && payload.id !== '0') {
       data = yield call(patientService.update, payload, loggedUser );  
+      yield put(patientSaveSuccess(data));
     } else {
       data = yield call(patientService.save, payload, loggedUser );  
+      yield put(patientSaveSuccess(data));
     }
-    yield put(patientSaveSuccess(data));
   } catch (err) {
     const errMsg =
       err.response && err.response.data.message

@@ -64,7 +64,11 @@ class BaseController {
   async create(req, res, next) {
     const createModel = new this._model(req.body);
     const savedModel = await createModel.save();
-    return res.status(200).json(savedModel);
+    req.params = {
+      ...req.params,
+      id: savedModel._id
+    };
+    return this.getById(req, res, next);
   }
 
   /**
@@ -89,8 +93,8 @@ class BaseController {
       for (const [key, value] of Object.entries(req.body)) {
         model[key] = value;
       }
-      const updatedModel = await model.save();
-      return res.status(200).json(updatedModel);
+      await model.save();
+      return this.getById(req, res, next);
     } else {
       return res.status(404).json('Record not found');
     }

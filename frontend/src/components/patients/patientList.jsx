@@ -156,7 +156,7 @@ const PatientList = (props) => {
     },
     {
       name: 'Nombre y Apellido',
-      selector: 'name',
+      selector: row => row.firstName,
       sortable: true,
       left: true,
       cell: (row, index, column, id) => `${row.firstName} ${row.lastName}`,
@@ -169,7 +169,7 @@ const PatientList = (props) => {
     },
     {
       name: 'Nro. Historia Clínica',
-      selector: 'healthRecordId',
+      selector: 'healthRecord.healthRecordNumber',
       sortable: true,
       left: true,
       cell: (row, index, column, id) =>
@@ -178,7 +178,7 @@ const PatientList = (props) => {
     {
       name: 'Obra Social',
       selector: 'healthInsurance',
-      sortable: true,
+      sortable: false,
       left: true,
       cell: (row, index, column, id) =>
         row.healthInsurances && row.healthInsurances.length > 0
@@ -187,7 +187,7 @@ const PatientList = (props) => {
     },
     {
       name: 'Nro. de Credencial',
-      selector: 'healthInsuranceId',
+      selector: 'healthInsurances[0].cardNumber',
       sortable: true,
       left: true,
       cell: (row, index, column, id) =>
