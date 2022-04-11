@@ -1,26 +1,27 @@
 import React, { Fragment, useState, useEffect, useMemo } from 'react';
 import DataTable from 'react-data-table-component';
 import { translate } from 'react-switch-lang';
-import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
 import SweetAlert from 'sweetalert2';
-import axios from 'axios';
+import { useSelector, useDispatch } from 'react-redux';
+
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
+import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
+import { getAppointmentsWatcher } from '../../redux/appointments/actions';
 
 const PatientsAgenda = (props) => {
-  const [patients, setPatients] = useState([]);
+  const appointments = useSelector((store) => store.Appointments.appointments);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      .get(`${process.env.PUBLIC_URL}/api/appointments.json`)
-      .then((res) => setPatients(res.data));
-  }, []);
+    dispatch(getAppointmentsWatcher());
+  }, [dispatch]);
 
   const [filterText, setFilterText] = useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   // const filteredItems = data.filter(
   //   item => item.name && item.name.includes(filterText)
   // );
-  const filteredUsers = patients.filter((item) => {
+  const filteredUsers = appointments.filter((item) => {
     // const dataToFilter = { position: item.position, salary: item.salary, office: item.office, email: item.email };
     // return  JSON.stringify(dataToFilter)
     //     .toLowerCase()
@@ -84,13 +85,13 @@ const PatientsAgenda = (props) => {
 
   const handleRowClick = (row, event) => {
     props.history.push(
-      `${process.env.PUBLIC_URL}/patient/${row.id}?mode=browse`
+      `${process.env.PUBLIC_URL}/patient/${row.patient.id}?mode=browse`
     );
   };
 
   const handleEditPatientClick = (row, event) => {
     props.history.push(
-      `${process.env.PUBLIC_URL}/patient/${row.id}?mode=edit`
+      `${process.env.PUBLIC_URL}/patient/${row.patient.id}?mode=edit`
     );
   };
 
@@ -218,7 +219,7 @@ const PatientsAgenda = (props) => {
                 hour12: false,
               })}</h6>
             <div className="media-body">
-              <span className="f-18 p-r-10">{`${row.patient.name}`}</span>
+              <span className="f-18 p-r-10">{`${row.patient.firstName} ${row.patient.lastName}`}</span>
               <span className="f-16 p-l-10 text-muted" style={{ borderLeft: '2px solid #999' }}>
                 <i className={`fa fa-${row.patient.sex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patient.age} años`}</span>
               {/* <span
@@ -252,15 +253,15 @@ const PatientsAgenda = (props) => {
       cell: (row, index, column, id) => (
         <div>
           <span className="p-r-10 text-muted">
-            <i className="fa fa-medkit">  </i>
-            {' ' + row.patient.healthInsurance}
+            <i className="fa fa-medkit mr-1">  </i>
+            {' ' + row.patient.healthInsurances?.length > 0 ? row.patient.healthInsurances[0].healthInsuranceCompany.description : ''}
           </span>
           <span
             className="p-l-10 text-muted"
             style={{ borderLeft: '2px solid #999' }}
           >
             {'Nro. de Credencial '}
-            <strong>{row.patient.healthInsuranceId}</strong>
+            <strong>{row.patient.healthInsurances?.length > 0 ? row.patient.healthInsurances[0].cardNumber : ''}</strong>
           </span>
         </div>
       ),
