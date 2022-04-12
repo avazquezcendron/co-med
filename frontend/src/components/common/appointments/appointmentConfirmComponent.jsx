@@ -29,7 +29,7 @@ const AppointmentConfirmComponent = (props) => {
             }) +
             'hs'
           : ''
-      } para el paciente ${appointmentData.patient.firstName} ${appointmentData.patient.lastName} con el doctor/a ${
+      } para el paciente ${appointmentData.patient.fullName} con el doctor/a ${
         appointmentData.doctor.name
       }.`,
       icon: 'warning',
@@ -44,7 +44,7 @@ const AppointmentConfirmComponent = (props) => {
         dispatch(
           saveAppointmentWatcher({
             ...appointmentData,
-            title: `${appointmentData.patient.firstName} ${appointmentData.patient.lastName} - ${appointmentData.mode}`,
+            title: `${appointmentData.patient.fullName} - ${appointmentData.mode}`,
             resourceId: appointmentData.doctor.id,
             constraint: 'businessHours',
             id: 2,

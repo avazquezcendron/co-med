@@ -35,7 +35,7 @@ const PatientProfile = (props) => {
         <Fragment> */}
           <Breadcrumb
             parent={{ title: props.t('Patients'), url: 'patient' }}
-            title={id === '0' ? 'Nuevo Paciente' : patient?.firstName + ' ' + patient?.lastName}
+            title={id === '0' ? 'Nuevo Paciente' : patient?.fullName }
           />
           <div className="container-fluid">
             <div className="edit-profile  ">

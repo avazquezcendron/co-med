@@ -7,7 +7,10 @@ import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 
 import defaultuser from '../../assets/images/user/user.png';
-import { patientSavetWatcher } from '../../redux/patients/actions';
+import {
+  patientSavetWatcher,
+  patientInitialize,
+} from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED, LOADING } from '../../redux/statusTypes';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 import Loader from '../common/loader';
@@ -25,6 +28,12 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const { patient, status } = useSelector((store) => store.Patient);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch(patientInitialize());
+    };
+  }, []);
 
   useEffect(() => {
     if (status === SUCCEEDED && mode === 'new') {
@@ -113,7 +122,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const handleSubmitForm = (data) => {
     if (data !== '') {
       const title = patient.id
-        ? `Se actualizarán los datos del paciente ${patient.firstName} ${patient.lastName}.`
+        ? `Se actualizarán los datos del paciente ${patient.fullName}.`
         : `Se dará de alta al paciente ${data.firstName} ${data.lastName}.`;
       SweetAlert.fire({
         title: 'Atención',
@@ -168,7 +177,9 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   return (
     <Fragment>
-      {status === LOADED || status === SUCCEEDED || (mode === 'new' && status !== LOADING) ? (
+      {status === LOADED ||
+      status === SUCCEEDED ||
+      (mode === 'new' && status !== LOADING) ? (
         <div className="card">
           <div className="card-header">
             <h5>{'Datos generales del paciente'}</h5>
@@ -714,8 +725,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                     />
                   </div>
                 </div>
-                <div className="card-footer m-b-40">
-                  {mode !== 'browse' && (
+                {mode !== 'browse' && (
+                  <div className="card-footer m-b-40">
                     <span className="pull-right">
                       {mode === 'new' && (
                         <button
@@ -729,13 +740,13 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                         {'Guardar'}
                       </button>
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </fieldset>
             </form>
           </div>
-          <div className="card-footer m-b-40">
-            {mode === 'browse' && (
+          {mode === 'browse' && (
+            <div className="card-footer m-b-40">
               <span className="pull-right">
                 <Link
                   className="btn btn-primary"
@@ -746,8 +757,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                   Editar
                 </Link>
               </span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <Loader show={true} />

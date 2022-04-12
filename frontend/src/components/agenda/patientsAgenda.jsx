@@ -219,7 +219,7 @@ const PatientsAgenda = (props) => {
                 hour12: false,
               })}</h6>
             <div className="media-body">
-              <span className="f-18 p-r-10">{`${row.patient.firstName} ${row.patient.lastName}`}</span>
+              <span className="f-18 p-r-10">{row.patient.fullName}</span>
               <span className="f-16 p-l-10 text-muted" style={{ borderLeft: '2px solid #999' }}>
                 <i className={`fa fa-${row.patient.sex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patient.age} años`}</span>
               {/* <span

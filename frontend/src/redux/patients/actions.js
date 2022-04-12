@@ -4,6 +4,7 @@ export const PATIENT_GET_ALL_WATCHER = 'patient/patientGetAllWatcher'
 export const PATIENT_GET_ALL_SUCCESS = 'patient/patientGetAllSuccess'
 export const PATIENT_GET_ALL_FAILURE = 'patient/patientGetAllFailure'
 
+export const PATIENTS_INITIALIZE = 'patient/patientsInitialize'
 export const PATIENT_INITIALIZE = 'patient/patientInitialize'
 
 export const PATIENT_GET_BY_ID_REQUEST = 'patient/patientGetByIdRequest'
@@ -27,11 +28,18 @@ export const PATIENT_CHANGE_STATUS_SUCCESS = 'patient/patientChangeStatuseSucces
 export const PATIENT_CHANGE_STATUS_FAILURE = 'patient/patientChangeStatuseFailure'
 
 
+export const patientsInitialize = () => {
+  return {
+    type: PATIENTS_INITIALIZE
+  };
+};
+
 export const patientGetAllWatcher = () => {
   return {
     type: PATIENT_GET_ALL_WATCHER
   };
 };
+
 
 export const patientGetAllRequest = () => {
   return {

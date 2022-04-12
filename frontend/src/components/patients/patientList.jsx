@@ -13,6 +13,7 @@ import DataTableFilterComponent from '../common/data-table/dataTableFilterCompon
 import {
   patientGetAllWatcher,
   patientInitialize,
+  patientsInitialize,
   patientChangeStatustWatcher,
 } from '../../redux/patients/actions';
 import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
@@ -25,6 +26,9 @@ const PatientList = (props) => {
 
   useEffect(() => {
     dispatch(patientGetAllWatcher());
+    return () => {
+      dispatch(patientsInitialize());
+    }
   }, []);
 
   useEffect(() => {
@@ -98,10 +102,6 @@ const PatientList = (props) => {
     },
   };
 
-  const handleNewClick = () => {
-    dispatch(patientInitialize());
-  };
-
   const handleRowClick = (row, event) => {
     props.history.push(
       `${process.env.PUBLIC_URL}/patient/${row.id}?mode=browse`
@@ -115,9 +115,7 @@ const PatientList = (props) => {
   const handleUserChangeStatusClick = (patient) => {
     SweetAlert.fire({
       title: 'Atención!',
-      text: `Se cambiará el estado del usuario "${patient.firstName} ${
-        patient.lastName
-      }" a "${patient.status === 'active' ? 'Inactivo' : 'Activo'}".`,
+      text: `Se cambiará el estado del usuario "${patient.fullName}" a "${patient.status === 'active' ? 'Inactivo' : 'Activo'}".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -156,10 +154,10 @@ const PatientList = (props) => {
     },
     {
       name: 'Nombre y Apellido',
-      selector: row => row.firstName,
+      selector: row => row.fullName,
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => `${row.firstName} ${row.lastName}`,
+      cell: (row, index, column, id) => row.fullName,
     },
     {
       name: 'Nro. Documento',
@@ -296,7 +294,6 @@ const PatientList = (props) => {
                         <div className="text-right">
                           <Link
                             className="btn btn-primary"
-                            onClick={handleNewClick}
                             to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
                           >
                             {' '}

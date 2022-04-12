@@ -15,6 +15,7 @@ import {
   PATIENT_CHANGE_STATUS_REQUEST,
   PATIENT_CHANGE_STATUS_SUCCESS,
   PATIENT_CHANGE_STATUS_FAILURE,
+  PATIENTS_INITIALIZE
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -25,6 +26,9 @@ const INITIAL_STATE_PATIENTS = {
 
 export const PatientsReducer = (state = INITIAL_STATE_PATIENTS, action) => {
   switch (action.type) {
+    case PATIENTS_INITIALIZE:
+      return INITIAL_STATE_PATIENTS;
+
     case PATIENT_GET_ALL_REQUEST:
       return { status: statusTypes.LOADING, patients: [] };
 

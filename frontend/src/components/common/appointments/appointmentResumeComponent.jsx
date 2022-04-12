@@ -17,7 +17,7 @@ const AppointmentResumeComponent = (props) => {
         <span className="f-w-600">Paciente</span>
       </div>
       <div className="col-md-12 ">
-        <p>{appointment.patient ? `${appointment.patient.firstName} ${appointment.patient.lastName}` : ''}</p>
+        <p>{appointment.patient ? appointment.patient.fullName : ''}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Tipo</span>

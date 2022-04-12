@@ -105,8 +105,8 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
               id="patient"
               name="patient"
               options={patients}
-              labelKey={(option) => option.firstName + ' ' + option.lastName}
-              filterBy={['firstName', 'option.lastName', 'nationalId', 'healthRecord.healthRecordId']}
+              labelKey={(option) => option.fullName}
+              filterBy={['fullName', 'nationalId', 'healthRecord.healthRecordId']}
               minLength={3}
               onChange={(selected) => handlePatientChange(selected)}
               selected={

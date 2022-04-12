@@ -81,6 +81,26 @@ PatientSchema.set('toJSON', {
   virtuals: true
 });
 
+PatientSchema.virtual('fullName').get(function () { 
+  return `${this.firstName} ${this.lastName}`;
+});
+
+PatientSchema.virtual('age').get(function () { 
+  if (this.dateOfBirth) {
+    return Math.floor((Date.now() - this.dateOfBirth.getTime()) / (1000 * 3600 * 24 * 365));
+  } else {
+    return '';
+  }
+});
+
+PatientSchema.virtual('lastVisit').get(function () { 
+  if (this.appointments?.length > 0) {
+    return this.appointments.sort(x => x.start)[0].start;
+  } else {
+    return '';
+  }
+});
+
 const Patient = mongoose.model('Patient', PatientSchema);
 
 export default Patient;
