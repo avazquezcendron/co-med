@@ -102,7 +102,7 @@ class BaseController {
 
   /**
    * @desc   Inactivate <model>
-   * @route  GET /api/<model>/inactivate/:id
+   * @route  GET /api/<model>/:id/inactivate
    * @access Private
    *
    * @param {Object} req The request object
@@ -124,7 +124,7 @@ class BaseController {
     
     /**
    * @desc   Activate <model>
-   * @route  GET /api/<model>/activate/:id
+   * @route  GET /api/<model>/:id/activate
    * @access Private
    *
    * @param {Object} req The request object

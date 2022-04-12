@@ -1,0 +1,28 @@
+import mongoose from 'mongoose'
+
+const studyExamSchema = mongoose.Schema(
+  {
+    value: { type: String, required: true },    
+    studyType: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'StudyType',
+    },
+    healthRecord: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'HealthRecord',
+    },
+  },
+  {
+    timestamps: true,
+  }
+)
+  
+studyExamSchema.set('toJSON', {
+  virtuals: true
+});
+
+const StudyExam = mongoose.model('StudyExam', studyExamSchema)
+
+export default StudyExam

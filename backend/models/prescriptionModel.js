@@ -8,7 +8,7 @@ const prescriptionSchema = mongoose.Schema(
     quantity: { type: Number, required: true },
     requiresDuplicate: { type: Boolean, default: false },
     longTerm: { type: Boolean, default: false },
-    drugId: {
+    drug: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: 'Drug',

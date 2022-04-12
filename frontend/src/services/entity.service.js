@@ -1,0 +1,96 @@
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+export const getAll = async (entity, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}`, config);
+  return data;
+};
+
+export const getById = async (entity, id, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.get(
+      `${process.env.PUBLIC_URL}/api/${entity}/${id}`,
+      config
+    );
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+  }
+};
+
+export const save = async (entity, entityData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.post(`/api/${entity}`, entityData, config);
+    toast.success('Registro dado de alta con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al dar de alta al registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
+
+export const update = async (entity, entityData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      `/api/${entity}/${entityData.id}`,
+      entityData,
+      config
+    );
+    toast.success('Registro actualizado con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al actualizar al registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};

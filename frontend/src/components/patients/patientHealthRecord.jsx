@@ -1,7 +1,14 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
-import { TabContent, TabPane, Collapse } from 'reactstrap';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import {
+  TabContent,
+  TabPane,
+  Collapse,
+  Popover,
+  PopoverHeader,
+  PopoverBody,
+} from 'reactstrap';
+import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import es from 'date-fns/locale/es';
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,6 +22,7 @@ import {
 } from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
+import * as entityService from '../../services/entity.service';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -25,6 +33,8 @@ const PatientHealthRecord = (props) => {
   const mode = query.get('mode');
 
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
+
+  const { loggedUser } = useSelector((store) => store.UserLogin);
 
   const { patient, status } = useSelector((store) => store.Patient);
   const dispatch = useDispatch();
@@ -42,6 +52,9 @@ const PatientHealthRecord = (props) => {
   const [notes, setNotes] = useState([]);
   const [isHealthRecord, setisHealthRecord] = useState(true);
 
+  const [popover, setPopover] = useState(false);
+  const popoverNewPatientToggle = () => setPopover(!popover);
+
   useEffect(() => {
     return () => {
       dispatch(patientInitialize());
@@ -51,7 +64,17 @@ const PatientHealthRecord = (props) => {
   useEffect(() => {
     // axios.get(`${process.env.PUBLIC_URL}/api/typeaheadData.json`).then(res => setOptions(res.data))
     setAlergias(['Productos Cosméticos', 'Penicilina', 'Picadura de Insectos']);
-    setmedicamentosActivos(['Lexotanil', 'Rivotril', 'Acitromicina']);
+    setmedicamentosActivos([
+      {
+        description: 'Diclogesic Relax',
+        format: '10 comprimidos recubiertos',
+        composition: 'Diclofenac sódico 50mg + Pridinol mesilato 4mg',
+        requiresPrescription: false,
+      },
+    ]);
+    // entityService
+    //   .getAll('drug', loggedUser)
+    //   .then((data) => setmedicamentosActivos(data));
   }, []);
 
   //Add new sticky note
@@ -96,7 +119,10 @@ const PatientHealthRecord = (props) => {
           <div className="card-header">
             <div className="row m-b-2">
               <div className="col-md-9">
-                <h4 className="card-title mb-0">{'Historia Clínica'}</h4>
+                <h4 className="card-title mb-0">
+                  {'Historia Clínica Nro. ' +
+                    patient.healthRecord?.healthRecordNumber}
+                </h4>
               </div>
               <div className="col-md-3">
                 <button
@@ -134,7 +160,7 @@ const PatientHealthRecord = (props) => {
                     }`}
                     onClick={() => setdataTab('antecedentes')}
                   >
-                    <i className="icofont icofont-prescription"></i>
+                    <i className="icofont icofont-medical"></i>
                     Antecendentes
                   </a>
                 </li>
@@ -171,7 +197,7 @@ const PatientHealthRecord = (props) => {
                     onClick={() => setdataTab('estudioscompl')}
                   >
                     <i className="icofont icofont-heartbeat"></i>
-                    Estudios Complementarios
+                    Estudios Compl.
                   </a>
                 </li>
                 <li className="nav-item">
@@ -182,8 +208,21 @@ const PatientHealthRecord = (props) => {
                     }`}
                     onClick={() => setdataTab('metricas')}
                   >
+                    <i className="icofont icofont-pulse"></i>
+                    Métricas y Signos Vitales
+                  </a>
+                </li>
+
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'evolucion' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('evolucion')}
+                  >
                     <i className="icofont icofont-chart-histogram"></i>
-                    Métricas
+                    Evolución
                   </a>
                 </li>
               </ul>
@@ -209,27 +248,27 @@ const PatientHealthRecord = (props) => {
                           className="theme-form mega-form"
                           onSubmit={handleSubmit(handleSubmitForm)}
                         >
-                          <fieldset disabled={mode === 'browse'}>
-                            <div className="row">
-                              <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  type="button"
-                                  onClick={() => setisAlergias(!isAlergias)}
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon2"
-                                  aria-expanded={isAlergias}
-                                  aria-controls="collapseicon2"
-                                  disabled={false}
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Alergias'}
-                                  </h6>
-                                </button>
-                              </div>
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                type="button"
+                                onClick={() => setisAlergias(!isAlergias)}
+                                data-toggle="collapse"
+                                data-target="#collapseicon2"
+                                aria-expanded={isAlergias}
+                                aria-controls="collapseicon2"
+                                disabled={false}
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Alergias'}
+                                </h6>
+                              </button>
                             </div>
-                            <Collapse isOpen={isAlergias}>
-                              <div className="form-group">
+                          </div>
+                          <Collapse isOpen={isAlergias}>
+                            <div className="form-group row">
+                              <div className="col-md-12">
                                 <Typeahead
                                   id="alergias"
                                   allowNew
@@ -239,704 +278,786 @@ const PatientHealthRecord = (props) => {
                                   disabled={mode === 'browse'}
                                 />
                               </div>
-                            </Collapse>
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
+                              <label
+                                className="col-md-12 col-form-label"
+                                htmlFor="alergiasText"
+                              >
+                                {'Comentarios extras'}
+                              </label>
                               <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() =>
-                                    setisMedicamentos(!isMedicamentos)
-                                  }
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isMedicamentos}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Medicamentos Activos'}
-                                  </h6>
-                                </button>
+                                <textarea
+                                  className="form-control"
+                                  id="alergiasText"
+                                  rows="2"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isMedicamentos}>
-                              <div className="form-group">
+                          </Collapse>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() =>
+                                  setisMedicamentos(!isMedicamentos)
+                                }
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isMedicamentos}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Medicamentos Activos'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isMedicamentos}>
+                            <div className="form-group row">
+                              <div className="col-md-12">
                                 <Typeahead
-                                  id="medicamentosActivos"
-                                  allowNew
+                                  // labelKey={(option) => `${option.description} (Composición: ${option.composition}, ${option.format})`}
+                                  labelKey="description"
                                   multiple
                                   newSelectionPrefix="Agregar nuevo medicamento: "
                                   options={medicamentosActivos}
                                   disabled={mode === 'browse'}
+                                  renderMenuItemChildren={(option, props) => (
+                                    <Fragment>
+                                      <Highlighter search={props.text}>
+                                        {option.description}
+                                      </Highlighter>
+                                      ,
+                                      <div>
+                                        <small className="text-muted">
+                                          Composición: {option.composition},{' '}
+                                          {option.format}
+                                        </small>
+                                      </div>
+                                    </Fragment>
+                                  )}
                                 />
                               </div>
-                            </Collapse>
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
+                              <label
+                                className="col-md-12 col-form-label"
+                                htmlFor="drugsText"
+                              >
+                                {'Comentarios extras'}
+                              </label>
                               <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() =>
-                                    setisAntecedentesPato(!isAntecedentesPato)
-                                  }
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isAntecedentesPato}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Antecedentes Patológicos'}
-                                  </h6>
-                                </button>
+                                <textarea
+                                  className="form-control col-md-12"
+                                  id="drugsText"
+                                  rows="2"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                              <Popover
+                                placement="right"
+                                isOpen={popover}
+                                target={'medicamentosActivos'}
+                                toggle={popoverNewPatientToggle}
+                                data-html="true"
+                              >
+                                <PopoverHeader>
+                                  {'Nuevo Paciente'}
+                                  <span className="pull-right">
+                                    <a
+                                      href="#javaScript"
+                                      onClick={popoverNewPatientToggle}
+                                    >
+                                      <i className="icofont icofont-close text-muted"></i>
+                                    </a>
+                                  </span>
+                                </PopoverHeader>
+                                <PopoverBody></PopoverBody>
+                              </Popover>
+                            </div>
+                          </Collapse>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() =>
+                                  setisAntecedentesPato(!isAntecedentesPato)
+                                }
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isAntecedentesPato}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Antecedentes Patológicos'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isAntecedentesPato}>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="cardiopatias"
+                              >
+                                {'Cardiopatías'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="cardiopatias"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isAntecedentesPato}>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="cardiopatias"
-                                >
-                                  {'Cardiopatías'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="cardiopatias"
-                                    rows="1"
-                                  />
-                                </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="traumatismosHeredo"
+                              >
+                                {'Traumatismos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="traumatismosHeredo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="traumatismosHeredo"
-                                >
-                                  {'Traumatismos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="traumatismosHeredo"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="diabetes"
+                              >
+                                {'Diabetes'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="diabetes"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="diabetes"
-                                >
-                                  {'Diabetes'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="diabetes"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="hipertensionHeredo"
+                              >
+                                {'Hipertensión arterial'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="hipertensionHeredo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="hipertensionHeredo"
-                                >
-                                  {'Hipertensión arterial'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="hipertensionHeredo"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="endocrino"
+                              >
+                                {'Endócrino-metabólico'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="endocrino"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="endocrino"
-                                >
-                                  {'Endócrino-metabólico'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="endocrino"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="respiratorios"
+                              >
+                                {'Respiratorios'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="respiratorios"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="respiratorios"
-                                >
-                                  {'Respiratorios'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="respiratorios"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="glaucoma"
+                              >
+                                {'Glaucoma'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="glaucoma"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="glaucoma"
-                                >
-                                  {'Glaucoma'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="glaucoma"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="digestivos"
+                              >
+                                {'Digestivos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="digestivos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="digestivos"
-                                >
-                                  {'Digestivos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="digestivos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="oncologicos"
+                              >
+                                {'Oncológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="oncologicos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="oncologicos"
-                                >
-                                  {'Oncológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="oncologicos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="neurologicos"
+                              >
+                                {'Neurológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="neurologicos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="neurologicos"
-                                >
-                                  {'Neurológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="neurologicos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="infectologicos"
+                              >
+                                {'Infectológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="infectologicos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="infectologicos"
-                                >
-                                  {'Infectológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="infectologicos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="nefrourologicos"
+                              >
+                                {'Nefrourológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="nefrourologicos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="nefrourologicos"
-                                >
-                                  {'Nefrourológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="nefrourologicos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="gineco"
+                              >
+                                {'Gineco y obstétricos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="gineco"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="gineco"
-                                >
-                                  {'Gineco y obstétricos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="gineco"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="ets"
+                              >
+                                {'ETS'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="ets"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="ets"
-                                >
-                                  {'ETS'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="ets"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="hematologicos"
+                              >
+                                {'Hematológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="hematologicos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="hematologicos"
-                                >
-                                  {'Hematológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="hematologicos"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="transfusiones"
+                              >
+                                {'Transfusiones'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="transfusiones"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="transfusiones"
-                                >
-                                  {'Transfusiones'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="transfusiones"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="hospitalizaciones"
+                              >
+                                {'Hospitalizaciones previas'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="hospitalizaciones"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="hospitalizaciones"
-                                >
-                                  {'Hospitalizaciones previas'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="hospitalizaciones"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="cirugias"
+                              >
+                                {'Cirugías previas'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="cirugias"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="cirugias"
-                                >
-                                  {'Cirugías previas'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="cirugias"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="otros"
+                              >
+                                {'Otros'}
+                              </label>
+                              <div className="col-md-12">
+                                <textarea
+                                  className="form-control"
+                                  id="otros"
+                                  rows="3"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="otros"
-                                >
-                                  {'Otros'}
-                                </label>
-                                <div className="col-md-12">
-                                  <textarea
-                                    className="form-control"
-                                    id="otros"
-                                    rows="3"
-                                  />
-                                </div>
-                              </div>
-                            </Collapse>
+                            </div>
+                          </Collapse>
 
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
-                              <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() =>
-                                    setisAntecedentesNoPato(
-                                      !isAntecedentesNoPato
-                                    )
-                                  }
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isAntecedentesNoPato}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Antecedentes No Patológicos'}
-                                  </h6>
-                                </button>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() =>
+                                  setisAntecedentesNoPato(!isAntecedentesNoPato)
+                                }
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isAntecedentesNoPato}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Antecedentes No Patológicos'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isAntecedentesNoPato}>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="tabaquismo"
+                              >
+                                {'Tabaquismo'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="tabaquismo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isAntecedentesNoPato}>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="tabaquismo"
-                                >
-                                  {'Tabaquismo'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="tabaquismo"
-                                    rows="1"
-                                  />
-                                </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="alcoholismo"
+                              >
+                                {'Alcoholismo'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="alcoholismo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="alcoholismo"
-                                >
-                                  {'Alcoholismo'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="alcoholismo"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="drogas"
+                              >
+                                {'Drogas'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="drogas"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="drogas"
-                                >
-                                  {'Drogas'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="drogas"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="vacunas"
+                              >
+                                {'Vacuna o inmunización reciente'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="vacunas"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="vacunas"
-                                >
-                                  {'Vacuna o inmunización reciente'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="vacunas"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="actfisica"
+                              >
+                                {'Actividad física'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="actfisica"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="exfumador"
-                                >
-                                  {'Ex-Fumador'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="exfumador"
-                                    rows="1"
-                                  />
-                                </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="otrosNoPat"
+                              >
+                                {'Otros'}
+                              </label>
+                              <div className="col-md-12">
+                                <textarea
+                                  className="form-control"
+                                  id="otrosNoPat"
+                                  rows="3"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="actfisica"
-                                >
-                                  {'Actividad física'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="actfisica"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="otrosNoPat"
-                                >
-                                  {'Otros'}
-                                </label>
-                                <div className="col-md-12">
-                                  <textarea
-                                    className="form-control"
-                                    id="otrosNoPat"
-                                    rows="3"
-                                  />
-                                </div>
-                              </div>
-                            </Collapse>
+                            </div>
+                          </Collapse>
 
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
-                              <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() => setisHeredoFam(!isHeredoFam)}
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isHeredoFam}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Antecedentes Heredo-familiares'}
-                                  </h6>
-                                </button>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() => setisHeredoFam(!isHeredoFam)}
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isHeredoFam}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Antecedentes Heredo-familiares'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isHeredoFam}>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="cardiopatiasHeredadas"
+                              >
+                                {'Cardiopatías'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="cardiopatiasHeredadas"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isHeredoFam}>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="cardiopatiasHeredadas"
-                                >
-                                  {'Cardiopatías'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="cardiopatiasHeredadas"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="traumatismos"
-                                >
-                                  {'Enfermedades de tiroides'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="traumatismos"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="diabetesHeredada"
-                                >
-                                  {'Diabetes'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="diabetesHeredada"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="hipertension"
-                                >
-                                  {'Hipertensión arterial'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="hipertension"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="endocrinoHeredada"
-                                >
-                                  {'Glaucoma'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="endocrinoHeredada"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="neurologicoHeredo"
-                                >
-                                  {'Neurológicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="neurologicoHeredo"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="oncologicoHeredo"
-                                >
-                                  {'Oncólogicos'}
-                                </label>
-                                <div className="col-md-10">
-                                  <textarea
-                                    className="form-control"
-                                    id="oncologicoHeredo"
-                                    rows="1"
-                                  />
-                                </div>
-                              </div>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="otrosHeredo"
-                                >
-                                  {'Otros'}
-                                </label>
-                                <div className="col-md-12">
-                                  <textarea
-                                    className="form-control"
-                                    id="otrosHeredo"
-                                    rows="3"
-                                  />
-                                </div>
-                              </div>
-                            </Collapse>
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
-                              <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() =>
-                                    setisAntecedentesPsico(!isAntecedentesPsico)
-                                  }
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isAntecedentesPsico}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Antecedentes Psiquiátricos'}
-                                  </h6>
-                                </button>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="traumatismos"
+                              >
+                                {'Enfermedades de tiroides'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="traumatismos"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isAntecedentesPsico}>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="psicoHeredo"
-                                >
-                                  {'Psiquiátricos'}
-                                </label>
-                                <div className="col-md-12">
-                                  <textarea
-                                    className="form-control"
-                                    id="psicoHeredo"
-                                    rows="3"
-                                  />
-                                </div>
-                              </div>
-                            </Collapse>
-                            <hr className="mt-4 mb-4" />
-                            <div className="row">
-                              <div className="col-md-12">
-                                <button
-                                  className="btn btn-link pl-0 m-b-10"
-                                  onClick={() =>
-                                    setisAntecedentesNutri(!isAntecedentesNutri)
-                                  }
-                                  type="button"
-                                  data-toggle="collapse"
-                                  data-target="#collapseicon3"
-                                  aria-expanded={isAntecedentesNutri}
-                                  aria-controls="collapseicon2"
-                                >
-                                  <h6 className="card-title mb-0">
-                                    {'Antecedentes Nutricionales'}
-                                  </h6>
-                                </button>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="diabetesHeredada"
+                              >
+                                {'Diabetes'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="diabetesHeredada"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
                               </div>
                             </div>
-                            <Collapse isOpen={isAntecedentesNutri}>
-                              <div className="form-group row">
-                                <label
-                                  className="col-md-2 col-form-label"
-                                  htmlFor="nutri"
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="hipertension"
+                              >
+                                {'Hipertensión arterial'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="hipertension"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="endocrinoHeredada"
+                              >
+                                {'Glaucoma'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="endocrinoHeredada"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="neurologicoHeredo"
+                              >
+                                {'Neurológicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="neurologicoHeredo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="oncologicoHeredo"
+                              >
+                                {'Oncólogicos'}
+                              </label>
+                              <div className="col-md-10">
+                                <textarea
+                                  className="form-control"
+                                  id="oncologicoHeredo"
+                                  rows="1"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="otrosHeredo"
+                              >
+                                {'Otros'}
+                              </label>
+                              <div className="col-md-12">
+                                <textarea
+                                  className="form-control"
+                                  id="otrosHeredo"
+                                  rows="3"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                          </Collapse>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() =>
+                                  setisAntecedentesPsico(!isAntecedentesPsico)
+                                }
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isAntecedentesPsico}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Antecedentes Psiquiátricos'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isAntecedentesPsico}>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="psicoHeredo"
+                              >
+                                {'Psiquiátricos'}
+                              </label>
+                              <div className="col-md-12">
+                                <textarea
+                                  className="form-control"
+                                  id="psicoHeredo"
+                                  rows="3"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                          </Collapse>
+                          <hr className="mt-4 mb-4" />
+                          <div className="row">
+                            <div className="col-md-12">
+                              <button
+                                className="btn btn-link pl-0 m-b-10"
+                                onClick={() =>
+                                  setisAntecedentesNutri(!isAntecedentesNutri)
+                                }
+                                type="button"
+                                data-toggle="collapse"
+                                data-target="#collapseicon3"
+                                aria-expanded={isAntecedentesNutri}
+                                aria-controls="collapseicon2"
+                              >
+                                <h6 className="card-title mb-0">
+                                  {'Antecedentes Nutricionales'}
+                                </h6>
+                              </button>
+                            </div>
+                          </div>
+                          <Collapse isOpen={isAntecedentesNutri}>
+                            <div className="form-group row">
+                              <label
+                                className="col-md-2 col-form-label"
+                                htmlFor="nutri"
+                              >
+                                {'Nutricionales'}
+                              </label>
+                              <div className="col-md-12">
+                                <textarea
+                                  className="form-control"
+                                  id="nutri"
+                                  rows="3"
+                                  disabled={mode === 'browse'}
+                                />
+                              </div>
+                            </div>
+                          </Collapse>
+                          {mode !== 'browse' && (
+                            <div className="card-footer m-b-40">
+                              <span className="pull-right">
+                                <button
+                                  className="btn btn-primary ml-1"
+                                  type="submit"
                                 >
-                                  {'Nutricionales'}
-                                </label>
-                                <div className="col-md-12">
-                                  <textarea
-                                    className="form-control"
-                                    id="nutri"
-                                    rows="3"
-                                  />
-                                </div>
-                              </div>
-                            </Collapse>
-                            {mode !== 'browse' && (
-                              <div className="card-footer m-b-40">
-                                <span className="pull-right">
-                                  <button
-                                    className="btn btn-primary ml-1"
-                                    type="submit"
-                                  >
-                                    {'Guardar'}
-                                  </button>
-                                </span>
-                              </div>
-                            )}
-                          </fieldset>
+                                  {'Guardar'}
+                                </button>
+                              </span>
+                            </div>
+                          )}
                         </form>
                       </div>
                       {mode === 'browse' && (
@@ -1025,6 +1146,15 @@ const PatientHealthRecord = (props) => {
                   </p>
                 </TabPane>
                 <TabPane tabId="metricas">
+                  <p className="mb-0">
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting industry. when an unknown printer took a galley
+                    of type and scrambled it to make a type specimen book.
+                    recently with desktop publishing software like Aldus
+                    PageMaker including versions of Lorem Ipsum
+                  </p>
+                </TabPane>
+                <TabPane tabId="evolucion">
                   <p className="mb-0">
                     Lorem Ipsum is simply dummy text of the printing and
                     typesetting industry. when an unknown printer took a galley

@@ -17,7 +17,7 @@ export const save = async (newUserData, loggedUser) => {
         Authorization: `Bearer ${loggedUser?.token}`,
       },
     };
-    const { data } = await axios.post('/api/user', newUserData, config);
+    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/user`, newUserData, config);
     toast.success('Usuario dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -45,7 +45,7 @@ export const update = async (userData, loggedUser) => {
       },
     };
     const { data } = await axios.put(
-      `/api/user/${userData.id}`,
+      `${process.env.PUBLIC_URL}/api/user/${userData.id}`,
       userData,
       config
     );
@@ -76,7 +76,7 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
       },
     };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(`/api/user/${id}/${actionStatus}`, config);
+    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/user/${id}/${actionStatus}`, config);
     toast.success('El estado del usuario se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });

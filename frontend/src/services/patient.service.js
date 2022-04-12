@@ -44,7 +44,7 @@ export const save = async (patientData, loggedUser) => {
         Authorization: `Bearer ${loggedUser?.token}`,
       },
     };
-    const { data } = await axios.post('/api/patient', patientData, config);
+    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/patient`, patientData, config);
     toast.success('Paciente dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -72,7 +72,7 @@ export const update = async (patientData, loggedUser) => {
       },
     };
     const { data } = await axios.put(
-      `/api/patient/${patientData.id}`,
+      `${process.env.PUBLIC_URL}/api/patient/${patientData.id}`,
       patientData,
       config
     );
@@ -103,7 +103,7 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
       },
     };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(`/api/patient/${id}/${actionStatus}`, config);
+    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/patient/${id}/${actionStatus}`, config);
     toast.success('El estado del paciente se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
