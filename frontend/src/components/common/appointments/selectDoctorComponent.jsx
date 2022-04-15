@@ -3,11 +3,12 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
+  Fragment
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form, FormGroup, Label } from 'reactstrap';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
@@ -66,7 +67,19 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
             clearButton
             onChange={(selected) => handleDoctorChange(selected)}
             selected={doctors.length > 0 ? doctors.filter((x) => x.name === doctor.name) : null}
-            innerRef={register('doctor', {required: true })}
+            innerRef={register('doctor', { required: true })}
+            renderMenuItemChildren={(option, props) => (
+              <Fragment>
+                <Highlighter search={props.text}>
+                  {option.name}
+                </Highlighter>
+                <div className="mt-1">
+                  <small className="text-muted">
+                    {option.speciality}
+                  </small>
+                </div>
+              </Fragment>
+            )}
           />
           <span style={{ color: 'red' }}>
             {errors.doctor && 'Debe ingresar el doctor'}

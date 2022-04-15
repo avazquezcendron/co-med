@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import defaultuser from '../../assets/images/user/user.png';
 import Loader from '../common/loader';
-import { SUCCEEDED, LOADED } from '../../redux/statusTypes';
+import { SUCCEEDED, LOADED, FAILED } from '../../redux/statusTypes';
 
 const PatientCard = (props) => {
   const { patient, status } = useSelector((store) => store.Patient);
@@ -12,7 +12,7 @@ const PatientCard = (props) => {
   const [isProfile, setisProfile] = useState(true);
   return (
     <Fragment>
-      {status === LOADED || status === SUCCEEDED ? (
+      {status === LOADED || status === SUCCEEDED || status === FAILED ? (
         <div className="card">
           <div className="card-header">
             <div className="row m-b-2 ">

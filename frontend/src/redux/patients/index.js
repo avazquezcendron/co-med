@@ -19,6 +19,7 @@ import {
   patientChangeStatusRequest,
   patientChangeStatusSuccess,
   patientChangeStatusFailure,
+  PATIENT_UPDATE_HR_WATCHER
 } from './actions';
 
 
@@ -34,6 +35,22 @@ function* savePatientAsync({ payload }) {
       data = yield call(patientService.save, payload, loggedUser );  
       yield put(patientSaveSuccess(data));
     }
+  } catch (err) {
+    const errMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    yield put(patientSaveFailure(errMsg));
+  }
+}
+
+function* updateHRAsync({ payload }) {
+  try {
+    yield put(patientSaveRequest());
+    const loggedUser = yield select(getLoggedUser);
+    let data;
+    data = yield call(patientService.updateHealthRecord, payload.patient, payload.healthRecordData, loggedUser );  
+    yield put(patientSaveSuccess(data));
   } catch (err) {
     const errMsg =
       err.response && err.response.data.message
@@ -93,4 +110,5 @@ export function* WatcherPatients() {
   yield takeLatest(PATIENT_GET_ALL_WATCHER, fetchPatientsAsync);
   yield takeLatest(PATIENT_GET_BY_ID_WATCHER, fetchPatientAsync);
   yield takeLatest(PATIENT_CHANGE_STATUS_WATCHER, changeStatusPatientAsync);
+  yield takeLatest(PATIENT_UPDATE_HR_WATCHER, updateHRAsync);
 }

@@ -95,6 +95,37 @@ export const update = async (patientData, loggedUser) => {
   }
 };
 
+export const updateHealthRecord = async (patient, healthRecordData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/healthRecord`,
+      { ...healthRecordData, patientVersion: patient.__v },
+      config
+    );
+    toast.success('Paciente actualizado con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
+
 export const changeStatus = async (id, currentStatus, loggedUser) => {
   try {
     const config = {

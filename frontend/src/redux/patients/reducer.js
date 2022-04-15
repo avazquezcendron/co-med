@@ -89,9 +89,9 @@ export const PatientReducer = (state = INITIAL_STATE_PATIENT, action) => {
 
     case PATIENT_SAVE_FAILURE:
       return {
+        ...state,
         status: statusTypes.FAILED,
-        error: action.payload,
-        patient: {},
+        error: action.payload,        
       };
 
     case PATIENT_DELETE_REQUEST:

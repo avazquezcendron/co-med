@@ -19,7 +19,7 @@ import {
   PopoverHeader,
   PopoverBody,
 } from 'reactstrap';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -106,8 +106,9 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
               name="patient"
               options={patients}
               labelKey={(option) => option.fullName}
-              filterBy={['fullName', 'nationalId', 'healthRecord.healthRecordId']}
+              filterBy={['fullName', 'nationalId', 'healthRecord.healthRecordNumber']}
               minLength={3}
+              clearButton
               onChange={(selected) => handlePatientChange(selected)}
               selected={
                 patients.length > 0
@@ -115,6 +116,18 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
                   : null
               }
               innerRef={register('patient', { required: true })}
+              renderMenuItemChildren={(option, props) => (
+                <Fragment>
+                  <Highlighter search={props.text}>
+                    {option.fullName}
+                  </Highlighter>
+                  <div className="mt-1">
+                    <small className="text-muted">
+                      Nro. HC: <b>{option.healthRecord?.healthRecordNumber}</b>
+                    </small>
+                  </div>
+                </Fragment>
+              )}
             />
             <span style={{ color: 'red' }}>
               {errors.patient && 'Debe ingresar el paciente'}

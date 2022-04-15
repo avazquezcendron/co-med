@@ -11,7 +11,7 @@ import {
   patientSavetWatcher,
   patientInitialize,
 } from '../../redux/patients/actions';
-import { SUCCEEDED, LOADED, LOADING } from '../../redux/statusTypes';
+import { SUCCEEDED, LOADED, LOADING, FAILED } from '../../redux/statusTypes';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 import Loader from '../common/loader';
 
@@ -31,7 +31,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   useEffect(() => {
     return () => {
-      dispatch(patientInitialize());
+      // dispatch(patientInitialize());
     };
   }, []);
 
@@ -178,7 +178,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   return (
     <Fragment>
       {status === LOADED ||
-      status === SUCCEEDED ||
+      status === SUCCEEDED ||      
+      status === FAILED ||
       (mode === 'new' && status !== LOADING) ? (
         <div className="card">
           <div className="card-header">

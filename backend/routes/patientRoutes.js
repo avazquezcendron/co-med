@@ -17,6 +17,11 @@ router
   .put(checkUserAuth, asyncHandler(patientController.update))
 
 router
+  .route('/:id/healthRecord')
+  .get(checkUserAuth, asyncHandler(patientController.getHealthRecord))
+  .put(checkUserAuth, asyncHandler(patientController.updateHealthRecord))
+
+router
   .route('/:id/inactivate')
   .get(checkUserAuth, asyncHandler(patientController.inactivate))
 
