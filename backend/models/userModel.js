@@ -25,6 +25,16 @@ const UserSchema = mongoose.Schema(
       ],
       default: ['receptionist'],
     },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: 'Doctor',
+    },
+    patient: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: false,
+      ref: 'Patient',
+    },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     email: {

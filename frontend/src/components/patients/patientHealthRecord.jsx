@@ -144,7 +144,6 @@ const PatientHealthRecord = (props) => {
     entityService.getAll('drug', loggedUser).then((data) => setDrugs(data));
   }, []);
 
-  //Add new sticky note
   const addPrescription = () => {
     prescriptionModalToggle();
   };

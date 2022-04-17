@@ -10,6 +10,7 @@ import SweetAlert from 'sweetalert2';
 import Breadcrumb from '../common/breadcrumb';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import defaultuser from '../../assets/images/user/user.png';
+import notFoundImg from '../../assets/images/search-not-found.png';
 import * as userService from '../../services/user.service';
 
 const UserList = (props) => {
@@ -290,7 +291,19 @@ const UserList = (props) => {
                     paginationComponentOptions={paginationComponentOptions}
                     customStyles={customStyles}
                     onRowClicked={handleRowClick}
-                    noDataComponent="No existen usuarios registrados aún."
+                    noDataComponent={
+                      <Col md="12" className="text-center m-50">
+                        <img
+                          className="img-fluid"
+                          src={notFoundImg}
+                          alt=""
+                        />
+                        <br />
+                        <span className="txt-info">
+                          No se encontraron usuarios...
+                        </span>
+                      </Col>
+                    }
                   />
                 </div>
               </div>

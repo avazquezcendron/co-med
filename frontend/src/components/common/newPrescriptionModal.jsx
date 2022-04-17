@@ -23,6 +23,7 @@ import logogris from '../../assets/images/co-med-logo-gris.jpg';
 const NewPrescriptionModalComponent = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const { patient } = useSelector((store) => store.Patient);
+  const { doctor } = useSelector((store) => store.Doctor);
 
   const { register, handleSubmit, errors, setError, clearErrors } = useForm();
 
@@ -35,6 +36,12 @@ const NewPrescriptionModalComponent = (props) => {
     date: new Date(),
     indications: '',
     diagnosis: '',
+    requiresDuplicate: false,
+    longTerm: false,
+    drugs: [],
+    doctor: doctor || loggedUser.doctor || {},
+    healthRecord: patient.healthRecord || {},
+    visit: {}
   });
 
   const [quantity, setQuantity] = useState(0);
@@ -229,9 +236,8 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12">
                     <b>
-                      {patient.healthInsurances
-                        ? patient.healthInsurances[0].healthInsuranceCompany
-                            .description
+                      {patient.healthInsurances?.length > 0
+                        ? patient.healthInsurances[0].healthInsuranceCompany?.description
                         : ''}
                     </b>
                   </p>
@@ -244,7 +250,7 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {patient.healthInsurances
+                      {patient.healthInsurances?.length > 0
                         ? patient.healthInsurances[0].plan.code
                         : ''}
                     </b>
@@ -258,7 +264,7 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {patient.healthInsurances
+                      {patient.healthInsurances?.length > 0
                         ? patient.healthInsurances[0].cardNumber
                         : ''}
                     </b>
@@ -589,7 +595,7 @@ class PrescriptionPrintPreview extends Component {
                       </p>
                       <p className="col-md-12">
                         <b>
-                          {patient.healthInsurances
+                          {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].healthInsuranceCompany
                                 .description
                             : ''}
@@ -604,7 +610,7 @@ class PrescriptionPrintPreview extends Component {
                       </p>
                       <p className="col-md-12 ">
                         <b>
-                          {patient.healthInsurances
+                          {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].plan.code
                             : ''}
                         </b>
@@ -618,7 +624,7 @@ class PrescriptionPrintPreview extends Component {
                       </p>
                       <p className="col-md-12 ">
                         <b>
-                          {patient.healthInsurances
+                          {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].cardNumber
                             : ''}
                         </b>

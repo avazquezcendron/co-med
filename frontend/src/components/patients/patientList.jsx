@@ -7,6 +7,8 @@ import { PlusCircle } from 'react-feather';
 import SweetAlert from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
 
+import defaultuser from '../../assets/images/user/user.png';
+import notFoundImg from '../../assets/images/search-not-found.png';
 import CustomMaterialMenu from '../common/data-table/customMaterialMenu';
 import Breadcrumb from '../common/breadcrumb';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
@@ -28,7 +30,7 @@ const PatientList = (props) => {
     dispatch(patientGetAllWatcher());
     return () => {
       dispatch(patientsInitialize());
-    }
+    };
   }, []);
 
   useEffect(() => {
@@ -115,7 +117,9 @@ const PatientList = (props) => {
   const handleUserChangeStatusClick = (patient) => {
     SweetAlert.fire({
       title: 'Atención!',
-      text: `Se cambiará el estado del usuario "${patient.fullName}" a "${patient.status === 'active' ? 'Inactivo' : 'Activo'}".`,
+      text: `Se cambiará el estado del usuario "${patient.fullName}" a "${
+        patient.status === 'active' ? 'Inactivo' : 'Activo'
+      }".`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -146,7 +150,7 @@ const PatientList = (props) => {
       width: '80px',
       cell: (row, index, column, id) => (
         <img
-          src={`${process.env.PUBLIC_URL}/assets/images/${row.image}`}
+          src={row.avatarUrl || defaultuser}
           className="img-50 img-fluid"
           alt=""
         />
@@ -154,7 +158,7 @@ const PatientList = (props) => {
     },
     {
       name: 'Nombre y Apellido',
-      selector: row => row.fullName,
+      selector: (row) => row.fullName,
       sortable: true,
       left: true,
       cell: (row, index, column, id) => row.fullName,
@@ -323,7 +327,19 @@ const PatientList = (props) => {
                         paginationComponentOptions={paginationComponentOptions}
                         customStyles={customStyles}
                         onRowClicked={handleRowClick}
-                        noDataComponent="No existen pacientes registrados aún."
+                        noDataComponent={
+                          <Col md="12" className="text-center m-50">
+                            <img
+                              className="img-fluid"
+                              src={notFoundImg}
+                              alt=""
+                            />
+                            <br />
+                            <span className="txt-info">
+                              No se encontraron pacientes...
+                            </span>
+                          </Col>
+                        }
                       />
                     </div>
                   </div>

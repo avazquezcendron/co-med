@@ -94,3 +94,31 @@ export const update = async (entity, entityData, loggedUser) => {
     throw err;
   }
 };
+
+export const changeStatus = async (entity, id, currentStatus, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
+    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}/${id}/${actionStatus}`, config);
+    toast.success('El estado del registro se ha actualizado con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al actualizar al registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};

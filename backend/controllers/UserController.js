@@ -2,7 +2,6 @@ import BaseController from './BaseController.js';
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
 
-
 class UserController extends BaseController {
   constructor() {
     super(User);
@@ -21,7 +20,9 @@ class UserController extends BaseController {
   async login(req, res, next) {
     const { username, password } = req.body;
 
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username })
+      .populate('doctor')
+      .populate('patient');
 
     if (user && (await user.matchPassword(password))) {
       if (user.status === 'inactive') {

@@ -16,6 +16,11 @@ const prescriptionSchema = mongoose.Schema(
         ref: 'Drug',
       }
     }],
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Doctor',
+    },
     healthRecord: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

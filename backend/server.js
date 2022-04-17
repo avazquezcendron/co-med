@@ -8,6 +8,7 @@ import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js'
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import patientRoutes from './routes/patientRoutes.js'
+import doctorRoutes from './routes/doctorRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import hospitalRoutes from './routes/hospitalRoutes.js'
 import healthInsuranceCompanyRoutes from './routes/healthInsuranceCompanyRoutes.js'
@@ -27,6 +28,7 @@ app.use(express.json())
 app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/patient', patientRoutes)
+app.use('/api/doctor', doctorRoutes)
 app.use('/api/hospital', hospitalRoutes)
 app.use('/api/healthInsurance', healthInsuranceCompanyRoutes)
 app.use('/api/upload', uploadRoutes)

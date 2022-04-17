@@ -4,7 +4,7 @@ const DoctorSchema = mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    nationalId: { type: Number, required: true },
+    nationalId: { type: Number, required: true, unique: true },
     nationalIdType: { type: String, required: true },
     nationality: { type: String, required: true },
     gender: { type: String, required: true },
@@ -27,6 +27,53 @@ const DoctorSchema = mongoose.Schema(
       country: String,
       zip: String,
     },
+    specialities: {
+      type: [
+        {
+          type: String,
+          enum: [
+            'Cardiología',
+            'Dermatología',
+            'Clínica Médica',
+            'Urología',
+            'Endocrinología',
+            'Gastroenterología',
+            'Medicina del deporte',
+            'Nefrología',
+            'Neurocirugía',
+            'Neurología',
+            'Otorrinolaringología',
+            'Pediatría',
+            'Reumatología',
+            'Infectología',
+            'Cirugía General',
+            'Alergia e Inmunología',
+            'Neumonología',
+            'Psiquiatría',
+            'Ginecología',
+            'Obstreticia',
+            'Esp. en Diagnóstico por Imágenes',
+            'Nutrición',
+            'Oftalmología',
+            'Traumatología',
+            'Hematología',
+          ],
+        },
+      ],
+    },
+    licenses: [
+      {
+        licenseId: { type: Number, required: true },
+        licenseType: {
+          type: [
+            {
+              type: String,
+              enum: ['mp', 'mn'], //matrícula provincial, matrícula nacional, etc.
+            },
+          ],
+        },
+      },
+    ],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: false,
@@ -56,12 +103,24 @@ const DoctorSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-    optimisticConcurrency: true
+    optimisticConcurrency: true,
   }
 );
 
 DoctorSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
+});
+
+DoctorSchema.virtual('fullName').get(function () { 
+  return `${this.firstName} ${this.lastName}`;
+});
+
+DoctorSchema.virtual('age').get(function () { 
+  if (this.dateOfBirth) {
+    return Math.floor((Date.now() - this.dateOfBirth.getTime()) / (1000 * 3600 * 24 * 365));
+  } else {
+    return '';
+  }
 });
 
 const Doctor = mongoose.model('Doctor', DoctorSchema);
