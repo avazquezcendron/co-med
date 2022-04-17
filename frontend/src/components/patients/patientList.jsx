@@ -295,6 +295,7 @@ const PatientList = (props) => {
                           <Link
                             className="btn btn-primary"
                             to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
+                            onClick={() => dispatch(patientInitialize())}
                           >
                             {' '}
                             <PlusCircle />

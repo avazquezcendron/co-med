@@ -7,7 +7,9 @@ import es from 'date-fns/locale/es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
+import DataTable from 'react-data-table-component';
 
+import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
 import PatientPersonalData from './patientPersonalData';
 import {
   patientSavetWatcher,
@@ -26,7 +28,8 @@ const PatientHealthRecord = (props) => {
   const query = useQuery();
   const mode = query.get('mode');
 
-  const { register, handleSubmit, setValue, setError, clearErrors, errors } = useForm();
+  const { register, handleSubmit, setValue, setError, clearErrors, errors } =
+    useForm();
 
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
@@ -49,23 +52,43 @@ const PatientHealthRecord = (props) => {
 
   const healthRecordPB = patient.healthRecord?.pathologicalBackground || {};
 
-  const [pHeartDisease, setpHeartDisease] = useState(healthRecordPB.heartDisease);
+  const [pHeartDisease, setpHeartDisease] = useState(
+    healthRecordPB.heartDisease
+  );
   const [pinjuries, setpinjuries] = useState(healthRecordPB.injuries);
   const [pdiabetes, setpdiabetes] = useState(healthRecordPB.diabetes);
-  const [parterialHypertension, setparterialHypertension] = useState(healthRecordPB.arterialHypertension);  
-  const [pendocrineMetabolic, setpendocrineMetabolic] = useState(healthRecordPB.endocrineMetabolic);
+  const [parterialHypertension, setparterialHypertension] = useState(
+    healthRecordPB.arterialHypertension
+  );
+  const [pendocrineMetabolic, setpendocrineMetabolic] = useState(
+    healthRecordPB.endocrineMetabolic
+  );
   const [prespiratory, setprespiratory] = useState(healthRecordPB.respiratory);
   const [pglaucoma, setpglaucoma] = useState(healthRecordPB.glaucoma);
   const [pdigestive, setpdigestive] = useState(healthRecordPB.digestive);
   const [poncological, setponcological] = useState(healthRecordPB.oncological);
-  const [pneurological, setpneurological] = useState(healthRecordPB.neurological);
-  const [pinfectological, setpinfectological] = useState(healthRecordPB.infectological);
-  const [pnephrourological, setpnephrourological] = useState(healthRecordPB.nephrourological);
-  const [pgynecoObstetrics, setpgynecoObstetrics] = useState(healthRecordPB.gynecoObstetrics);
+  const [pneurological, setpneurological] = useState(
+    healthRecordPB.neurological
+  );
+  const [pinfectological, setpinfectological] = useState(
+    healthRecordPB.infectological
+  );
+  const [pnephrourological, setpnephrourological] = useState(
+    healthRecordPB.nephrourological
+  );
+  const [pgynecoObstetrics, setpgynecoObstetrics] = useState(
+    healthRecordPB.gynecoObstetrics
+  );
   const [pstd, setpstd] = useState(healthRecordPB.std);
-  const [phematological, setphematological] = useState(healthRecordPB.hematological);
-  const [ptransfusions, setptransfusions] = useState(healthRecordPB.transfusions);
-  const [phospitalizations, setphospitalizations] = useState(healthRecordPB.hospitalizations);
+  const [phematological, setphematological] = useState(
+    healthRecordPB.hematological
+  );
+  const [ptransfusions, setptransfusions] = useState(
+    healthRecordPB.transfusions
+  );
+  const [phospitalizations, setphospitalizations] = useState(
+    healthRecordPB.hospitalizations
+  );
   const [psurgeries, setpsurgeries] = useState(healthRecordPB.surgeries);
 
   const healthRecordNPB = patient.healthRecord?.noPathologicalBackground || {};
@@ -73,18 +96,33 @@ const PatientHealthRecord = (props) => {
   const [npsmoking, setnpsmoking] = useState(healthRecordNPB.smoking);
   const [npalcoholism, setnpalcoholism] = useState(healthRecordNPB.alcoholism);
   const [npdrugs, setnpdrugs] = useState(healthRecordNPB.drugs);
-  const [npvaccines, setnpvaccines] = useState(healthRecordNPB.vaccines);  
-  const [npphysicalActivities, setnpphysicalActivities] = useState(healthRecordNPB.physicalActivities);
+  const [npvaccines, setnpvaccines] = useState(healthRecordNPB.vaccines);
+  const [npphysicalActivities, setnpphysicalActivities] = useState(
+    healthRecordNPB.physicalActivities
+  );
 
   const healthRecordHB = patient.healthRecord?.hereditaryBackground || {};
 
   const [hbthyroid, sethbthyroid] = useState(healthRecordHB.thyroid);
-  const [hbheartDisease, sethbheartDisease] = useState(healthRecordHB.heartDisease);
+  const [hbheartDisease, sethbheartDisease] = useState(
+    healthRecordHB.heartDisease
+  );
   const [hbdiabetes, sethbdiabetes] = useState(healthRecordHB.diabetes);
-  const [hbarterialHypertension, sethbarterialHypertension] = useState(healthRecordHB.arterialHypertension);  
+  const [hbarterialHypertension, sethbarterialHypertension] = useState(
+    healthRecordHB.arterialHypertension
+  );
   const [hbglaucoma, sethbglaucoma] = useState(healthRecordHB.glaucoma);
-  const [hbneurological, sethbneurological] = useState(healthRecordHB.neurological);
-  const [hboncological, sethboncological] = useState(healthRecordHB.oncological);
+  const [hbneurological, sethbneurological] = useState(
+    healthRecordHB.neurological
+  );
+  const [hboncological, sethboncological] = useState(
+    healthRecordHB.oncological
+  );
+
+  const [prescriptionModal, setprescriptionModal] = useState(false);
+  const prescriptionModalToggle = () => {
+    setprescriptionModal(!prescriptionModal);
+  };
 
   useEffect(() => {
     return () => {
@@ -108,12 +146,7 @@ const PatientHealthRecord = (props) => {
 
   //Add new sticky note
   const addPrescription = () => {
-    setNotes([...notes, { id: notes.length + 1, isDeleted: false }]);
-  };
-
-  //Delete a particulr sticky note
-  const deleteNote = (note) => {
-    note.isDeleted = true;
+    prescriptionModalToggle();
   };
 
   const handleSubmitForm = (data) => {
@@ -153,6 +186,30 @@ const PatientHealthRecord = (props) => {
       errors.showMessages();
     }
   };
+
+  const paginationComponentOptions = {
+    rowsPerPageText: 'Filas por página',
+    rangeSeparatorText: 'de',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Todos',
+  };
+
+  const handleRowClickPrescriptions = (row, event) => {};
+
+  const columnsConfigPrescription = [    
+    {
+      name: 'Fecha',
+      selector: (row) => row.date,
+      sortable: true,
+      left: true,
+    },
+    {
+      name: 'Diagnóstico',
+      selector: (row) => row.diagnosis,
+      sortable: true,
+      left: true,
+    }
+  ];
 
   return (
     <Fragment>
@@ -479,7 +536,15 @@ const PatientHealthRecord = (props) => {
                                     patient.healthRecord?.pathologicalBackground
                                       ?.heartDisease
                                   }
-                                  onClick={(e) => { setpHeartDisease(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.heartDiseaseText', '');} } }
+                                  onClick={(e) => {
+                                    setpHeartDisease(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.heartDiseaseText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.heartDisease"
                                   ref={register({ required: false })}
                                 />
@@ -512,8 +577,19 @@ const PatientHealthRecord = (props) => {
                                   id="chktraumatismosHeredo"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.injuries }
-                                  onClick={(e) => { setpinjuries(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.injuriesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.injuries
+                                  }
+                                  onClick={(e) => {
+                                    setpinjuries(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.injuriesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.injuries"
                                   ref={register({ required: false })}
                                 />
@@ -546,8 +622,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpdiabetes"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.diabetes }
-                                  onClick={(e) => { setpdiabetes(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.diabetesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.diabetes
+                                  }
+                                  onClick={(e) => {
+                                    setpdiabetes(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.diabetesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.diabetes"
                                   ref={register({ required: false })}
                                 />
@@ -580,8 +667,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkparterialHypertension"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.arterialHypertension }
-                                  onClick={(e) => { setparterialHypertension(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.arterialHypertensionText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.arterialHypertension
+                                  }
+                                  onClick={(e) => {
+                                    setparterialHypertension(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.arterialHypertensionText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.arterialHypertension"
                                   ref={register({ required: false })}
                                 />
@@ -591,7 +689,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="hipertensionHeredo"
                                   rows="1"
-                                  disabled={mode === 'browse' || !parterialHypertension}
+                                  disabled={
+                                    mode === 'browse' || !parterialHypertension
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.arterialHypertensionText
@@ -614,8 +714,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpendocrineMetabolic"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.endocrineMetabolic }
-                                  onClick={(e) => { setpendocrineMetabolic(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.endocrineMetabolicText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.endocrineMetabolic
+                                  }
+                                  onClick={(e) => {
+                                    setpendocrineMetabolic(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.endocrineMetabolicText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.endocrineMetabolic"
                                   ref={register({ required: false })}
                                 />
@@ -625,7 +736,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="endocrino"
                                   rows="1"
-                                  disabled={mode === 'browse' || !pendocrineMetabolic}
+                                  disabled={
+                                    mode === 'browse' || !pendocrineMetabolic
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.endocrineMetabolicText
@@ -648,8 +761,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkprespiratory"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.respiratory }
-                                  onClick={(e) => { setprespiratory(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.respiratoryText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.respiratory
+                                  }
+                                  onClick={(e) => {
+                                    setprespiratory(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.respiratoryText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.respiratory"
                                   ref={register({ required: false })}
                                 />
@@ -682,8 +806,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpglaucoma"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.glaucoma }
-                                  onClick={(e) => { setpglaucoma(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.glaucomaText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.glaucoma
+                                  }
+                                  onClick={(e) => {
+                                    setpglaucoma(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.glaucomaText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.glaucoma"
                                   ref={register({ required: false })}
                                 />
@@ -716,8 +851,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpdigestive"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.digestive }
-                                  onClick={(e) => { setpdigestive(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.digestiveText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.digestive
+                                  }
+                                  onClick={(e) => {
+                                    setpdigestive(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.digestiveText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.digestive"
                                   ref={register({ required: false })}
                                 />
@@ -750,8 +896,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkponcological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.oncological }
-                                  onClick={(e) => { setponcological(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.oncologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.oncological
+                                  }
+                                  onClick={(e) => {
+                                    setponcological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.oncologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.oncological"
                                   ref={register({ required: false })}
                                 />
@@ -761,7 +918,7 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="oncologicos"
                                   rows="1"
-                                  disabled={mode === 'browse'|| !poncological}
+                                  disabled={mode === 'browse' || !poncological}
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.oncologicalText
@@ -784,8 +941,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpneurological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.neurological }
-                                  onClick={(e) => { setpneurological(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.neurologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.neurological
+                                  }
+                                  onClick={(e) => {
+                                    setpneurological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.neurologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.neurological"
                                   ref={register({ required: false })}
                                 />
@@ -818,8 +986,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpinfectological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.infectological }
-                                  onClick={(e) => { setpinfectological(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.infectologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.infectological
+                                  }
+                                  onClick={(e) => {
+                                    setpinfectological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.infectologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.infectological"
                                   ref={register({ required: false })}
                                 />
@@ -829,7 +1008,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="infectologicos"
                                   rows="1"
-                                  disabled={mode === 'browse' || !pinfectological}
+                                  disabled={
+                                    mode === 'browse' || !pinfectological
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.infectologicalText
@@ -852,8 +1033,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpnephrourological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.infectological }
-                                  onClick={(e) => { setpnephrourological(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.nephrourologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.infectological
+                                  }
+                                  onClick={(e) => {
+                                    setpnephrourological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.nephrourologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.nephrourological"
                                   ref={register({ required: false })}
                                 />
@@ -863,7 +1055,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="nefrourologicos"
                                   rows="1"
-                                  disabled={mode === 'browse' || !pnephrourological}
+                                  disabled={
+                                    mode === 'browse' || !pnephrourological
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.nephrourologicalText
@@ -886,8 +1080,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpgynecoObstetrics"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.gynecoObstetrics }
-                                  onClick={(e) => { setpgynecoObstetrics(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.gynecoObstetricsText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.gynecoObstetrics
+                                  }
+                                  onClick={(e) => {
+                                    setpgynecoObstetrics(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.gynecoObstetricsText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.gynecoObstetrics"
                                   ref={register({ required: false })}
                                 />
@@ -897,7 +1102,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="gineco"
                                   rows="1"
-                                  disabled={mode === 'browse' || !pgynecoObstetrics}
+                                  disabled={
+                                    mode === 'browse' || !pgynecoObstetrics
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.gynecoObstetricsText
@@ -920,8 +1127,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpstd"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.std }
-                                  onClick={(e) => { setpstd(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.stdText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.std
+                                  }
+                                  onClick={(e) => {
+                                    setpstd(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.stdText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.std"
                                   ref={register({ required: false })}
                                 />
@@ -954,8 +1172,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkphematological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.hematological }
-                                  onClick={(e) => { setphematological(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.hematologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.hematological
+                                  }
+                                  onClick={(e) => {
+                                    setphematological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.hematologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.hematological"
                                   ref={register({ required: false })}
                                 />
@@ -965,7 +1194,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="hematologicos"
                                   rows="1"
-                                  disabled={mode === 'browse' || !phematological}
+                                  disabled={
+                                    mode === 'browse' || !phematological
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.hematologicalText
@@ -988,8 +1219,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkptransfusions"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.transfusions }
-                                  onClick={(e) => { setptransfusions(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.transfusionsText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.transfusions
+                                  }
+                                  onClick={(e) => {
+                                    setptransfusions(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.transfusionsText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.transfusions"
                                   ref={register({ required: false })}
                                 />
@@ -1022,8 +1264,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkphospitalizations"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.hospitalizations }
-                                  onClick={(e) => { setphospitalizations(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.hospitalizationsText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.hospitalizations
+                                  }
+                                  onClick={(e) => {
+                                    setphospitalizations(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.hospitalizationsText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.hospitalizations"
                                   ref={register({ required: false })}
                                 />
@@ -1033,7 +1286,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="hospitalizaciones"
                                   rows="1"
-                                  disabled={mode === 'browse' || !phospitalizations}
+                                  disabled={
+                                    mode === 'browse' || !phospitalizations
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.pathologicalBackground
                                       ?.hospitalizationsText
@@ -1056,8 +1311,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkpsurgeries"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.pathologicalBackground?.surgeries }
-                                  onClick={(e) => { setpsurgeries(e.target.checked); if (!e.target.checked) { setValue('pathologicalBackground.surgeriesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.pathologicalBackground
+                                      ?.surgeries
+                                  }
+                                  onClick={(e) => {
+                                    setpsurgeries(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'pathologicalBackground.surgeriesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="pathologicalBackground.surgeries"
                                   ref={register({ required: false })}
                                 />
@@ -1135,8 +1401,19 @@ const PatientHealthRecord = (props) => {
                                   id="chknpsmoking"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.noPathologicalBackground?.smoking }
-                                  onClick={(e) => { setnpsmoking(e.target.checked); if (!e.target.checked) { setValue('noPathologicalBackground.smokingText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord
+                                      ?.noPathologicalBackground?.smoking
+                                  }
+                                  onClick={(e) => {
+                                    setnpsmoking(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'noPathologicalBackground.smokingText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="noPathologicalBackground.smoking"
                                   ref={register({ required: false })}
                                 />
@@ -1169,8 +1446,19 @@ const PatientHealthRecord = (props) => {
                                   id="chknpalcoholism"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.noPathologicalBackground?.alcoholism }
-                                  onClick={(e) => { setnpalcoholism(e.target.checked); if (!e.target.checked) { setValue('noPathologicalBackground.alcoholismText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord
+                                      ?.noPathologicalBackground?.alcoholism
+                                  }
+                                  onClick={(e) => {
+                                    setnpalcoholism(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'noPathologicalBackground.alcoholismText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="noPathologicalBackground.alcoholism"
                                   ref={register({ required: false })}
                                 />
@@ -1203,8 +1491,19 @@ const PatientHealthRecord = (props) => {
                                   id="chknpdrugs"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.noPathologicalBackground?.drugs }
-                                  onClick={(e) => { setnpdrugs(e.target.checked); if (!e.target.checked) { setValue('noPathologicalBackground.drugsText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord
+                                      ?.noPathologicalBackground?.drugs
+                                  }
+                                  onClick={(e) => {
+                                    setnpdrugs(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'noPathologicalBackground.drugsText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="noPathologicalBackground.drugs"
                                   ref={register({ required: false })}
                                 />
@@ -1237,8 +1536,19 @@ const PatientHealthRecord = (props) => {
                                   id="chknpvaccines"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.noPathologicalBackground?.vaccines }
-                                  onClick={(e) => { setnpvaccines(e.target.checked); if (!e.target.checked) { setValue('noPathologicalBackground.vaccinesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord
+                                      ?.noPathologicalBackground?.vaccines
+                                  }
+                                  onClick={(e) => {
+                                    setnpvaccines(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'noPathologicalBackground.vaccinesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="noPathologicalBackground.vaccines"
                                   ref={register({ required: false })}
                                 />
@@ -1271,8 +1581,20 @@ const PatientHealthRecord = (props) => {
                                   id="chknpphysicalActivities"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.noPathologicalBackground?.physicalActivities }
-                                  onClick={(e) => { setnpphysicalActivities(e.target.checked); if (!e.target.checked) { setValue('noPathologicalBackground.physicalActivitiesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord
+                                      ?.noPathologicalBackground
+                                      ?.physicalActivities
+                                  }
+                                  onClick={(e) => {
+                                    setnpphysicalActivities(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'noPathologicalBackground.physicalActivitiesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="noPathologicalBackground.physicalActivities"
                                   ref={register({ required: false })}
                                 />
@@ -1282,7 +1604,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="actfisica"
                                   rows="1"
-                                  disabled={mode === 'browse' || !npphysicalActivities}
+                                  disabled={
+                                    mode === 'browse' || !npphysicalActivities
+                                  }
                                   defaultValue={
                                     patient.healthRecord
                                       ?.noPathologicalBackground
@@ -1349,8 +1673,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbheartDisease"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.heartDisease }
-                                  onClick={(e) => { sethbheartDisease(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.heartDiseaseText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.heartDisease
+                                  }
+                                  onClick={(e) => {
+                                    sethbheartDisease(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.heartDiseaseText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.heartDisease"
                                   ref={register({ required: false })}
                                 />
@@ -1360,7 +1695,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="cardiopatiasHeredadas"
                                   rows="1"
-                                  disabled={mode === 'browse' || !hbheartDisease}
+                                  disabled={
+                                    mode === 'browse' || !hbheartDisease
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.hereditaryBackground
                                       ?.heartDiseaseText
@@ -1383,8 +1720,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbthyroid"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.thyroid }
-                                  onClick={(e) => { sethbthyroid(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.thyroidText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.thyroid
+                                  }
+                                  onClick={(e) => {
+                                    sethbthyroid(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.thyroidText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.thyroid"
                                   ref={register({ required: false })}
                                 />
@@ -1417,8 +1765,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbdiabetes"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.diabetes }
-                                  onClick={(e) => { sethbdiabetes(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.diabetesText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.diabetes
+                                  }
+                                  onClick={(e) => {
+                                    sethbdiabetes(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.diabetesText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.diabetes"
                                   ref={register({ required: false })}
                                 />
@@ -1451,8 +1810,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbarterialHypertension"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.arterialHypertension }
-                                  onClick={(e) => { sethbarterialHypertension(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.arterialHypertensionText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.arterialHypertension
+                                  }
+                                  onClick={(e) => {
+                                    sethbarterialHypertension(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.arterialHypertensionText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.arterialHypertension"
                                   ref={register({ required: false })}
                                 />
@@ -1462,7 +1832,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="hipertension"
                                   rows="1"
-                                  disabled={mode === 'browse' || !hbarterialHypertension}
+                                  disabled={
+                                    mode === 'browse' || !hbarterialHypertension
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.hereditaryBackground
                                       ?.arterialHypertensionText
@@ -1485,8 +1857,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbaglaucoma"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.glaucoma }
-                                  onClick={(e) => { sethbglaucoma(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.glaucomaText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.glaucoma
+                                  }
+                                  onClick={(e) => {
+                                    sethbglaucoma(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.glaucomaText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.glaucoma"
                                   ref={register({ required: false })}
                                 />
@@ -1519,8 +1902,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhbneurological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.neurological }
-                                  onClick={(e) => { sethbneurological(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.neurologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.neurological
+                                  }
+                                  onClick={(e) => {
+                                    sethbneurological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.neurologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.neurological"
                                   ref={register({ required: false })}
                                 />
@@ -1530,7 +1924,9 @@ const PatientHealthRecord = (props) => {
                                   className="form-control"
                                   id="neurologicoHeredo"
                                   rows="1"
-                                  disabled={mode === 'browse' || !hbneurological}
+                                  disabled={
+                                    mode === 'browse' || !hbneurological
+                                  }
                                   defaultValue={
                                     patient.healthRecord?.hereditaryBackground
                                       ?.neurologicalText
@@ -1553,8 +1949,19 @@ const PatientHealthRecord = (props) => {
                                   id="chkhboncological"
                                   type="checkbox"
                                   disabled={mode === 'browse'}
-                                  defaultChecked={ patient.healthRecord?.hereditaryBackground?.oncological }
-                                  onClick={(e) => { sethboncological(e.target.checked); if (!e.target.checked) { setValue('hereditaryBackground.oncologicalText', '');} } }
+                                  defaultChecked={
+                                    patient.healthRecord?.hereditaryBackground
+                                      ?.oncological
+                                  }
+                                  onClick={(e) => {
+                                    sethboncological(e.target.checked);
+                                    if (!e.target.checked) {
+                                      setValue(
+                                        'hereditaryBackground.oncologicalText',
+                                        ''
+                                      );
+                                    }
+                                  }}
                                   name="hereditaryBackground.oncological"
                                   ref={register({ required: false })}
                                 />
@@ -1718,51 +2125,47 @@ const PatientHealthRecord = (props) => {
                   <div className="col-md-12">
                     <div className="card">
                       <div className="card-header">
-                        <h5>
-                          {'Prescripciones'}
-                          <a
-                            href="#javascript"
-                            onClick={addPrescription}
-                            className="btn btn-primary pull-right m-l-10"
-                          >
-                            {'Agregar'}
-                          </a>
-                        </h5>
-                        <span>{'Prescripciones del paciente.'}</span>
-                      </div>
-                      <div className="card-body">
-                        <div className="sticky-note row" id="board">
-                          {notes.map((data, index) => (
-                            <div
-                              className={`note ui-draggable ui-draggable-handle col-md-5 ${
-                                data.isDeleted ? 'd-none' : ''
-                              }`}
-                              key={index}
-                            >
-                              <a
-                                href="#javascript"
-                                onClick={() => deleteNote(data)}
-                                className="button remove"
-                              >
-                                X
-                              </a>
-                              <div className="note_cnt">
-                                <textarea
-                                  className="title"
-                                  placeholder="Título..."
-                                  style={{ height: '64px' }}
-                                ></textarea>
-                                <textarea
-                                  className="cnt"
-                                  placeholder="Detalle de la prescripción..."
-                                  style={{ height: '200px' }}
-                                ></textarea>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <h5>{'Prescripciones'}</h5>
+                            <span>{'Prescripciones del paciente.'}</span>
+                          </div>
+                          <div className="col-md-6">
+                              <div className="text-right">
+                                <button
+                                  onClick={addPrescription}
+                                  className="btn btn-primary"
+                                >
+                                  {'Agregar'}
+                                </button>
                               </div>
-                            </div>
-                          ))}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="card-body datatable-react">
+                        <div className="table-responsive support-table">
+                          <DataTable
+                            columns={columnsConfigPrescription}
+                            data={patient.healthRecord?.prescriptions}
+                            // striped={true}
+                            // center={true}
+                            pagination
+                            highlightOnHover
+                            pointerOnHover
+                            noHeader
+                            subHeader
+                            subHeaderAlign={'left'}
+                            paginationPerPage={20}
+                            paginationComponentOptions={
+                              paginationComponentOptions
+                            }
+                            onRowClicked={handleRowClickPrescriptions}
+                            noDataComponent="No existen prescripcion registradas aún."
+                          />
                         </div>
                       </div>
                     </div>
+                    {prescriptionModal && <NewPrescriptionModalComponent prescriptionModal={prescriptionModal} prescriptionModalToggle={prescriptionModalToggle} />}
                   </div>
                 </TabPane>
                 <TabPane tabId="laboratorios">

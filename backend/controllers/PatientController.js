@@ -1,6 +1,7 @@
 import BaseController from './BaseController.js';
 import Patient from '../models/patientModel.js';
 import HealthRecord from '../models/healthRecordModel.js';
+import Prescription from '../models/prescriptionModel.js';
 
 class PatientController extends BaseController {
   constructor() {
@@ -51,6 +52,10 @@ class PatientController extends BaseController {
       .populate({
         path: 'healthRecord',
         populate: { path: 'drugsInfo.drugs' }
+      })
+      .populate({
+        path: 'healthRecord',
+        populate: { path: 'prescriptions.drugs', populate: { path: 'drugs.drug'} }
       });
     if (model) {
       return res.status(200).json(model);
