@@ -80,7 +80,7 @@ const DoctorList = (props) => {
                 )}
               </Col>
               {doctors.map((doctor, i) => (
-                <Col md="6" lg="6" xl="4" className="box-col-6" key={i}>
+                <Col md="3" lg="3" xl="3" className="box-col-3" key={i}>
                   <Card className="custom-card features-faq product-box">
                     <CardHeader className="">
                       <Media
@@ -191,22 +191,22 @@ const DoctorList = (props) => {
                             </a>
                           </li>
                           <li>
-                            <a
-                              href="#javascritp"
-                              title="Ver detalles"
+                            <Link
                               className="text-muted"
+                              title="Ver detalles"
+                              to={`${process.env.PUBLIC_URL}/doctor/${doctor.id}?mode=browse`}
                             >
                               <i className="icon-eye"></i>
-                            </a>
+                            </Link>
                           </li>
                           <li>
-                            <a
-                              href="#javascritp"
-                              title="Editar"
+                            <Link
                               className="text-muted"
+                              title="Editar"
+                              to={`${process.env.PUBLIC_URL}/doctor/${doctor.id}?mode=edit`}
                             >
                               <i className="icon-pencil-alt"></i>
-                            </a>
+                            </Link>
                           </li>
                           <li>
                             <a

@@ -8,6 +8,7 @@ const DoctorSchema = mongoose.Schema(
     nationalIdType: { type: String, required: true },
     nationality: { type: String, required: true },
     gender: { type: String, required: true },
+    biologicalSex: { type: String, required: false },
     email: {
       type: String,
       lowercase: true,

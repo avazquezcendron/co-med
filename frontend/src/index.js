@@ -15,8 +15,8 @@ import Default from './components/dashboard/defaultCompo/default';
 // users
 import UserProfile from './components/users/userProfile';
 import UserList from './components/users/userList';
-import UserCards from './components/users/user-cards';
 import DoctorList from './components/doctors/doctorList';
+import DoctorProfile from './components/doctors/doctorProfile';
 import PatientList from './components/patients/patientList';
 import PatientProfile from './components/patients/patientProfile';
 
@@ -99,8 +99,10 @@ const Root = () => {
                                     {/* Users */}
                                     <Route path={`${process.env.PUBLIC_URL}/user/:id`} component={UserProfile} />
                                     <Route exact path={`${process.env.PUBLIC_URL}/user`} component={UserList} />
-                                    <Route path={`${process.env.PUBLIC_URL}/userCards`} component={UserCards} />
-                                    <Route path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
+                                
+                                    <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />
+                                
                                     <Route exact path={`${process.env.PUBLIC_URL}/patient`} component={PatientList} />
                                     <Route path={`${process.env.PUBLIC_URL}/patient/:id`} component={PatientProfile} />
 
