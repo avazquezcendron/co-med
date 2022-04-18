@@ -37,6 +37,7 @@ const DoctorProfile = (props) => {
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
   const [dateOfBirth, setdobDate] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
+  const [specialities, setSpecialities] = useState([]);
 
   const [users, setUsers] = useState([]);
 
@@ -45,19 +46,13 @@ const DoctorProfile = (props) => {
   }, []);
 
   useEffect(() => {
-    // if (patient.healthInsurances?.length > 0) {
-    //   setHealthInsurancePlans(
-    //     patient.healthInsurances[0].healthInsuranceCompany.plans
-    //   );
-    //   setosFecIngresoDate(
-    //     patient.healthInsurances[0].admissionDate
-    //       ? new Date(patient.healthInsurances[0].admissionDate)
-    //       : null
-    //   );
-    // }
     if (doctor.dateOfBirth) {
       setdobDate(new Date(doctor.dateOfBirth));
     }
+    if (doctor.specialities) {
+      setSpecialities(doctor.specialities);  
+    }
+    
   }, [doctor]);
 
   useEffect(() => {
@@ -73,8 +68,16 @@ const DoctorProfile = (props) => {
   }, [status]);
 
   const handleSubmitForm = (data) => {
-    if (!doctor.specialities || doctor.specialities.length === 0) {
+    if (!specialities || specialities.length === 0) {
       setError('specialities', {});
+      return;
+    }
+    if (!dateOfBirth) {
+      setError('dateOfBirth', {});
+      return;
+    }
+    if (data && data.licenses?.length === 0) {
+      setError('dateOfBirth', {});
       return;
     }
     if (data !== '') {
@@ -92,14 +95,9 @@ const DoctorProfile = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          const doctorData = { ...doctor, ...data, dateOfBirth, user: data.user || null };
-          // if (doctorData.healthInsurances?.length > 0) {
-          //   if (!doctorData.healthInsurances[0].healthInsuranceCompany) {
-          //     doctorData.healthInsurances = [];
-          //   } else {
-          //     doctorData.healthInsurances[0].admissionDate = osFecIngresoDate;
-          //   }
-          // }
+          const licenses = data.licenses.filter(x => x.licenseType !== '');
+          const doctorData = { ...doctor, ...data, dateOfBirth, licenses: licenses, specialities: specialities, user: data.user || null };
+          
           dispatch(doctorSavetWatcher(doctorData));
         }
       });
@@ -130,7 +128,7 @@ const DoctorProfile = (props) => {
     } else {
       clearErrors('specialities');
     }
-    // setUser({ ...doctor, roles: roles });
+    setSpecialities(specialities);
   };
 
   const handleDoBChange = (date) => {
@@ -596,7 +594,7 @@ const DoctorProfile = (props) => {
                                   'Traumatología',
                                   'Hematología',
                                 ]}
-                                selected={doctor.specialities}
+                                selected={specialities}
                                 disabled={mode === 'browse'}
                                 onChange={handleSpecialitiesChange}
                               />
@@ -616,7 +614,7 @@ const DoctorProfile = (props) => {
                                 className="form-control"
                                 name="status"
                                 id="inputStatus"
-                                value={doctor.status}
+                                defaultValue={doctor.status}
                                 ref={register({ required: true })}
                               >
                                 <option value="active">{'Activo'}</option>
@@ -639,15 +637,19 @@ const DoctorProfile = (props) => {
                                 defaultValue={
                                   doctor?.licenses &&
                                   doctor?.licenses.length > 0
-                                    ? doctor?.licenses[0].licenseType
+                                    ? doctor?.licenses[0].licenseType[0]
                                     : undefined
                                 }
-                                ref={register({ required: false })}
+                                ref={register({ required: true })}
                               >
                                 <option value="">No Posee</option>
                                 <option value="mp">Matrícula Provincial</option>
                                 <option value="mn">Matrícula Nacional</option>
                               </select>
+                              <span style={{ color: 'red' }}>
+                                {errors.licenses &&
+                                  'Ingrese al menos una matrícula.'}
+                              </span>
                             </div>
                             <label
                               className="col-md-2 col-form-label"
@@ -665,8 +667,12 @@ const DoctorProfile = (props) => {
                                       ? doctor?.licenses[0].licenseId
                                       : undefined}
                                   type="number"
-                                  ref={register({ required: false })}
+                                  ref={register({ required: true })}
                                 />
+                                <span style={{ color: 'red' }}>
+                                  {errors.licenses &&
+                                    'Ingrese al menos una matrícula.'}
+                                </span>
                             </div>
                           </div>
                           <div className="form-group row">
@@ -684,7 +690,7 @@ const DoctorProfile = (props) => {
                                 defaultValue={
                                   doctor?.licenses &&
                                   doctor?.licenses.length > 1
-                                    ? doctor?.licenses[1].licenseType
+                                    ? doctor?.licenses[1].licenseType[0]
                                     : undefined
                                 }
                                 ref={register({ required: false })}

@@ -428,7 +428,7 @@ const UserProfile = (props) => {
                             className="form-control"
                             name="status"
                             id="inputStatus"
-                            value={user.status}
+                            defaultValue={user.status}
                             ref={register({ required: true })}
                           >
                             <option value="active">{'Activo'}</option>

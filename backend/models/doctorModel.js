@@ -21,6 +21,7 @@ const DoctorSchema = mongoose.Schema(
     phoneNumber: Number,
     avatarUrl: String,
     bio: String,
+    status: { type: String, default: 'active' },
     address: {
       street: String,
       city: String,

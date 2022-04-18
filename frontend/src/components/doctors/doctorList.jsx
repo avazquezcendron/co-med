@@ -39,6 +39,30 @@ const DoctorList = (props) => {
       dispatch(doctorsInitialize());
     };
   }, []);
+
+  useEffect(() => {
+    if (doctorStoreStatus === SUCCEEDED) dispatch(doctorGetAllWatcher());
+  }, [doctorStoreStatus]);
+
+  const handleDoctorChangeStatusClick = (doctor) => {
+    SweetAlert.fire({
+      title: 'Atención!',
+      text: `Se cambiará el estado del doctor "${doctor.fullName}" a "${
+        doctor.status === 'active' ? 'Inactivo' : 'Activo'
+      }".`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#ff0000',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.value) {
+        dispatch(doctorChangeStatustWatcher(doctor));
+      }
+    });
+  };
+
   return (
     <Fragment>
       {status === LOADED ? (
@@ -81,7 +105,17 @@ const DoctorList = (props) => {
               </Col>
               {doctors.map((doctor, i) => (
                 <Col md="3" lg="3" xl="3" className="box-col-3" key={i}>
-                  <Card className="custom-card features-faq product-box">
+                  {doctor.status === 'inactive' && (
+                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-danger">
+                      <i className="icon-na" title={'Estado "Inactivo"'}></i>
+                    </div>
+                  )}
+                  {doctor.status === 'active' && (
+                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-success">
+                      <i className="icon-check" title={'Estado "Activo"'}></i>
+                    </div>
+                  )}
+                  <Card className="custom-card features-faq product-box ribbon-vertical-right-wrapper">
                     <CardHeader className="">
                       <Media
                         body
@@ -211,10 +245,25 @@ const DoctorList = (props) => {
                           <li>
                             <a
                               href="#javascritp"
-                              className="txt-danger"
-                              title="Desactivar"
+                              className={
+                                doctor.status === 'active'
+                                  ? 'txt-danger'
+                                  : 'txt-success'
+                              }
+                              title={
+                                doctor.status === 'active'
+                                  ? 'Desactivar'
+                                  : 'Activar'
+                              }
+                              onClick={() =>
+                                handleDoctorChangeStatusClick(doctor)
+                              }
                             >
-                              <i className="icon-trash"></i>
+                              <i
+                                className={`icon-${
+                                  doctor.status === 'active' ? 'trash' : 'plus'
+                                }`}
+                              ></i>
                             </a>
                           </li>
                         </ul>
