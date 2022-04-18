@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as entityService from './entity.service';
 
-export const getAll = (loggedUser) => {
+export const getAll = (loggedUser, status = '') => {
   return entityService.getAll('doctor', loggedUser);
 };
 

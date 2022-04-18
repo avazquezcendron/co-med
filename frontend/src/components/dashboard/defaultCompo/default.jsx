@@ -1,21 +1,34 @@
 import React ,{useEffect, useState , useRef, Fragment} from 'react';
-import Breadcrumb from '../../common/breadcrumb';
 import { CloudDrizzle, Navigation, Users, DollarSign, Tag, Calendar, ShoppingBag, MessageCircle, MinusCircle, ThumbsUp, MessageSquare, Briefcase, MoreHorizontal, Send, Activity, Anchor, Compass, Cpu, Slack, Umbrella, Box, Book } from 'react-feather';
-import { calcultionOptions, calcultionData } from '../../../data/default'
+import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import ChartistGraph from 'react-chartist';
 import { translate } from 'react-switch-lang';
 import EventCharts from './eventCharts';
 import { Chart } from "react-google-charts";
 import CountUp from 'react-countup';
+import { useSelector, useDispatch } from 'react-redux';
+
+
+import Breadcrumb from '../../common/breadcrumb';
+import { calcultionOptions, calcultionData } from '../../../data/default'
 import configDB from '../../../data/customizer/config';
 import Todo from '../../applications/todo-app/todo'
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import {New,NewSale,NewMessage,NewVisits,TotalProfit,AllCustomIncome,All,TotalInvestment,TotalReview,CustomerReview,Change,Online,MarshiKisteen,Dashboard,Ui,Xi,Message,Portfolio,NewUser,Month,Today,NickStone,Follow,WiltorNoice,NewReport,TotalFeedback,MilanoEsco,AnnaStrong,RecentNotification,Order,Download, Trash,ByKan,ByKaint,ByTailer,ByWaiter,ByComman,Calculation,TotalIncome,TotalLoss,Conversations,View,Media,Search,SellingUpdate,Shipping,Purchase,TotalSell,Feedback,ByCall,Activitys} from '../../../constant'
+import {
+  patientGetAllWatcher,
+  patientsInitialize,
+} from '../../../redux/patients/actions';
+import {
+    getAppointmentsWatcher,
+  } from '../../../redux/appointments/actions';
 
 var Knob = require('knob')// browserify require
 var primary = localStorage.getItem('primary_color') || configDB.data.color.primary_color;
 
 const Default = (props) => {
+    const { patients } = useSelector((store) => store.Patients);
+    const { appointments } = useSelector((store) => store.Appointments);
+    const dispatch = useDispatch();
     
     const pageSize = 6;
     const pagesCount = Math.ceil(20 / pageSize);
@@ -42,6 +55,14 @@ const Default = (props) => {
     
     const [date, setDate] = useState(new Date());
     const dateRef = useRef(null);
+
+    useEffect(() => {
+        dispatch(patientGetAllWatcher());
+        dispatch(getAppointmentsWatcher());
+        return () => {
+          dispatch(patientsInitialize());
+        };
+      }, []);
 
     useEffect(() => {
         clearInterval(dateRef.current);
@@ -105,7 +126,7 @@ const Default = (props) => {
                                     <div className="media-body">
                                         <span className="m-0">{props.t('Patients') + ' Totales'}</span>
                                         <h4 className="mb-0 counter">
-                                            <CountUp className="counter" end={150} />
+                                            <CountUp className="counter" end={patients.length} />
                                         </h4>
                                         <Users className="icon-bg" />
                                     </div>
@@ -143,7 +164,7 @@ const Default = (props) => {
                                     <div className="media-body">
                                         <span className="m-0">{props.t('Appointments') + ' Totales'}</span>
                                         <h4 className="mb-0 counter">
-                                            <CountUp className="counter" end={420} />
+                                            <CountUp className="counter" end={appointments.length} />
                                         </h4>
                                         <Calendar className="icon-bg" />
                                     </div>

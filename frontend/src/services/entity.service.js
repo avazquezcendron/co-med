@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export const getAll = async (entity, loggedUser) => {
+export const getAll = async (entity, loggedUser, status = '') => {
   const config = {
     headers: {
       Authorization: `Bearer ${loggedUser?.token}`,
     },
   };
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}`, config);
+  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}${status ? '?status='+status : ''}`, config);
   return data;
 };
 

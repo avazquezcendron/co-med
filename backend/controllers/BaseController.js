@@ -28,8 +28,14 @@ class BaseController {
    * @return {Object} res The response object
    */
   async getAll(req, res, next) {
-    const models = await this._model.find({});
-    res.status(200).json(models);
+    const status = req.query.status;
+    if (status) {
+      const models = await this._model.find({status: status});
+      res.status(200).json(models);
+    } else {
+      const models = await this._model.find({});
+      res.status(200).json(models);
+    }    
   }
 
   /**

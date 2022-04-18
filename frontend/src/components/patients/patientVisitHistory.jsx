@@ -213,7 +213,7 @@ const PatientVisitHistory = (props) => {
                 >
                   <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
                     <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
-                      <i class="icon-signal" title={'Primera Consulta'}></i>
+                      <i className="icon-signal" title={'Primera Consulta'}></i>
                     </div>
                     <div className="col-md-8 ">
                       <div className="blog-details">

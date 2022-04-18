@@ -12,7 +12,7 @@ import * as statusTypes from '../statusTypes';
 
 const INITIAL_STATE_APPOINTMENTS = {
   appointments: [],
-  status: statusTypes.SUCCEEDED,
+  status: '',
 };
 export const AppointmentsReducer = (
   state = INITIAL_STATE_APPOINTMENTS,
