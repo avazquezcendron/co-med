@@ -162,13 +162,7 @@ const DoctorList = (props) => {
                     <div className="text-center profile-details">
                       <h4>{doctor.fullName}</h4>
                       <h6 className="mb-0">
-                        {doctor.specialities?.map(
-                          (x, index) =>
-                            x +
-                            (index === doctor.specialities.length - 1
-                              ? ''
-                              : ' | ')
-                        )}
+                        {doctor.specialities?.join(', ')}
                       </h6>
                       <h6 className="mb-0">
                         {doctor.licenses.map(

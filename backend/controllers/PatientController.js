@@ -22,8 +22,38 @@ class PatientController extends BaseController {
    * @return {Object} res The response object
    */
   async getAll(req, res, next) {
+    const status = req.query.status;
+    const filterBy = req.query.filterBy;
+    const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
+    const searchRgx = rgx(filterBy);
+    const filter = {};
+    if (status) {
+      filter.status = status;
+    }
+
+    if (filterBy) {
+      const filterByParsed = parseInt(filterBy);
+      filter.$or = [
+        { firstName: { $regex: searchRgx } },
+        { lastName: { $regex: searchRgx } },
+      ];
+      if (filterByParsed) {
+        filter.$or.push(
+          { nationalId: filterByParsed },
+          { 'healthRecord.healthRecordNumber': filterByParsed }
+        );
+      }
+    }
+
+    let finalFilter = {};
+    if (filter.status && filter.$or) {
+      finalFilter.$and = [{ status: filter.status }, { $or: filter.$or }];
+    } else {
+      finalFilter = filter;
+    }
+
     const patients = await this._model
-      .find({})
+      .find(finalFilter)
       .populate({
         path: 'healthInsurances.healthInsuranceCompany',
       })
@@ -51,11 +81,14 @@ class PatientController extends BaseController {
       })
       .populate({
         path: 'healthRecord',
-        populate: { path: 'drugsInfo.drugs' }
+        populate: { path: 'drugsInfo.drugs' },
       })
       .populate({
         path: 'healthRecord',
-        populate: { path: 'prescriptions.drugs', populate: { path: 'drugs.drug'} }
+        populate: {
+          path: 'prescriptions.drugs',
+          populate: { path: 'drugs.drug' },
+        },
       });
     if (model) {
       return res.status(200).json(model);

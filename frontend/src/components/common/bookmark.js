@@ -20,7 +20,7 @@ const Bookmark = () => {
   // eslint-disable-next-line
   const [targetName, setTargetName] = useState('');
 
-  const [appointmentData, setAppointmentData] = useState({});
+  const [appointmentData, setAppointmentData] = useState({new: true});
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
@@ -171,14 +171,12 @@ const Bookmark = () => {
   return (
     <div>
       <div className="col">
-        {appointmentModal && (
-          <AppointmentModalComponent
-            appointmentModal={appointmentModal}
-            appointmentModalToggle={appointmentModalToggle}
-            appointmentData={appointmentData}
-            setAppointmentModal={setAppointmentModal}
-          />
-        )}
+        <AppointmentModalComponent
+          appointmentModal={appointmentModal}
+          appointmentModalToggle={appointmentModalToggle}
+          appointmentData={appointmentData}
+          setAppointmentModal={setAppointmentModal}
+        />
         <div className="bookmark pull-right">
           <ul>
             <li>
@@ -190,7 +188,8 @@ const Bookmark = () => {
               >
                 <UserPlus />
               </Link>
-            </li><li>
+            </li>
+            <li>
               <a
                 href="#javascript"
                 className="realname"
@@ -199,14 +198,15 @@ const Bookmark = () => {
               >
                 <Clipboard />
               </a>
-            </li><li>
+            </li>
+            <li>
               <a
                 href="#javascript"
                 className="realname"
                 // onClick={handleNewAppointment}
                 title="Nueva Consulta"
               >
-               <PlusCircle />
+                <PlusCircle />
               </a>
             </li>
             <li>

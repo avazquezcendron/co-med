@@ -25,7 +25,7 @@ const Calender = () => {
   const businessHours = appointmentService.getBussinesHours();
 
   // const [appointments, setAppointments] = useState([]);
-  const [appointmentData, setAppointmentData] = useState({});
+  const [appointmentData, setAppointmentData] = useState({new: true});
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);

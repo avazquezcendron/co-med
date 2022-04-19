@@ -3,37 +3,40 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
-  Fragment
+  Fragment,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { Form, FormGroup, Label } from 'reactstrap';
-import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
-import { setDataAppointmentForm } from '../../../redux/appointments/actions';
 import * as doctorService from '../../../services/doctor.service';
+import { setDataAppointmentForm } from '../../../redux/appointments/actions';
+import {
+  doctorGetAllWatcher,
+  doctorsInitialize,
+} from '../../../redux/doctors/actions';
+import { LOADED } from '../../../redux/statusTypes';
 
 const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
 
   const appointment = useSelector((store) => store.AppointmentForm);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const [doctor, setDoctor] = useState(appointment.doctor || {});
-
   const [doctors, setDoctors] = useState([]);
-  useEffect(() => {
-    doctorService.getAll().then((res) => setDoctors(res.data));
-  }, []);
+  const [isLoading, setIsLoading] = useState(false);
 
   useImperativeHandle(ref, () => ({
     isValidated() {
-      if (!doctor.name) {
-        if(!errors.doctor)
-          setError("doctor", {});
-        return false;        
+      if (!doctor.id) {
+        if (!errors.doctor) setError('doctor', {});
+        return false;
       }
+      dispatch(setDataAppointmentForm({ doctor: doctor }));
       return true;
     },
   }));
@@ -41,41 +44,56 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const handleDoctorChange = (selected) => {
     let doctor = selected.length > 0 ? selected[0] : {};
     if (selected.length <= 0) {
-      setError("doctor", {});
+      setError('doctor', {});
     } else {
       clearErrors('doctor');
     }
     setDoctor(doctor);
-    dispatch(setDataAppointmentForm({ doctor: doctor }));
   };
+
+  const handleSearch = (filter) => {
+    setIsLoading(true);
+    doctorService.getDoctorsByFilter(filter, loggedUser).then((doctors) => {
+      setDoctors(doctors);
+      setIsLoading(false);
+    });
+  };
+
+  // Bypass client-side filtering by returning `true`. Results are already
+  // filtered by the search endpoint, so no need to do it again.
+  const filterBy = () => true;
 
   return (
     <Form className="form-bookmark needs-validation">
       <div className="form-row m-50">
         <p className="text-muted f-12 col-md-12">
-          Ingrese el nombre o DNI para buscar al doctor.
+          Ingrese el nombre, especialidad o DNI para buscar al doctor.
         </p>
         <FormGroup className="col-md-4">
           <Label>{'Doctor'}</Label>
-          <Typeahead
+          <AsyncTypeahead
             id="doctor"
             name="doctor"
+            isLoading={isLoading}
             options={doctors}
-            labelKey="name"
-            filterBy={['nationalId', 'healthRecordId']}
+            labelKey={(option) => option.fullName}
+            filterBy={filterBy}
             minLength={3}
+            onSearch={handleSearch}
             clearButton
             onChange={(selected) => handleDoctorChange(selected)}
-            selected={doctors.length > 0 ? doctors.filter((x) => x.name === doctor.name) : null}
+            selected={
+              doctors.length > 0
+                ? doctors.filter((x) => x.id === doctor.id)
+                : null
+            }
             innerRef={register('doctor', { required: true })}
             renderMenuItemChildren={(option, props) => (
               <Fragment>
-                <Highlighter search={props.text}>
-                  {option.name}
-                </Highlighter>
+                <Highlighter search={props.text}>{option.fullName}</Highlighter>
                 <div className="mt-1">
                   <small className="text-muted">
-                    {option.speciality}
+                    {option.specialities.join(', ')}
                   </small>
                 </div>
               </Fragment>

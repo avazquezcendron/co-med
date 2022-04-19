@@ -38,9 +38,10 @@ export const doctorsInitialize = () => {
   };
 };
 
-export const doctorGetAllWatcher = () => {
+export const doctorGetAllWatcher = (status) => {
   return {
     type: DOCTOR_GET_ALL_WATCHER,
+    payload: status
   };
 };
 

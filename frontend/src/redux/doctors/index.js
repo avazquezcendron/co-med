@@ -58,11 +58,11 @@ function* changeStatusDoctorAsync({ payload }) {
   }
 }
 
-function* fetchDoctorsAsync() {
+function* fetchDoctorsAsync({ payload }) {
     try {
         yield put(doctorGetAllRequest());
         const loggedUser = yield select(getLoggedUser);
-        const data = yield call(doctorService.getAll, loggedUser);
+        const data = yield call(doctorService.getAll, loggedUser, payload);
         yield put(doctorGetAllSuccess(data));
     } catch (err) {
         const errMsg =

@@ -19,22 +19,26 @@ import {
   PopoverHeader,
   PopoverBody,
 } from 'reactstrap';
-import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 
+import * as patientService from '../../../services/patient.service';
 import PatientQuickAdd from '../patientQuickAdd';
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
 import { patientGetAllWatcher } from '../../../redux/patients/actions';
+import { LOADED } from '../../../redux/statusTypes';
 
 const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
 
   const appointment = useSelector((store) => store.AppointmentForm);
-  const { patients, status } = useSelector((store) => store.Patients);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const [patient, setPatient] = useState(appointment.patient || {});
+  const [patients, setPatients] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [type, setType] = useState(appointment.type || 'turno');
   const [mode, setMode] = useState(appointment.mode || 'presencial');
   const [description, setDescription] = useState(appointment.description || '');
@@ -44,10 +48,6 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
 
   const [popover, setPopover] = useState(false);
   const popoverNewPatientToggle = () => setPopover(!popover);
-
-  useEffect(() => {
-    dispatch(patientGetAllWatcher());
-  }, []);
 
   useImperativeHandle(ref, () => ({
     isValidated() {
@@ -79,13 +79,17 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
     }
   };
 
-  const showNewPatientForm = () => {
-    document.querySelector('.history').classList.add('show');
+  const handleSearch = (filter) => {
+    setIsLoading(true);
+    patientService.getPatientsByFilter(filter, loggedUser).then((patients) => {
+      setPatients(patients);
+      setIsLoading(false);
+    });
   };
 
-  const closeNewPatientForm = () => {
-    document.querySelector('.history').classList.remove('show');
-  };
+// Bypass client-side filtering by returning `true`. Results are already
+  // filtered by the search endpoint, so no need to do it again.
+  const filterBy = () => true;
 
   return (
     <Fragment>
@@ -99,15 +103,16 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
             </a>{' '}
             para ingresar un nuevo paciente al sistema.
           </p>
-          <FormGroup className="col-md-4">
+          <FormGroup className="col-md-6">
             <Label>{'Paciente'} </Label>
-            <Typeahead
+            <AsyncTypeahead
               id="patient"
               name="patient"
               options={patients}
               labelKey={(option) => option.fullName}
-              filterBy={['fullName', 'nationalId', 'healthRecord.healthRecordNumber']}
+              filterBy={filterBy}
               minLength={3}
+              onSearch={handleSearch}
               clearButton
               onChange={(selected) => handlePatientChange(selected)}
               selected={

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { useDispatch } from 'react-redux';
 
@@ -11,9 +11,13 @@ import AppointmentResumeComponent from './appointmentResumeComponent';
 
 const AppointmentModalComponent = (props) => {
   const dispatch = useDispatch();
-  if (!props.appointmentData.new) {
-    dispatch(setDataAppointmentForm(props.appointmentData));
-  }
+  
+
+  useEffect(() => {
+    if (props.appointmentData && !props.appointmentData.new) {
+      dispatch(setDataAppointmentForm(props.appointmentData));
+    }
+  }, [props.appointmentData]);
 
   return (
     <Modal

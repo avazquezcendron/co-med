@@ -153,3 +153,29 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
     throw err;
   }
 };
+
+export const getPatientsByFilter = async (filter, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.get(
+      `${process.env.PUBLIC_URL}/api/patient/?status=active&filterBy=${filter}`,
+      config
+    );
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+  }
+};
