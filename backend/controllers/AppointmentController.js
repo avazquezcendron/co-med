@@ -27,6 +27,11 @@ class AppointmentController extends BaseController {
       })
       .populate({
         path: 'patient',
+        populate: { path: 'healthInsurances.healthInsuranceCompany'}
+      })
+      .populate({
+        path: 'patient',
+        populate: { path: 'healthRecord'}
       });
     res.status(200).json(appointments);
   }
@@ -69,7 +74,7 @@ class AppointmentController extends BaseController {
    */
   async create(req, res, next) {
     const appointment = new this._model(req.body);
-    const patient = await Patient.findById(appointment.patient.id);
+    const patient = await Patient.findById(appointment.patient._id);
     const savedappointment = await appointment.save();
     patient.appointments.push(savedappointment._id);
     await patient.save();

@@ -39,7 +39,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const [patient, setPatient] = useState(appointment.patient || {});
   const [patients, setPatients] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [type, setType] = useState(appointment.type || 'turno');
+  const [type, setType] = useState(appointment.appointmentType || 'turno');
   const [mode, setMode] = useState(appointment.mode || 'presencial');
   const [description, setDescription] = useState(appointment.description || '');
 
@@ -67,7 +67,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       dispatch(
         setDataAppointmentForm({
           patient: patient,
-          type: type,
+          appointmentType: type,
           mode: mode,
           description: description,
         })

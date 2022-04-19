@@ -66,7 +66,6 @@ const Calender = () => {
   const handleAppointmentClick = (eventClick) => {
     if (eventClick.event.id) {
       setAppointmentData({
-        // startTime: eventClick.event.start,
         start: eventClick.event.start,
         end: eventClick.event.end,
         title: eventClick.event.title,

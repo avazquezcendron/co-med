@@ -7,10 +7,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
 import { getAppointmentsWatcher } from '../../redux/appointments/actions';
+import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 
 const PatientsAgenda = (props) => {
   const appointments = useSelector((store) => store.Appointments.appointments);
   const dispatch = useDispatch();
+
+  const [appointmentData, setAppointmentData] = useState({ new: true });
+  const [appointmentModal, setAppointmentModal] = useState(false);
+  const appointmentModalToggle = () => {
+    setAppointmentModal(!appointmentModal);
+  };
 
   useEffect(() => {
     dispatch(getAppointmentsWatcher());
@@ -84,15 +91,10 @@ const PatientsAgenda = (props) => {
   };
 
   const handleRowClick = (row, event) => {
-    props.history.push(
-      `${process.env.PUBLIC_URL}/patient/${row.patient.id}?mode=browse`
-    );
-  };
-
-  const handleEditPatientClick = (row, event) => {
-    props.history.push(
-      `${process.env.PUBLIC_URL}/patient/${row.patient.id}?mode=edit`
-    );
+    if (row.id) {
+      setAppointmentData({ ...row, start: new Date(row.start), end: new Date(row.end) ,new: false});
+      appointmentModalToggle();
+    }
   };
 
   const handleDeletePatientClick = (patient) => {
@@ -221,7 +223,7 @@ const PatientsAgenda = (props) => {
             <div className="media-body">
               <span className="f-18 p-r-10">{row.patient.fullName}</span>
               <span className="f-16 p-l-10 text-muted" style={{ borderLeft: '2px solid #999' }}>
-                <i className={`fa fa-${row.patient.sex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patient.age} años`}</span>
+                <i className={`fa fa-${row.patient.biologicalSex === 'm' ? 'male' : 'female'}`}></i>{` ${row.patient.age} años`}</span>
               {/* <span
                 className="p-l-10 p-r-10 text-muted"
                 style={{ borderRight: '2px solid #999' }}
@@ -237,7 +239,7 @@ const PatientsAgenda = (props) => {
               </span> */}
               {/* <span className="p-l-10 text-muted">{row.start}</span> */}
               <p className="f-12">
-                <i className="icofont icofont-doctor-alt"></i> {row.doctor.name} | {row.doctor.speciality}
+                <i className="icofont icofont-doctor-alt"></i> {row.doctor.fullName} | {row.doctor.specialities.join(', ')}
               </p>
             </div>
           </div>
@@ -351,6 +353,12 @@ const PatientsAgenda = (props) => {
     <Fragment>
       <div className="tab-content" id="tab-3">
         <div className="row">
+        <AppointmentModalComponent
+            appointmentModal={appointmentModal}
+            appointmentModalToggle={appointmentModalToggle}
+            appointmentData={appointmentData}
+            setAppointmentModal={setAppointmentModal}
+          />
           <div className="col-sm-12">
             <div className="card">
               <div className="card-header">

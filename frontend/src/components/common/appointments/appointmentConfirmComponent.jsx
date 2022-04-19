@@ -30,7 +30,7 @@ const AppointmentConfirmComponent = (props) => {
             'hs'
           : ''
       } para el paciente ${appointmentData.patient.fullName} con el doctor/a ${
-        appointmentData.doctor.name
+        appointmentData.doctor.fullName
       }.`,
       icon: 'warning',
       showCancelButton: true,
@@ -41,9 +41,6 @@ const AppointmentConfirmComponent = (props) => {
     }).then((result) => {
       if (result.value) {
         dispatch(saveAppointmentWatcher(appointmentData));
-        toast.success('Turno confirmado con éxito.', {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
         props.modalToggle();
       } else {
         toast.error('Se canceló el alta del turno.', {

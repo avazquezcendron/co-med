@@ -23,7 +23,7 @@ const AppointmentResumeComponent = (props) => {
         <span className="f-w-600">Tipo</span>
       </div>
       <div className="col-md-12 ">
-        <p>{appointment.type === 'turno' ? 'Turno' : 'Sobreturno'}</p>
+        <p>{appointment.appointmentType === 'turno' ? 'Turno' : 'Sobreturno'}</p>
       </div>
       <div className="col-md-12">
         <span className="f-w-600">Modalidad</span>
