@@ -40,16 +40,7 @@ const AppointmentConfirmComponent = (props) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.value) {
-        //TODO: acomodar el seteo de la propiedades title, resourceId y Id: Id y title se generan en back, resourceId es más cuestion de front ya que está relacionado al reac-scheduler.
-        dispatch(
-          saveAppointmentWatcher({
-            ...appointmentData,
-            title: `${appointmentData.patient.fullName} - ${appointmentData.mode}`,
-            resourceId: appointmentData.doctor.id,
-            constraint: 'businessHours',
-            id: 2,
-          })
-        );
+        dispatch(saveAppointmentWatcher(appointmentData));
         toast.success('Turno confirmado con éxito.', {
           position: toast.POSITION.BOTTOM_RIGHT,
         });

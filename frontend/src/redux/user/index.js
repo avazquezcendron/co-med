@@ -13,9 +13,9 @@ import {
   userSaveRequest,
   userSaveSuccess,
   userSaveFailure,
-  USER_GET_ALL_WATCHER,
-  userGetAllRequest,
-  userGetAllSuccess
+  // USER_GET_ALL_WATCHER,
+  // userGetAllRequest,
+  // userGetAllSuccess
 } from './actions';
 
 
@@ -61,20 +61,20 @@ function* saveUserAsync({ payload }) {
   }
 }
 
-function* fetchUsersAsync() {
-    try {
-        yield put(userGetAllRequest());
-        const loggedUser = yield select(getLoggedUser);
-        const response = yield call(userService.getAll, loggedUser);
-        yield put(userGetAllSuccess(response.data));
-    } catch (err) {
-        const errMsg =
-        err.response && err.response.data.message
-            ? err.response.data.message
-            : err.message;
-        // yield put(userSaveFailure(errMsg));
-    }
-}
+// function* fetchUsersAsync() {
+//     try {
+//         yield put(userGetAllRequest());
+//         const loggedUser = yield select(getLoggedUser);
+//         const response = yield call(userService.getAll, loggedUser);
+//         yield put(userGetAllSuccess(response.data));
+//     } catch (err) {
+//         const errMsg =
+//         err.response && err.response.data.message
+//             ? err.response.data.message
+//             : err.message;
+//         // yield put(userSaveFailure(errMsg));
+//     }
+// }
 
 export function* WatcherUsers() {
   yield takeLatest(USER_LOGIN_WATCHER, loginUserAsync);

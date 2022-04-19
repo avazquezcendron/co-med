@@ -183,7 +183,7 @@ const Default = (props) => {
                                     <div className="media-body">
                                         <span className="m-0">{props.t('Appointments') + ' para hoy'}</span>
                                         <h4 className="mb-0 counter">
-                                            <CountUp className="counter" end={30} />
+                                            <CountUp className="counter" end={appointments.filter(x => new Date(x.start).toLocaleDateString() === new Date().toLocaleDateString()).length} />
                                         </h4>
                                         <Calendar className="icon-bg" />
                                     </div>

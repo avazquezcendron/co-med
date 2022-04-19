@@ -1,25 +1,44 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { call, put, takeLatest, select } from 'redux-saga/effects';
 
 import * as appointmentService from '../../services/appointment.service';
-import { saveAppointmentRequest, saveAppointmentSuccess, getAppointmentsRequest, getAppointmentsSuccess,GET_APPOINTMENTS_WATCHER, SAVE_APPOINTMENT_WATCHER } from "./actions";
+import {
+  saveAppointmentRequest,
+  saveAppointmentSuccess,
+  getAppointmentsRequest,
+  getAppointmentsSuccess,
+  GET_APPOINTMENTS_WATCHER,
+  SAVE_APPOINTMENT_WATCHER,
+} from './actions';
+import { getLoggedUser } from '../selectors';
 
 function* fetchAppointmentsAsync() {
-    yield put(getAppointmentsRequest());
-    const response = yield call(appointmentService.getAllAppointments);
-    const appointments = response.data.map(appointmentData => {
-        return { ...appointmentData, resourceId: appointmentData.doctor.id, constraint: 'businessHours' };//TODO: analizar dónde setear las properties netamente de front, relacionadas a plugins de calendarios y demás.
-    })
-    yield put(getAppointmentsSuccess(appointments));
+  yield put(getAppointmentsRequest());
+  const loggedUser = yield select(getLoggedUser);
+  const appointments = yield call(appointmentService.getAll, loggedUser);
+  yield put(getAppointmentsSuccess(appointments));
 }
 
-function* saveAppointmentsAsync({ payload }) {
+function* saveAppointmentAsync({ payload }) {
+  try {
     yield put(saveAppointmentRequest());
-    // TODO: Save to BBDD through API
-    yield put(saveAppointmentSuccess(payload.id, payload));
+    const loggedUser = yield select(getLoggedUser);
+    let data;
+    if (payload.id && payload.id !== '0') {
+      data = yield call(appointmentService.update, payload, loggedUser);
+      yield put(saveAppointmentSuccess(data));
+    } else {
+      data = yield call(appointmentService.save, payload, loggedUser);
+      yield put(saveAppointmentSuccess(data));
+    }
+  } catch (err) {
+    const errMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+  }
 }
 
 export function* WatcherAppointments() {
-    yield takeLatest(GET_APPOINTMENTS_WATCHER, fetchAppointmentsAsync);
-    yield takeLatest(SAVE_APPOINTMENT_WATCHER, saveAppointmentsAsync);
+  yield takeLatest(GET_APPOINTMENTS_WATCHER, fetchAppointmentsAsync);
+  yield takeLatest(SAVE_APPOINTMENT_WATCHER, saveAppointmentAsync);
 }
-

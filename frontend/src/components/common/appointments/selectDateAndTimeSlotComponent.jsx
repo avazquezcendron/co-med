@@ -20,6 +20,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
 
   const appointment = useSelector((store) => store.AppointmentForm);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const [selectedSlot, setSelectedSlot] = useState({});
@@ -29,20 +30,22 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
 
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
   useEffect(() => {
-    const sessions = appointmentService.getAppointmentSessions();
-    setAppointmentsSessions(sessions);
-    const startTime = new Date(appointment.start);
-    if (startTime) {
-      sessions.forEach((session) => {
-        const activeSlot = session.slots.filter(
-          (slot) =>
-            slot.startTime.getHours() === startTime.getHours() &&
-            slot.startTime.getMinutes() === startTime.getMinutes()
-          // && slot.available
-        );
-        if (activeSlot && activeSlot.length > 0) setSelectedSlot(activeSlot[0]);
-      });
-    }
+    appointmentService.getAppointmentSessions(loggedUser).then((sessions) => {
+      setAppointmentsSessions(sessions);
+      const startTime = new Date(appointment.start);
+      if (startTime) {
+        sessions.forEach((session) => {
+          const activeSlot = session.slots.filter(
+            (slot) =>
+              slot.startTime.getHours() === startTime.getHours() &&
+              slot.startTime.getMinutes() === startTime.getMinutes()
+            // && slot.available
+          );
+          if (activeSlot && activeSlot.length > 0)
+            setSelectedSlot(activeSlot[0]);
+        });
+      }
+    });
   }, []);
 
   const handleAppDateChange = (date) => {
@@ -118,7 +121,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
       <div className="form-row m-50">
         <FormGroup className="col-md-12">
           <div className="row">
-            {startDate &&
+            {startDate && (
               <p className="text-muted col-md-12">
                 * Turnos disponibles para el{' '}
                 <mark>
@@ -132,7 +135,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
                   </u>
                 </mark>
               </p>
-            }
+            )}
             <div className="col-md-6">
               <Label>{'Día'}</Label>
               <DatePicker

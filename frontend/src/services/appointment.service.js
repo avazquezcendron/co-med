@@ -1,42 +1,141 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-export const getAllAppointments = () => {
-  return axios.get(`${process.env.PUBLIC_URL}/api/appointments.json`);
+export const getAll = async (loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/appointment`,
+    config
+  );
+  return data;
 };
 
-export const getBussinesHours = () => {
-  const slotConfig = getAppointmentSlotsConfig();
+export const save = async (appointmentData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.post(
+      `${process.env.PUBLIC_URL}/api/appointment`,
+      appointmentData,
+      config
+    );
+    toast.success('Turno dado de alta con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al dar de alta el Turno. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
+
+export const update = async (appointmentData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      `${process.env.PUBLIC_URL}/api/appointment/${appointmentData.id}`,
+      appointmentData,
+      config
+    );
+    toast.success('Turno actualizado con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al actualizar el Turno. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
+
+export const getBussinesHoursBySlot = (slotConfig) => {
   return [
     {
-      daysOfWeek: slotConfig.timeArr[0].daysOfWeek,
-      startTime: slotConfig.timeArr[0].startTime, //'08:30',
-      endTime: slotConfig.timeArr[0].endTime,
+      daysOfWeek: slotConfig.sessions[0].daysOfWeek,
+      startTime: slotConfig.sessions[0].startTime, //'08:30',
+      endTime: slotConfig.sessions[0].endTime,
     },
     {
-      daysOfWeek: slotConfig.timeArr[1].daysOfWeek,
-      startTime: slotConfig.timeArr[1].startTime, //'08:30',
-      endTime: slotConfig.timeArr[1].endTime,
+      daysOfWeek: slotConfig.sessions[1].daysOfWeek,
+      startTime: slotConfig.sessions[1].startTime, //'08:30',
+      endTime: slotConfig.sessions[1].endTime,
     },
   ];
 };
 
-export const getAppointmentSlotsConfig = () => {
-  return {
-    configSlotHours: 0,
-    configSlotMinutes: 30,
-    configSlotPreparation: 0,
-    timeArr: [
-      { sessionType: 'morning', sessionName: 'Mañana', startTime: '08:30', endTime: '13:00', daysOfWeek: [1, 2, 3, 4, 5, 6, 7] },
-      { sessionType: 'evening', sessionName: 'Tarde', startTime: '14:00', endTime: '16:00', daysOfWeek: [1, 2, 3, 4, 5, 6, 7] },
-    ],
-  };
+export const getBussinesHours = async (loggedUser) => {
+  const slotConfig = await getAppointmentSlotsConfig(loggedUser);
+  if (slotConfig?.length === 0) return [];
+
+  return getBussinesHoursBySlot(slotConfig[0]);
 };
 
-export const getAppointmentSessions = () => {
-  const slotConfig = getAppointmentSlotsConfig();
+export const getAppointmentSlotsConfig = async (loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.get(
+      `${process.env.PUBLIC_URL}/api/appointmentconfig/`,
+      config
+    );
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al obtener la configuración de los turnos. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
 
-  const { configSlotHours, configSlotMinutes, configSlotPreparation, timeArr } =
-    slotConfig;
+export const getAppointmentSessions = async (loggedUser) => {
+  const slotConfig = await getAppointmentSlotsConfig(loggedUser);
+
+  if (slotConfig?.length === 0) return [];
+
+  const {
+    slotHours,
+    slotMinutes,
+    slotPreparation,
+    sessions: timeArr,
+  } = slotConfig[0];
   let defaultDate = new Date().toISOString().substring(0, 10);
   let sessions = [];
   let _timeArrStartTime;
@@ -47,7 +146,7 @@ export const getAppointmentSessions = () => {
   let slotId = 0;
   // Loop over timeArr
   for (var i = 0; i < timeArr.length; i++) {
-    let session = { sessionName: timeArr[i].sessionName, slots: [] };
+    let session = { sessionName: timeArr[i].name, slots: [] };
 
     // Creating time stamp using time from timeArr and default date
     _timeArrStartTime = new Date(
@@ -68,10 +167,10 @@ export const getAppointmentSessions = () => {
 
       //Adding minutes and hours from config to create slot and overiding the value of _tempSlotStartTime
       _tempSlotStartTime = _endSlot.setHours(
-        parseInt(_endSlot.getHours()) + parseInt(configSlotHours)
+        parseInt(_endSlot.getHours()) + parseInt(slotHours)
       );
       _tempSlotStartTime = _endSlot.setMinutes(
-        parseInt(_endSlot.getMinutes()) + parseInt(configSlotMinutes)
+        parseInt(_endSlot.getMinutes()) + parseInt(slotMinutes)
       );
 
       // Check _tempSlotStartTime is less than end time after adding minutes and hours, if true push into slotsArr
@@ -101,7 +200,7 @@ export const getAppointmentSessions = () => {
 
       //preparation time is added in last to maintain the break period
       _tempSlotStartTime = _endSlot.setMinutes(
-        _endSlot.getMinutes() + parseInt(configSlotPreparation)
+        _endSlot.getMinutes() + parseInt(slotPreparation)
       );
     }
 

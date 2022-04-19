@@ -13,11 +13,6 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import * as doctorService from '../../../services/doctor.service';
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
-import {
-  doctorGetAllWatcher,
-  doctorsInitialize,
-} from '../../../redux/doctors/actions';
-import { LOADED } from '../../../redux/statusTypes';
 
 const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
@@ -29,6 +24,21 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const [doctor, setDoctor] = useState(appointment.doctor || {});
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  
+  useEffect(() => {
+    if (loggedUser.user?.isDoctor && !loggedUser.user?.isAdmin) {
+      setIsDisabled(true);
+      jumpToStep(1);
+    }    
+  }, [])
+  
+  useEffect(() => {
+    if (appointment.doctor) {
+      setDoctors([appointment.doctor]);
+      setDoctor(appointment.doctor);
+    }
+  }, [appointment])
 
   useImperativeHandle(ref, () => ({
     isValidated() {
@@ -87,6 +97,7 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
                 ? doctors.filter((x) => x.id === doctor.id)
                 : null
             }
+            disabled={isDisabled}
             innerRef={register('doctor', { required: true })}
             renderMenuItemChildren={(option, props) => (
               <Fragment>

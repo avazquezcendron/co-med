@@ -164,23 +164,6 @@ const DoctorProfile = (props) => {
     });
   };
 
-  const labelKeyRenderRoles = (option) => {
-    switch (option) {
-      case 'external':
-        return 'Usuario Externo';
-      case 'patient':
-        return 'Paciente';
-      case 'admin':
-        return 'Administrador';
-      case 'receptionist':
-        return 'Recepcionista';
-      case 'doctor':
-        return 'Doctor';
-      default:
-        break;
-    }
-  };
-
   const checkKeyDown = (e) => {
     if (e.code === 'Enter') e.preventDefault();
   };

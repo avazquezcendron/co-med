@@ -68,6 +68,22 @@ UserSchema.set('toJSON', {
   virtuals: true
 });
 
+UserSchema.virtual('isAdmin').get(function () { 
+  return this.roles.includes('admin');
+});
+
+UserSchema.virtual('isDoctor').get(function () { 
+  return this.roles.includes('doctor');
+});
+
+UserSchema.virtual('isPatient').get(function () { 
+  return this.roles.includes('patient');
+});
+
+UserSchema.virtual('isReceptionist').get(function () { 
+  return this.roles.includes('receptionist');
+});
+
 // UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 UserSchema.pre('save', async function (next) {

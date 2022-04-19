@@ -1,14 +1,16 @@
 import BaseController from './BaseController.js';
-import DrugModel from '../models/drugModel.js';
-import StudyTypeModel from '../models/studyTypeModel.js';
+import Drug from '../models/drugModel.js';
+import StudyType from '../models/studyTypeModel.js';
+import AppointmentConfig from '../models/appointmentConfigModel.js';
 
 class BaseEntityController extends BaseController {
   constructor() {
     super();
 
     this._modelsDic = new Map();
-    this._modelsDic.set('drug', DrugModel);
-    this._modelsDic.set('studytype', StudyTypeModel);
+    this._modelsDic.set('drug', Drug);
+    this._modelsDic.set('studytype', StudyType);
+    this._modelsDic.set('appointmentconfig', AppointmentConfig);
   }
 
 

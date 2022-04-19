@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import StepZilla from 'react-stepzilla';
 
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
@@ -10,11 +10,17 @@ import SelectDateAndTimeSlotComponent from './selectDateAndTimeSlotComponent';
 import AppointmentConfirmComponent from './appointmentConfirmComponent';
 
 const NewAppointmentWizardComponent = (props) => {
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setDataAppointmentForm(props.appointmentData));
-  },[dispatch])
+    dispatch(
+      setDataAppointmentForm({
+        ...props.appointmentData,
+        doctor: loggedUser.user?.doctor || props.appointmentData?.doctor,
+      })
+    );
+  }, [dispatch]);
 
   const steps = [
     { name: 'Doctor', component: <SelectDoctorComponent /> },
@@ -28,7 +34,9 @@ const NewAppointmentWizardComponent = (props) => {
     },
     {
       name: 'Resumen',
-      component: <AppointmentConfirmComponent modalToggle={props.modalToggle}/>,
+      component: (
+        <AppointmentConfirmComponent modalToggle={props.modalToggle} />
+      ),
     },
   ];
   return (

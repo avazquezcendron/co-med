@@ -1,9 +1,9 @@
 import { all } from "redux-saga/effects";
-import { WatcherEcommerceApp } from '../redux/ecommerce'
-import { WatcherChatApp } from '../redux/chat'
-import { WatcherEmailApp } from '../redux/email'
+// import { WatcherEcommerceApp } from '../redux/ecommerce'
+// import { watchBookmarkList } from "../redux/bookmark";
+// import { WatcherChatApp } from '../redux/chat'
+// import { WatcherEmailApp } from '../redux/email'
 import { WatcherTodoList } from '../redux/todo';
-import { watchBookmarkList } from "../redux/bookmark";
 import { WatcherAppointments } from "../redux/appointments";
 import { WatcherUsers } from "../redux/user";
 import { WatcherPatients } from "../redux/patients";

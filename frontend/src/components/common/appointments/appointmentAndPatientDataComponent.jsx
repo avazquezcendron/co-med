@@ -49,6 +49,13 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const [popover, setPopover] = useState(false);
   const popoverNewPatientToggle = () => setPopover(!popover);
 
+  useEffect(() => {
+    if (appointment.patient) {
+      setPatients([appointment.patient]);
+      setPatient(appointment.patient);
+    }
+  }, [appointment])
+
   useImperativeHandle(ref, () => ({
     isValidated() {
       if (!patient.id) {
@@ -109,6 +116,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
               id="patient"
               name="patient"
               options={patients}
+              isLoading={isLoading}
               labelKey={(option) => option.fullName}
               filterBy={filterBy}
               minLength={3}

@@ -1,5 +1,7 @@
 import BaseController from './BaseController.js';
 import Appointment from '../models/appointmentModel.js';
+import Patient from '../models/patientModel.js';
+import AppointmentConfig from '../models/appointmentConfigModel.js';
 
 class AppointmentController extends BaseController {
   constructor() {
@@ -21,10 +23,10 @@ class AppointmentController extends BaseController {
     const appointments = await this._model
       .find({})
       .populate({
-        path: 'healthInsurances.healthInsuranceCompany',
+        path: 'doctor',
       })
       .populate({
-        path: 'healthRecord',
+        path: 'patient',
       });
     res.status(200).json(appointments);
   }
@@ -43,15 +45,10 @@ class AppointmentController extends BaseController {
     const model = await this._model
       .findById(req.params.id)
       .populate({
-        path: 'healthInsurances.healthInsuranceCompany',
+        path: 'doctor',
       })
       .populate({
-        path: 'healthRecord',
-        populate: { path: 'drugsInfo.drugs' }
-      })
-      .populate({
-        path: 'healthRecord',
-        populate: { path: 'prescriptions.drugs', populate: { path: 'drugs.drug'} }
+        path: 'patient'
       });
     if (model) {
       return res.status(200).json(model);
@@ -72,14 +69,10 @@ class AppointmentController extends BaseController {
    */
   async create(req, res, next) {
     const appointment = new this._model(req.body);
-    const healthRecordNumber = new Number('549310' + appointment.nationalId);
-    const healthRecord = new HealthRecord({
-      healthRecordNumber: healthRecordNumber,
-    });
-    appointment.healthRecord = healthRecord;
+    const patient = await Patient.findById(appointment.patient.id);
     const savedappointment = await appointment.save();
-    healthRecord.appointment = savedappointment._id;
-    await healthRecord.save();
+    patient.appointments.push(savedappointment._id);
+    await patient.save();
     req.params = {
       ...req.params,
       id: savedappointment._id,

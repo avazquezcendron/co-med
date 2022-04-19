@@ -106,13 +106,13 @@ const DoctorList = (props) => {
               {doctors.map((doctor, i) => (
                 <Col md="3" lg="3" xl="3" className="box-col-3" key={i}>
                   {doctor.status === 'inactive' && (
-                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-danger">
-                      <i className="icon-na" title={'Estado "Inactivo"'}></i>
+                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-danger" title={'Estado "Inactivo"'}>
+                      <i className="icon-na"></i>
                     </div>
                   )}
                   {doctor.status === 'active' && (
-                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-success">
-                      <i className="icon-check" title={'Estado "Activo"'}></i>
+                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-success" title={'Estado "Activo"'}>
+                      <i className="icon-check" ></i>
                     </div>
                   )}
                   <Card className="custom-card features-faq product-box ribbon-vertical-right-wrapper">

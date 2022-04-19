@@ -7,6 +7,7 @@ const appointmentSchema = mongoose.Schema(
     description: { type: String, required: false },
     type: { type: String, required: true },
     mode: { type: String, required: true },
+    constraint: { type: String, required: false, default: 'businessHours' },//TODO: fix: this is a FullCalendar property, it shouldn't be here.
     doctor: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

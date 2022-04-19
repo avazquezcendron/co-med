@@ -8,6 +8,7 @@ import interactionPlugin, { Draggable } from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import SweetAlert from 'sweetalert2';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 import { BasicCalendars } from '../../constant';
 import { getAppointmentsWatcher } from '../../redux/appointments/actions';
@@ -16,48 +17,64 @@ import AppointmentModalComponent from '../common/appointments/appointmentModalCo
 
 const Calender = () => {
   const appointments = useSelector((store) => store.Appointments.appointments);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
-  const slotsConfig = appointmentService.getAppointmentSlotsConfig();
-  const { configSlotHours, configSlotMinutes } = slotsConfig;
-  const slotDuration =
-    configSlotHours.toString() + ':' + configSlotMinutes.toString();
-  const businessHours = appointmentService.getBussinesHours();
+  const [slotDuration, setslotDuration] = useState('');
+  const [businessHours, setbusinessHours] = useState([]);
 
   // const [appointments, setAppointments] = useState([]);
-  const [appointmentData, setAppointmentData] = useState({new: true});
+  const [appointmentData, setAppointmentData] = useState({ new: true });
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
   };
 
   useEffect(() => {
+    appointmentService.getAppointmentSlotsConfig(loggedUser).then((data) => {
+      if (data?.length > 0) {
+        const { slotHours, slotMinutes } = data[0];
+        setslotDuration(slotHours?.toString() + ':' + slotMinutes?.toString());
+        setbusinessHours(appointmentService.getBussinesHoursBySlot(data[0]));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     dispatch(getAppointmentsWatcher());
   }, [dispatch]);
 
   const handleNewAppointment = (appointmentData) => {
-    setAppointmentData({
-      // startTime: appointmentData.start,
-      start: appointmentData?.start,
-      end: appointmentData?.end,
-      new: true,
-    });
-    appointmentModalToggle();
+    if (selectAllow(appointmentData)) {
+      setAppointmentData({
+        // startTime: appointmentData.start,
+        start: appointmentData?.start,
+        end: appointmentData?.end,
+        new: true,
+      });
+      appointmentModalToggle();
+    }
   };
 
-  /**
-   * when we click on event we are displaying event details
-   */
+  const selectAllow = (selectInfo) => {
+    if (moment(selectInfo.start).isBefore(moment())){
+      return false;
+    }
+    return true;
+  }
+
   const handleAppointmentClick = (eventClick) => {
-    setAppointmentData({
-      // startTime: eventClick.event.start,
-      start: eventClick.event.start,
-      end: eventClick.event.end,
-      title: eventClick.event.title,
-      ...eventClick.event.extendedProps,
-      new: false,
-    });
-    appointmentModalToggle();
+    if (eventClick.event.id) {
+      setAppointmentData({
+        // startTime: eventClick.event.start,
+        start: eventClick.event.start,
+        end: eventClick.event.end,
+        title: eventClick.event.title,
+        ...eventClick.event.extendedProps,
+        new: false,
+      });
+      appointmentModalToggle();
+    }
   };
 
   const handleEventOverlap = (stillEvent, movingEvent) => {
@@ -138,66 +155,71 @@ const Calender = () => {
                 <h5>{BasicCalendars}</h5>
               </div>
               <div className="card-body">
-                <FullCalendar
-                  initialView="timeGridWeek"
-                  themeSystem="standar"
-                  locale={esLocale}
-                  headerToolbar={{
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
-                  }}
-                  views={{
-                    listDay: { buttonText: "Agenda del día"},
-                    listWeek: { buttonText: "Agenda semanal"},
-                    listMonth: { buttonText: "Agenda mensual"}
-                  }}
-                  weekends={true}
-                  businessHours={businessHours}
-                  slotDuration={slotDuration}
-                  slotLabelInterval={slotDuration}
-                  slotMinTime={'06:00:00'}
-                  //   slotMaxTime={'22:00:00'}
-                  nowIndicator={true}
-                  weekNumbers={true}
-                  navLinks={true} // can click day/week names to navigate views
-                  rerenderDelay={10}
-                  eventDurationEditable={true}
-                  editable={true}
-                  droppable={true}
-                  dayMaxEvents={true}
-                  dayMaxEventRows={2}
-                  eventOverlap={handleEventOverlap}
-                  eventDrop={handleEventDrop}
-                  eventResize={handleEventDrop}
-                  selectable={true}
-                  selectMirror={true}
-                  select={handleNewAppointment}
-                  plugins={[
-                    listPlugin,
-                    dayGridPlugin,
-                    timeGridPlugin,
-                    interactionPlugin,
-                  ]}
-                  events={
-                    [
+                {businessHours.length > 0 ? (
+                  <FullCalendar
+                    initialView="timeGridWeek"
+                    themeSystem="standar"
+                    locale={esLocale}
+                    headerToolbar={{
+                      left: 'prev,next today',
+                      center: 'title',
+                      right:
+                        'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
+                    }}
+                    views={{
+                      listDay: { buttonText: 'Agenda del día' },
+                      listWeek: { buttonText: 'Agenda semanal' },
+                      listMonth: { buttonText: 'Agenda mensual' },
+                    }}
+                    weekends={true}
+                    businessHours={businessHours}
+                    slotDuration={slotDuration}
+                    slotLabelInterval={slotDuration}
+                    slotMinTime={'06:00:00'}
+                    //   slotMaxTime={'22:00:00'}
+                    nowIndicator={true}
+                    weekNumbers={true}
+                    navLinks={true} // can click day/week names to navigate views
+                    rerenderDelay={10}
+                    eventDurationEditable={true}
+                    editable={true}
+                    droppable={true}
+                    dayMaxEvents={true}
+                    dayMaxEventRows={2}
+                    eventOverlap={handleEventOverlap}
+                    eventDrop={handleEventDrop}
+                    eventResize={handleEventDrop}
+                    selectable={true}
+                    selectAllow={selectAllow}
+                    selectConstraint={'businessHours'}
+                    selectMirror={true}
+                    select={handleNewAppointment}
+                    plugins={[
+                      listPlugin,
+                      dayGridPlugin,
+                      timeGridPlugin,
+                      interactionPlugin,
+                    ]}
+                    events={[
                       ...appointments,
                       {
                         groupId: 'testGroupId',
-                        startTime: businessHours[0].startTime,
-                        endTime: businessHours[0].endTime,
+                        startTime: businessHours[0]?.startTime,
+                        endTime: businessHours[0]?.endTime,
                         display: 'background',
                       },
                       {
                         groupId: 'testGroupId2',
-                        startTime: businessHours[1].startTime,
-                        endTime: businessHours[1].endTime,
+                        startTime: businessHours[1]?.startTime,
+                        endTime: businessHours[1]?.endTime,
                         display: 'background',
                       },
-                    ]
-                  }                  
-                  eventClick={handleAppointmentClick}
-                />
+                    ]}
+                    eventClick={handleAppointmentClick}
+                  />
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>
