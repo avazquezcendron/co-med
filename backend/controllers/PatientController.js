@@ -24,14 +24,15 @@ class PatientController extends BaseController {
   async getAll(req, res, next) {
     const status = req.query.status;
     const filterBy = req.query.filterBy;
-    const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
-    const searchRgx = rgx(filterBy);
+
     const filter = {};
     if (status) {
       filter.status = status;
     }
 
     if (filterBy) {
+      const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
+      const searchRgx = rgx(filterBy);
       const filterByParsed = parseInt(filterBy);
       filter.$or = [
         { firstName: { $regex: searchRgx } },
