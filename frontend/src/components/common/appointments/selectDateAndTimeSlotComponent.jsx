@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
-import { Form, FormGroup, Input, Label, Button } from 'reactstrap';
+import { Form, FormGroup, Label } from 'reactstrap';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import moment from 'moment';

@@ -11,8 +11,6 @@ import AppointmentResumeComponent from './appointmentResumeComponent';
 
 const AppointmentModalComponent = (props) => {
   const dispatch = useDispatch();
-  
-
   useEffect(() => {
     if (props.appointmentData && !props.appointmentData.new) {
       dispatch(setDataAppointmentForm(props.appointmentData));
@@ -27,19 +25,14 @@ const AppointmentModalComponent = (props) => {
       onClosed={() => dispatch(clearAppointmentForm())}
     >
       <ModalHeader toggle={props.appointmentModalToggle}>
-        {props.appointmentData.new
-          ? 'Nuevo Turno'
-          : 'Turno ' +
-            (props.appointmentData.start
-              ? props.appointmentData.start.toLocaleDateString('es-AR', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                }) +
-                ' - ' +
-                props.appointmentData.title
-              : '')}
+        {props.appointmentData.new ? (
+          'Nuevo Turno'
+        ) : (
+          <i className="icofont icofont-ui-calendar">
+            {' '}
+            {props.appointmentData.title}
+          </i>
+        )}
       </ModalHeader>
       <ModalBody>
         {props.appointmentData.new ? (
@@ -52,24 +45,26 @@ const AppointmentModalComponent = (props) => {
             <div className="card-body">
               <AppointmentResumeComponent />
             </div>
-            <div className="card-footer text-center">
-              <button
-                type="button"
-                className="btn btn-outline-danger"
-                onClick={props.appointmentModalToggle}
-              >
-                <i className="fa fa-trash mr-2"></i>
-                {'Eliminar'}
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary ml-1"
-                onClick={props.appointmentModalToggle}
-              >
-                <i className="fa fa-pencil mr-2"></i>
-                {'Editar'}
-              </button>
-            </div>
+            {props.appointmentData.isActive && (
+              <div className="card-footer text-center">
+                <button
+                  type="button"
+                  className="btn btn-outline-danger"
+                  onClick={props.appointmentModalToggle}
+                >
+                  <i className="fa fa-times mr-2"></i>
+                  {'Cancelar Turno'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary ml-1"
+                  onClick={props.appointmentModalToggle}
+                >
+                  <i className="fa fa-pencil mr-2"></i>
+                  {'Editar'}
+                </button>
+              </div>
+            )}
           </div>
         )}
       </ModalBody>

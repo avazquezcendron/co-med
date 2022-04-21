@@ -1,10 +1,8 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { translate } from 'react-switch-lang';
-import Breadcrumb from '../../common/breadcrumb';
 import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import {ADD_NEW_ITEM,REMOVE_ITEM,MARK_ALL_ITEMS,SELECTED_ITEM,WATCH_TODO_LIST} from '../../../redux/actionTypes'
-import {ToDo, AddNewTask,AddTask,Close} from '../../../constant'
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
 const Todo = (props) => {
@@ -51,28 +49,28 @@ const Todo = (props) => {
 
     const handleRemoveTodo = (todoId) => {
         dispatch({ type: REMOVE_ITEM, payload: todoId });
-        toast.success("Deleted Task !");
+        toast.success("Nota borrada!");
     }
 
     const handleMarkedTodo = (itemId, itemStatus) => {
         if (itemStatus === 'completed') {
             setStatus('pending')
             dispatch({ type: SELECTED_ITEM, payload: { itemId, status } });
-            toast.success("Task Completed !");
+            toast.success("Nota Completada");
         }
         else if (itemStatus === 'pending') {
             setStatus('completed')
             dispatch({ type: SELECTED_ITEM, payload: { itemId, status } });
-            toast.error(" Task In-completed !");
+            toast.warn("Nota pendiente");
         }
     }
 
     const markAllStatus = () => {
         setMarkAll(!markAll);
         if(markAll === true){
-            toast.error("All Task In-Completed !");
+            toast.error("Todas las notas pendientes.");
         }else{
-            toast.success("All Task Completed !");
+            toast.success("Todas las notas completadas.");
         }
         dispatch({ type: MARK_ALL_ITEMS, payload: markAll })
     }
@@ -99,7 +97,7 @@ const Todo = (props) => {
                     {/* <div className="col-xl-12"> */}
                         <div className="card">
                             <div className="card-header">
-                                <h5>{props.t('Notes')}</h5>
+                                <h5><i className="icofont icofont-notepad"></i> {' '} {props.t('Notes')}</h5>
                             </div>
                             <div className="card-body">
                                 <div className="todo">
@@ -147,18 +145,18 @@ const Todo = (props) => {
                                             <div className="todo-list-footer">
                                                 <div className="add-task-btn-wrapper"><span className="add-task-btn">
                                                     <button className="btn btn-primary" onClick={openTaskWrapper} >
-                                                        <i className="icon-plus"></i> {AddNewTask}</button></span></div>
+                                                        <i className="icon-plus"></i> {'Nueva nota'}</button></span></div>
                                                 <div className={"new-task-wrapper" + addTask}>
                                                     <textarea
                                                         className={"ng-untouched ng-pristine ng-valid" + border_danger}
                                                         id="newtask"
-                                                        placeholder="Enter new task here. . ."
+                                                        placeholder="Ingrese una nueva nota aquí. . ."
                                                         defaultValue={task}
                                                         onChange={onTaskChanged}
                                                     >
                                                     </textarea>
-                                                    <span className="btn btn-danger cancel-btn" id="close-task-panel" onClick={closeTaskWrapper}>{Close}</span>
-                                                    <span className="btn btn-success ml-3 add-new-task-btn" id="add-task" onClick={addNewTask}>{AddTask}</span>
+                                                    <span className="btn btn-danger cancel-btn" id="close-task-panel" onClick={closeTaskWrapper}>{'Cancelar'}</span>
+                                                    <span className="btn btn-success ml-3 add-new-task-btn" id="add-task" onClick={addNewTask}>{'Agregar'}</span>
                                                 </div>
                                             </div>
                                         </div>

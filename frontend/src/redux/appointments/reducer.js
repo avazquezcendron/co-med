@@ -7,6 +7,7 @@ import {
   DELETE_APPOINTMENT_SUCCESS,
   GET_APPOINTMENTS_REQUEST,
   GET_APPOINTMENTS_SUCCESS,
+  APPOINTMENTS_INITIALIZE
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -36,39 +37,36 @@ export const AppointmentsReducer = (
     //         : appointment
     //     )
     //   };
+    case APPOINTMENTS_INITIALIZE:
+      return INITIAL_STATE_APPOINTMENTS;
 
     case GET_APPOINTMENTS_REQUEST:
       return { ...state, status: statusTypes.LOADING };
 
     case GET_APPOINTMENTS_SUCCESS:
       return {
-        ...state,
-        status: statusTypes.SUCCEEDED,
-        appointments: [
-          ...action.payload,
-          ...state.appointments.filter((x) => x.new),//TODO: quitar esto: los appointments vienen desde back todos.
-        ],
+        status: statusTypes.LOADED,
+        appointments: action.payload.sort((x, y) => new Date(x.start) - new Date(y.start))
       };
 
     case SAVE_APPOINTMENT_REQUEST:
       return { ...state, status: statusTypes.LOADING };
 
     case SAVE_APPOINTMENT_SUCCESS:
-      let appointments = [];
-      if (action.payload.appointmentData.new) {
-        appointments = [...state.appointments, action.payload.appointmentData];
-      } else {
-        appointments = state.appointments.map((appointment) =>
-          appointment.id === action.payload.id
-            ? { ...appointment, ...action.payload.appointmentData }
-            : appointment
-        );
-      }
+      // let appointments = [];
+      // if (action.payload.appointmentData.new) {
+      //   appointments = [...state.appointments, action.payload.appointmentData];
+      // } else {
+      //   appointments = state.appointments.map((appointment) =>
+      //     appointment.id === action.payload.id
+      //       ? { ...appointment, ...action.payload.appointmentData }
+      //       : appointment
+      //   );
+      // }
 
       return {
-        ...state,
         status: statusTypes.SUCCEEDED,
-        appointments: appointments,
+        appointments:[]
       };
 
     // case ADD_APPOINTMENT_REQUEST:

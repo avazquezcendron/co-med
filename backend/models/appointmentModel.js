@@ -1,4 +1,5 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
+import moment from 'moment';
 
 const appointmentSchema = mongoose.Schema(
   {
@@ -7,7 +8,7 @@ const appointmentSchema = mongoose.Schema(
     description: { type: String, required: false },
     appointmentType: { type: String, required: true },
     mode: { type: String, required: true },
-    constraint: { type: String, required: false, default: 'businessHours' },//TODO: fix: this is a FullCalendar property, it shouldn't be here.
+    constraint: { type: String, required: false, default: 'businessHours' }, //TODO: fix: this is a FullCalendar property, it shouldn't be here.
     doctor: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -18,22 +19,48 @@ const appointmentSchema = mongoose.Schema(
       required: true,
       ref: 'Patient',
     },
-    status: { type: String, default: 'active' },
+    status: {
+      type: String,
+      enum: ['active', 'done', 'cancelled', 'expired'],
+      default: 'active',
+    },
   },
   {
     timestamps: true,
-    optimisticConcurrency: true
+    optimisticConcurrency: true,
   }
-)
-  
+);
+
 appointmentSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
 });
 
-appointmentSchema.virtual('title').get(function () { 
-  return `${this.patient.fullName} - ${this.mode}`;
+appointmentSchema.virtual('title').get(function () {
+  return `Paciente ${this.patient.fullName} - ${this.doctor.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${this.doctor.fullName} | ${this.mode}`;
 });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema)
+appointmentSchema.virtual('isDone').get(function () {
+  return this.status === 'done';
+});
 
-export default Appointment
+appointmentSchema.virtual('isCancelled').get(function () {
+  return this.status === 'cancelled';
+});
+
+appointmentSchema.virtual('isActive').get(function () {
+  if (!moment(this.start).isBefore(moment()) && this.status === 'active') {
+    return true;
+  }
+  return false;
+});
+
+appointmentSchema.virtual('isExpired').get(function () {
+  if (moment(this.start).isBefore(moment()) && this.status === 'active') {
+    return true;
+  }
+  return false;
+});
+
+const Appointment = mongoose.model('Appointment', appointmentSchema);
+
+export default Appointment;

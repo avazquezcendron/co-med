@@ -2,7 +2,6 @@ import React, {
   useState,
   useEffect,
   useRef,
-  forwardRef,
   Fragment,
   Component,
 } from 'react';
@@ -16,9 +15,9 @@ import ReactToPrint from 'react-to-print';
 
 import * as entityService from '../../services/entity.service';
 import logo from '../../assets/images/co-med-logo.jpg';
-import logo2 from '../../assets/images/co-med-logo-2.png';
-import logo3 from '../../assets/images/co-med-logo-3.png';
-import logogris from '../../assets/images/co-med-logo-gris.jpg';
+// import logo2 from '../../assets/images/co-med-logo-2.png';
+// import logo3 from '../../assets/images/co-med-logo-3.png';
+// import logogris from '../../assets/images/co-med-logo-gris.jpg';
 
 const NewPrescriptionModalComponent = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
@@ -505,7 +504,7 @@ const NewPrescriptionModalComponent = (props) => {
               <ReactToPrint
                 trigger={() => (
                   <button
-                    class="btn btn-pill btn-outline-primary pull-right"
+                    className="btn btn-pill btn-outline-primary pull-right"
                     type="button"
                   >
                     <i className="fa fa-print"></i> Imprimir

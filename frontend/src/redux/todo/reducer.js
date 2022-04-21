@@ -16,7 +16,7 @@ const TodoReducer = (state = INITIAL_STATE, action) => {
     switch (action.type) {
 
         case GET_TODO_LIST:
-            const allTodoItems = action.list.data;
+            const allTodoItems = action.list.data || [];
             return { ...state, loading: false, allTodoItems:allTodoItems };
             
 

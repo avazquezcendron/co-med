@@ -10,6 +10,14 @@ export const DELETE_APPOINTMENT_SUCCESS = "appointments/deleteAppointmentSuccess
 export const SET_DATA_APPOINTMENT_FORM = "appointments/setDataAppointmentForm";
 export const CLEAR_APPOINTMENT_FORM = "appointments/clearAppointmentForm";
 
+export const APPOINTMENTS_INITIALIZE = "appointments/appointmentsInitialize";
+
+export const appointmentsInitialize = () => {
+  return {
+    type: APPOINTMENTS_INITIALIZE,
+  };
+};
+
 export const getAppointmentsWatcher = () => {
   return {
     type: GET_APPOINTMENTS_WATCHER,
@@ -56,10 +64,10 @@ export const saveAppointmentRequest = () => {
   };
 };
 
-export const saveAppointmentSuccess = (id, appointmentData, isNew) => {
+export const saveAppointmentSuccess = (id, appointmentData) => {
   return {
     type: SAVE_APPOINTMENT_SUCCESS,
-    payload: { id, appointmentData, isNew },
+    payload: appointmentData,
   };
 };
 
