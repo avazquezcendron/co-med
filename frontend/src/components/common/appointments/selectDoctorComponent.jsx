@@ -21,24 +21,20 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
-  const [doctor, setDoctor] = useState(appointment.doctor || {});
+  const [doctor, setDoctor] = useState({});
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  
+
   useEffect(() => {
+    const doctor = appointment.doctor || loggedUser.user?.doctor || {};
+    setDoctors([doctor]);
+    setDoctor(doctor);
     if (loggedUser.user?.isDoctor && !loggedUser.user?.isAdmin) {
       setIsDisabled(true);
       jumpToStep(1);
-    }    
-  }, [])
-  
-  useEffect(() => {
-    if (appointment.doctor) {
-      setDoctors([appointment.doctor]);
-      setDoctor(appointment.doctor);
     }
-  }, [appointment])
+  }, []);
 
   useImperativeHandle(ref, () => ({
     isValidated() {

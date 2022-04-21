@@ -122,6 +122,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
               minLength={3}
               onSearch={handleSearch}
               clearButton
+              disabled={!appointment.new}
               onChange={(selected) => handlePatientChange(selected)}
               selected={
                 patients.length > 0

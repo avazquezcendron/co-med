@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
-import { getAppointmentsWatcher } from '../../redux/appointments/actions';
+import { getAppointmentsWatcher, setDataAppointmentForm } from '../../redux/appointments/actions';
 import { LOADED, SUCCEEDED, FAILED } from '../../redux/statusTypes';
 import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 import Loader from '../common/loader';
@@ -24,7 +24,6 @@ const PatientsAgenda = (props) => {
   const [tomorrowAppointments, setTomorrowAppointments] = useState([]);
   const [appointmentsFiltered, setAppointmentsFiltered] = useState([]);
 
-  const [appointmentData, setAppointmentData] = useState({ new: true });
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
@@ -162,12 +161,14 @@ const PatientsAgenda = (props) => {
 
   const handleRowClick = (row, event) => {
     if (row.id) {
-      setAppointmentData({
-        ...row,
-        start: new Date(row.start),
-        end: new Date(row.end),
-        new: false,
-      });
+      dispatch(
+        setDataAppointmentForm({
+          ...row,
+          start: new Date(row.start),
+          end: new Date(row.end),
+          new: false,
+        })
+      );
       appointmentModalToggle();
     }
   };
@@ -291,7 +292,7 @@ const PatientsAgenda = (props) => {
         >
           <div className="media">
             <h6>
-              <i className="icofont icofont-clock-time"></i> {' '}
+              <i className="icofont icofont-clock-time"></i>{' '}
               {new Date(row.start).toLocaleTimeString('es', {
                 hour: '2-digit',
                 minute: 'numeric',
@@ -379,7 +380,8 @@ const PatientsAgenda = (props) => {
       center: true,
       cell: (row, index, column, id) => (
         <span className="text-muted f-w-700">
-          <i className="icofont icofont-ui-calendar"></i> {new Date(row.start).toLocaleDateString('es')}
+          <i className="icofont icofont-ui-calendar"></i>{' '}
+          {new Date(row.start).toLocaleDateString('es')}
         </span>
       ),
     },
@@ -456,7 +458,6 @@ const PatientsAgenda = (props) => {
             <AppointmentModalComponent
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
-              appointmentData={appointmentData}
               setAppointmentModal={setAppointmentModal}
             />
             <div className="col-sm-12">

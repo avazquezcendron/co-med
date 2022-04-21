@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   clearAppointmentForm,
@@ -10,12 +10,12 @@ import NewAppointmentWizardComponent from './newAppointmentWizardComponent';
 import AppointmentResumeComponent from './appointmentResumeComponent';
 
 const AppointmentModalComponent = (props) => {
+  const appointment = useSelector((store) => store.AppointmentForm);
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (props.appointmentData && !props.appointmentData.new) {
-      dispatch(setDataAppointmentForm(props.appointmentData));
-    }
-  }, [props.appointmentData]);
+ 
+  const handleEditAppointmentClick = () => {
+    dispatch(setDataAppointmentForm({ ...appointment, edit: true}));
+  }
 
   return (
     <Modal
@@ -25,19 +25,18 @@ const AppointmentModalComponent = (props) => {
       onClosed={() => dispatch(clearAppointmentForm())}
     >
       <ModalHeader toggle={props.appointmentModalToggle}>
-        {props.appointmentData.new ? (
+        {appointment.new ? (
           'Nuevo Turno'
         ) : (
           <i className="icofont icofont-ui-calendar">
             {' '}
-            {props.appointmentData.title}
+            {appointment.title}
           </i>
         )}
       </ModalHeader>
       <ModalBody>
-        {props.appointmentData.new ? (
+        {appointment.new || appointment.edit ? (
           <NewAppointmentWizardComponent
-            appointmentData={props.appointmentData}
             modalToggle={props.appointmentModalToggle}
           />
         ) : (
@@ -45,7 +44,7 @@ const AppointmentModalComponent = (props) => {
             <div className="card-body">
               <AppointmentResumeComponent />
             </div>
-            {props.appointmentData.isActive && (
+            {appointment.isActive && (
               <div className="card-footer text-center">
                 <button
                   type="button"
@@ -58,7 +57,7 @@ const AppointmentModalComponent = (props) => {
                 <button
                   type="button"
                   className="btn btn-primary ml-1"
-                  onClick={props.appointmentModalToggle}
+                  onClick={handleEditAppointmentClick}
                 >
                   <i className="fa fa-pencil mr-2"></i>
                   {'Editar'}

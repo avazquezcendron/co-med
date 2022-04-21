@@ -12,7 +12,7 @@ import es from 'date-fns/locale/es';
 import moment from 'moment';
 
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
-import * as appointmentService from '../../../services/appointment.service';
+import * as doctorService from '../../../services/doctor.service';
 
 const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
   registerLocale('es', es);
@@ -30,15 +30,14 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
 
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
   useEffect(() => {
-    appointmentService.getAppointmentSessions(loggedUser).then((sessions) => {
+    doctorService.getDoctorSessions(appointment.doctor.id, startDate, loggedUser).then((sessions) => {
       setAppointmentsSessions(sessions);
-      const startTime = new Date(appointment.start);
+      const startTime = moment(appointment.start);
       if (startTime) {
         sessions.forEach((session) => {
           const activeSlot = session.slots.filter(
             (slot) =>
-              slot.startTime.getHours() === startTime.getHours() &&
-              slot.startTime.getMinutes() === startTime.getMinutes()
+            moment(slot.startTime).isSame(startTime)
             // && slot.available
           );
           if (activeSlot && activeSlot.length > 0)
@@ -46,7 +45,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
         });
       }
     });
-  }, []);
+  }, [startDate]);
 
   const handleAppDateChange = (date) => {
     setStartDate(date);
@@ -94,15 +93,15 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
         setDataAppointmentForm({
           start: new Date(
             startDate.setHours(
-              selectedSlot.startTime.getHours(),
-              selectedSlot.startTime.getMinutes(),
+              new Date(selectedSlot.startTime).getHours(),
+              new Date(selectedSlot.startTime).getMinutes(),
               0
             )
           ),
           end: new Date(
             startDate.setHours(
-              selectedSlot.endTime.getHours(),
-              selectedSlot.endTime.getMinutes(),
+              new Date(selectedSlot.endTime).getHours(),
+              new Date(selectedSlot.endTime).getMinutes(),
               0
             )
           ),
@@ -172,14 +171,14 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
                         onClick={(e) => handleSlotClick(e, slot)}
                       >
                         {slot.available ? (
-                          slot.startTime.toLocaleTimeString('es', {
+                          new Date(slot.startTime).toLocaleTimeString('es', {
                             hour: 'numeric',
                             minute: 'numeric',
                             hour12: false,
                           })
                         ) : (
                           <s>
-                            {slot.startTime.toLocaleTimeString('es', {
+                            {new Date(slot.startTime).toLocaleTimeString('es', {
                               hour: 'numeric',
                               minute: 'numeric',
                               hour12: false,

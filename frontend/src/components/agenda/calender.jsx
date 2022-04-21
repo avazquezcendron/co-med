@@ -12,7 +12,11 @@ import { toast } from 'react-toastify';
 import moment from 'moment';
 
 import { BasicCalendars } from '../../constant';
-import { getAppointmentsWatcher } from '../../redux/appointments/actions';
+import {
+  getAppointmentsWatcher,
+  saveAppointmentWatcher,
+  setDataAppointmentForm,
+} from '../../redux/appointments/actions';
 import * as appointmentService from '../../services/appointment.service';
 import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 import Loader from '../common/loader';
@@ -31,8 +35,6 @@ const Calender = () => {
   const [slotDuration, setslotDuration] = useState('');
   const [businessHours, setbusinessHours] = useState([]);
 
-  // const [appointments, setAppointments] = useState([]);
-  const [appointmentData, setAppointmentData] = useState({ new: true });
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
@@ -52,14 +54,15 @@ const Calender = () => {
     dispatch(getAppointmentsWatcher());
   }, [dispatch]);
 
-  const handleNewAppointment = (appointmentData) => {
-    if (selectAllow(appointmentData)) {
-      setAppointmentData({
-        // startTime: appointmentData.start,
-        start: appointmentData?.start,
-        end: appointmentData?.end,
-        new: true,
-      });
+  const handleNewAppointment = (calenderData) => {
+    if (selectAllow(calenderData)) {
+      dispatch(
+        setDataAppointmentForm({
+          start: calenderData?.start,
+          end: calenderData?.end,
+          new: true,
+        })
+      );
       appointmentModalToggle();
     }
   };
@@ -73,13 +76,15 @@ const Calender = () => {
 
   const handleAppointmentClick = (eventClick) => {
     if (eventClick.event.id) {
-      setAppointmentData({
-        start: eventClick.event.start,
-        end: eventClick.event.end,
-        title: eventClick.event.title,
-        ...eventClick.event.extendedProps,
-        new: false,
-      });
+      dispatch(
+        setDataAppointmentForm({
+          ...eventClick.event.extendedProps,
+          start: eventClick.event.start,
+          end: eventClick.event.end,
+          id: eventClick.event.id,
+          title: eventClick.event.title,
+        })
+      );
       appointmentModalToggle();
     }
   };
@@ -96,51 +101,53 @@ const Calender = () => {
   };
 
   const handleEventDrop = (info) => {
-    SweetAlert.fire({
-      title: 'Atención',
-      text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
-        'es-AR',
-        {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
+    if (selectAllow(info.event) && (info.event.extendedProps.isActive || info.event.extendedProps.isExpired)) {
+      SweetAlert.fire({
+        title: 'Atención',
+        text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
+          'es-AR',
+          {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }
+        )} a las ${info.event.start.toLocaleTimeString('es', {
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: false,
+        })}hs`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#ff0000',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.value) {
+          dispatch(
+            saveAppointmentWatcher({
+              ...info.event.extendedProps,
+              start: info.event.start,
+              end: info.event.end,
+              id: info.event.id,
+              title: info.event.title,
+            })
+          );
+        } else {
+          info.revert();
         }
-      )} a las ${info.event.start.toLocaleTimeString('es', {
-        hour: 'numeric',
-        minute: 'numeric',
-        hour12: false,
-      })}hs`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Aceptar',
-      cancelButtonText: 'Cancelar',
-      cancelButtonColor: '#ff0000',
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.value) {
-        // dispatch(
-        //   saveAppointmentWatcher({
-        //     ...appointmentData,
-        //     title: appointmentData.patient.name + ' - ' + appointmentData.mode,
-        //     resourceId: appointmentData.doctor.id,
-        //     id: 2,
-        //   })
-        // );
-        toast.success('Turno reprogramado con éxito.', {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      } else {
-        info.revert();
-      }
-    });
+      });
+    } else {
+      info.revert();
+    }
   };
 
   const handleCalendarEventMount = (info) => {
     let bgColor = info.el.style.backgroundColor;
     let txtColor = info.el.style.color;
     let txtDecoration = info.el.style.textDecoration;
-    let title = 'Turno activo.';
+    let title = info.event.title;
 
     const isListView = ['listDay', 'listWeek', 'listMonth'].includes(
       info.view.type
@@ -150,16 +157,18 @@ const Calender = () => {
     if (info.event.extendedProps.isExpired) {
       bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
       txtColor = isListView || dayGridMonthView ? 'gray' : 'white';
-      title = 'Turno expirado.';
+      title = 'TURNO EXPIRADO. ' + title;
     } else if (info.event.extendedProps.isCancelled) {
       bgColor = isListView || dayGridMonthView ? bgColor : 'red';
       txtColor = isListView || dayGridMonthView ? 'red' : 'white';
-      title = 'Turno cancelado.';
+      title = 'TURNO CANCELADO. ' + title;
       txtDecoration = 'line-through';
     } else if (info.event.extendedProps.isDone) {
       bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
       txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
-      title = 'Turno atendido.';
+      title = 'TURNO FINALIZADO. ' + title;
+    } else {
+      title = 'TURNO ACTIVO. ' + title;
     }
 
     if (isListView) {
@@ -182,18 +191,17 @@ const Calender = () => {
     info.el.style.color = txtColor;
     info.el.style.textDecoration = txtDecoration;
     info.el.title = title;
-
   };
 
   return (
     <Fragment>
-      {status === LOADED || status === FAILED || status === SUCCEEDED? (
+      {status === LOADED || status === FAILED || status === SUCCEEDED ? (
         <div className="container-fluid">
           <div className="row">
             <AppointmentModalComponent
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
-              appointmentData={appointmentData}
+              // appointmentData={appointmentData}
               setAppointmentModal={setAppointmentModal}
             />
             <div className="col-sm-12">

@@ -24,4 +24,8 @@ router
   .route('/:id/activate')
   .get(checkUserAuth, asyncHandler(doctorController.activate))
 
+router
+  .route('/:id/sessions')
+  .post(checkUserAuth, asyncHandler(doctorController.getSessions))
+
 export default router

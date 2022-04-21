@@ -1,26 +1,12 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
 import StepZilla from 'react-stepzilla';
 
-import { setDataAppointmentForm } from '../../../redux/appointments/actions';
-import * as appointmentService from '../../../services/appointment.service';
 import AppointmentAndPatientDataComponent from './appointmentAndPatientDataComponent';
 import SelectDoctorComponent from './selectDoctorComponent';
 import SelectDateAndTimeSlotComponent from './selectDateAndTimeSlotComponent';
 import AppointmentConfirmComponent from './appointmentConfirmComponent';
 
 const NewAppointmentWizardComponent = (props) => {
-  const { loggedUser } = useSelector((store) => store.UserLogin);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(
-      setDataAppointmentForm({
-        ...props.appointmentData,
-        doctor: loggedUser.user?.doctor || props.appointmentData?.doctor,
-      })
-    );
-  }, [dispatch]);
 
   const steps = [
     { name: 'Doctor', component: <SelectDoctorComponent /> },

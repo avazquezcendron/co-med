@@ -47,3 +47,30 @@ export const getDoctorsByFilter = async (filter, loggedUser) => {
     );
   }
 };
+
+export const getDoctorSessions = async (id, startDate, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.post(
+      `${process.env.PUBLIC_URL}/api/doctor/${id}/sessions`,
+      { date: startDate.toLocaleString() },
+      config
+    );
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data.message
+        ? err.response.data.message
+        : err.message;
+    toast.error(
+      `Ocurrió un error al intentar obtener las sesiones del Doctor. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+  }
+};

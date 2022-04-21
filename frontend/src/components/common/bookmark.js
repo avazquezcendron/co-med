@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Star, UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Tooltip } from 'reactstrap';
 
 import { MENUITEMS } from '../../components/common/sidebar-component/menu';
 import { patientInitialize } from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
+import { setDataAppointmentForm } from '../../redux/appointments/actions';
+
 
 const Bookmark = () => {
   const dispatch = useDispatch();
@@ -20,7 +21,6 @@ const Bookmark = () => {
   // eslint-disable-next-line
   const [targetName, setTargetName] = useState('');
 
-  const [appointmentData, setAppointmentData] = useState({new: true});
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
@@ -162,9 +162,9 @@ const Bookmark = () => {
   };
 
   const handleNewAppointment = () => {
-    setAppointmentData({
+    dispatch(setDataAppointmentForm({
       new: true,
-    });
+    }));
     appointmentModalToggle();
   };
 
@@ -174,7 +174,7 @@ const Bookmark = () => {
         <AppointmentModalComponent
           appointmentModal={appointmentModal}
           appointmentModalToggle={appointmentModalToggle}
-          appointmentData={appointmentData}
+          // appointmentData={appointmentData}
           setAppointmentModal={setAppointmentModal}
         />
         <div className="bookmark pull-right">
