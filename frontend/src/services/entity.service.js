@@ -25,8 +25,8 @@ export const getById = async (entity, id, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
@@ -51,8 +51,8 @@ export const save = async (entity, entityData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al dar de alta al registro. Detalle: ${errorMsg}`,
@@ -82,8 +82,8 @@ export const update = async (entity, entityData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al registro. Detalle: ${errorMsg}`,
@@ -110,8 +110,8 @@ export const changeStatus = async (entity, id, currentStatus, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al registro. Detalle: ${errorMsg}`,

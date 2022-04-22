@@ -59,13 +59,13 @@ class DoctorController extends BaseController {
     if (slotConfig.length === 0)
       return res
         .status(200)
-        .json('There are no sessions configured for the Doctor.');
+        .json('No hay sesiones de turnos configuradas para el Doctor.');
 
     const doctor = await this._model.findById(req.params.id).populate({
       path: 'appointments',
     });
 
-    if (!doctor) return res.status(404).json('Doctor not found');
+    if (!doctor) return res.status(404).json('Doctor no encontrado.');
 
     const doctorAppointments = doctor.appointments;
 

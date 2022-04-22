@@ -25,8 +25,8 @@ export const getById = async (id, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del paciente. Detalle: ${errorMsg}`,
@@ -51,8 +51,8 @@ export const save = async (patientData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al dar de alta al Paciente. Detalle: ${errorMsg}`,
@@ -82,8 +82,8 @@ export const update = async (patientData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
@@ -113,8 +113,8 @@ export const updateHealthRecord = async (patient, healthRecordData, loggedUser) 
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
@@ -141,8 +141,8 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
@@ -168,8 +168,8 @@ export const getPatientsByFilter = async (filter, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,

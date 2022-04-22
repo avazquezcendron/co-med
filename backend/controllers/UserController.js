@@ -27,7 +27,7 @@ class UserController extends BaseController {
     if (user && (await user.matchPassword(password))) {
       if (user.status === 'inactive') {
         res.status(403);
-        res.json(`The user ${user.username} has been deactivated. .`);
+        res.json(`El Usuario ${user.username} se encuentra desactivado temporalmente. Contacte al administrador del sistema.`);
         return;
       }
 
@@ -37,7 +37,7 @@ class UserController extends BaseController {
         user,
       });
     } else {
-      return res.status(401).json('Invalid username or password');
+      return res.status(401).json('Usuario o Contraseña inválido.');
     }
   }
 }

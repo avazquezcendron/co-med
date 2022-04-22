@@ -94,7 +94,7 @@ const SearchHeader = () => {
                         <input
                             className="form-control-plaintext searchIcon"
                             type="text"
-                            placeholder="search"
+                            placeholder="Buscar..."
                             defaultValue={searchValue}
                             onChange={(e) => handleSearchKeyword(e.target.value)}
                         />

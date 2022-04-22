@@ -512,21 +512,15 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                 <hr className="mt-4 mb-4" />
                 <h6>{'Cobertura Médica'}</h6>
                 <div className="form-group row">
-                  <label className="col-md-2 col-form-label" htmlFor="inputOS">
+                  <label className="col-md-2 col-form-label" htmlFor="healthInsuranceCompany">
                     {'Obra Social'}
                   </label>
                   <div className="col-md-3">
                     <select
                       className="form-control"
                       name="healthInsurances.0.healthInsuranceCompany"
-                      id="healthInsurance"
-                      defaultValue={
-                        patient?.healthInsurances &&
-                        patient?.healthInsurances.length > 0
-                          ? patient?.healthInsurances[0].healthInsuranceCompany
-                              ?.id
-                          : undefined
-                      }
+                      id="healthInsuranceCompany"
+                      deafaultValue={patient.healthInsurances[0]?.healthInsuranceCompany.id}
                       onChange={(e) =>
                         handleHealthInsuranceChange(e.target.value)
                       }
@@ -556,16 +550,16 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       name="healthInsurances.0.plan.code"
                       id="healthInsurancePlan"
                       defaultValue={
-                        patient?.healthInsurances &&
-                        patient?.healthInsurances.length > 0
-                          ? patient?.healthInsurances[0].plan?.code
+                        patient.healthInsurances &&
+                        patient.healthInsurances.length > 0
+                          ? patient.healthInsurances[0].plan.code
                           : undefined
                       }
                       ref={register({ required: false })}
                     >
                       {healthInsurancePlans &&
                         healthInsurancePlans.map((plan, i) => (
-                          <option key={plan.code}>{plan.code}</option>
+                          <option key={plan.code} value={plan.code}>{plan.code}</option>
                         ))}
                     </select>
                     <span style={{ color: 'red' }}>

@@ -53,7 +53,7 @@ class BaseController {
     if (model) {
       return res.status(200).json(model);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Registro no encontrado.');
     }
   }
 
@@ -91,9 +91,7 @@ class BaseController {
     let model = await this._model.findById(req.params.id);
     if (model) {
       if (model.__v !== req.body.__v) {
-        res.status(409);
-        res.json('The record has been modified by another transaction.');
-        return;
+        return res.status(409).json('El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
       }
 
       for (const [key, value] of Object.entries(req.body)) {
@@ -102,7 +100,7 @@ class BaseController {
       await model.save();
       return this.getById(req, res, next);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Registro no encontrado.');
     }
   }
 
@@ -124,7 +122,7 @@ class BaseController {
       const updatedModel = await model.save();
       return res.status(200).json(updatedModel);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Registro no encontrado.');
     }
   }
     
@@ -146,7 +144,7 @@ class BaseController {
       const updatedModel = await model.save();
       return res.status(200).json(updatedModel);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Registro no encontrado.');
     }
   }
 }

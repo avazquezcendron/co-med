@@ -36,8 +36,8 @@ export const getDoctorsByFilter = async (filter, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
@@ -63,8 +63,8 @@ export const getDoctorSessions = async (id, startDate, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener las sesiones del Doctor. Detalle: ${errorMsg}`,

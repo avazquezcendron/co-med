@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
-import { getAppointmentsWatcher, setDataAppointmentForm } from '../../redux/appointments/actions';
+import { getAppointmentsWatcher, setDataAppointmentForm, saveAppointmentWatcher } from '../../redux/appointments/actions';
 import { LOADED, SUCCEEDED, FAILED } from '../../redux/statusTypes';
 import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 import Loader from '../common/loader';
@@ -38,12 +38,12 @@ const PatientsAgenda = (props) => {
       const _currentDayAppointments = appointments.filter(
         (x) =>
           new Date(x.start).toLocaleDateString() ===
-            dateNow.toLocaleDateString() && x.isActive
+            dateNow.toLocaleDateString() && !x.isExpired
       );
       setCurrentMonthAppointments(
         appointments.filter(
           (x) =>
-            new Date(x.start).getMonth() === dateNow.getMonth() && x.isActive
+            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired
         )
       );
       setCurrentDayAppointments(_currentDayAppointments);
@@ -62,7 +62,7 @@ const PatientsAgenda = (props) => {
             new Date(x.start).getFullYear() === dateNow.getFullYear() &&
             new Date(x.start).getMonth() === dateNow.getMonth() &&
             new Date(x.start).getDate() === dateNow.getDate() + 1 &&
-            x.isActive
+            !x.isExpired
         )
       );
       setAppointmentsFiltered(_currentDayAppointments);
@@ -173,10 +173,10 @@ const PatientsAgenda = (props) => {
     }
   };
 
-  const handleDeletePatientClick = (patient) => {
+  const handleChangeStatusAppointment = (appointment) => {
     SweetAlert.fire({
-      title: 'Está seguro?',
-      text: `El patiente ${patient.name} será dado de baja.`,
+      title: 'Atención',
+      text: appointment.isActive ? 'El turno será cancelado. Desea continuar?' : 'El turno pasará a estar activo nuevamente. Desea continuar?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -185,100 +185,29 @@ const PatientsAgenda = (props) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.value) {
-        // dispatch(removeTask(taskId));
-        SweetAlert.fire(
-          'Acción completada!',
-          `El patiente ${patient.name} ha sido dado de baja.`,
-          'success'
-        );
-      } else {
-        SweetAlert.fire(
-          '',
-          `La acción de eliminar al paciente ${patient.name} ha sido descartada.`,
-          'info'
-        );
-      }
+        dispatch(saveAppointmentWatcher({ ...appointment, status: appointment.isCancelled ? 'active' : 'cancelled' }));
+      } 
     });
   };
+
   const conditionalRowStyles = [
     {
-      when: (row) => row.status === 'cancelled',
+      when: (row) => row.isCancelled,
       style: {
         backgroundColor: '#ffc3cd',
-        color: 'white',
+        // color: 'white',
       },
     },
     {
-      when: (row) => row.status === 'done',
+      when: (row) => row.isDone,
       style: {
-        backgroundColor: '#d6d6d6',
-        color: 'white',
+        backgroundColor: '#cbf3cb',
+        // color: 'white',
       },
-    },
+    }
   ];
 
   const olumnsConfig = [
-    // {
-    // 	cell: () => <i className="fa fa-th text-success" />,
-    // 	width: '56px', // custom width for icon button
-    // 	style: {
-    // 		borderBottom: '1px solid #FFFFFF',
-    // 		marginBottom: '-1px',
-    // 	},
-    // },
-    // {
-    //   name: 'Hora',
-    //   selector: 'hora',
-    //   sortable: true,
-    //   // right: true,
-    //   width: '80px',
-    //   cell: (row, index, column, id) => (
-    //     <div style={{
-    //       paddingRight: 10,
-    //       paddingBottom: 5,
-    //       paddingTop9: 5,
-    //       borderRadius: 2,
-    //       borderRight: 'solid #4466f2',
-    //     }}>
-    //       <h6 className="m-b-0">9:00</h6>
-    //     </div>
-    //     // <img
-    //     //   src={`${process.env.PUBLIC_URL}/assets/images/${row.image}`}
-    //     //   className="img-50 img-fluid"
-    //     //   alt=""
-    //     // />
-    //   ),
-    // },
-    // {
-    //   name: 'Nombre y Apellido',
-    //   selector: 'name',
-    //   sortable: true,
-    //   left: true,
-    // },
-    // {
-    //   name: 'Documento',
-    //   selector: 'nationalId',
-    //   sortable: true,
-    //   left: true,
-    // },
-    // {
-    //   name: 'Fecha',
-    //   selector: 'birthDate',
-    //   sortable: true,
-    //   center: true,
-    // },
-    // {
-    //   name: 'Obra Social',
-    //   selector: 'healthInsurance',
-    //   sortable: true,
-    //   center: true,
-    // },
-    // {
-    //   name: 'Nro. Historia Clínica',
-    //   selector: 'healthRecordId',
-    //   sortable: true,
-    //   left: true,
-    // },
     {
       name: 'Turno',
       selector: 'appointmentDetail',
@@ -287,7 +216,7 @@ const PatientsAgenda = (props) => {
       width: '550px',
       cell: (row, index, column, id) => (
         <div
-          className="card-body recent-notification "
+          className={`card-body recent-notification  ${row.isCancelled ? 'b-l-danger border-3' : ''} ${row.isDone ? 'b-l-success border-3' : ''} `}
           onClick={() => handleRowClick(row)}
         >
           <div className="media">
@@ -399,7 +328,7 @@ const PatientsAgenda = (props) => {
         ) : row.status === 'cancelled' ? (
           <span className="badge badge-danger">Cancelado</span>
         ) : row.status === 'done' ? (
-          <span className="badge badge-success">Completado</span>
+          <span className="badge badge-success">Finalizado</span>
         ) : (
           ''
         ),
@@ -413,12 +342,12 @@ const PatientsAgenda = (props) => {
       cell: (row, index, column, id) => (
         <div>
           <span
-            onClick={() => handleDeletePatientClick(row)}
-            title="Cancelar Turno"
+            onClick={() => handleChangeStatusAppointment(row)}
+            title={row.isCancelled ? 'Activar Turno' : 'Cancelar Turno'}
           >
             <i
-              className="fa fa-times"
-              style={{ width: 35, fontSize: 16, padding: 11, color: '#e4566e' }}
+              className={row.isCancelled ? 'fa fa-plus' : 'fa fa-times'}
+              style={{ width: 35, fontSize: 16, padding: 11, color: row.isCancelled ? 'green' : '#e4566e' }}
             ></i>
           </span>
           {/* <span

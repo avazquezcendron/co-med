@@ -36,8 +36,8 @@ function* saveDoctorAsync({ payload }) {
     }
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(doctorSaveFailure(errMsg));
   }
@@ -51,8 +51,8 @@ function* changeStatusDoctorAsync({ payload }) {
     yield put(doctorChangeStatusSuccess(data));
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(doctorChangeStatusFailure(errMsg));
   }
@@ -66,8 +66,8 @@ function* fetchDoctorsAsync({ payload }) {
         yield put(doctorGetAllSuccess(data));
     } catch (err) {
         const errMsg =
-        err.response && err.response.data.message
-            ? err.response.data.message
+        err.response && err.response.data
+            ? err.response.data
             : err.message;
         yield put(doctorGetAllFailure(errMsg));
     }
@@ -81,8 +81,8 @@ function* fetchDoctorAsync({ payload }) {
       yield put(doctorGetByIdSuccess(data));
   } catch (err) {
       const errMsg =
-      err.response && err.response.data.message
-          ? err.response.data.message
+      err.response && err.response.data
+          ? err.response.data
           : err.message;
       yield put(doctorGetByIdFailure(errMsg));
   }

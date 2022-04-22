@@ -36,8 +36,8 @@ function* loginUserAsync({ payload }) {
     }    
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(userLoginFailure(errMsg));
   }
@@ -54,8 +54,8 @@ function* saveUserAsync({ payload }) {
     yield put(userSaveSuccess(data));
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(userSaveFailure(errMsg));
   }
@@ -69,8 +69,8 @@ function* saveUserAsync({ payload }) {
 //         yield put(userGetAllSuccess(response.data));
 //     } catch (err) {
 //         const errMsg =
-//         err.response && err.response.data.message
-//             ? err.response.data.message
+//         err.response && err.response.data
+//             ? err.response.data
 //             : err.message;
 //         // yield put(userSaveFailure(errMsg));
 //     }

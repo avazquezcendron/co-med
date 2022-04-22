@@ -94,7 +94,7 @@ class PatientController extends BaseController {
     if (model) {
       return res.status(200).json(model);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Paciente inexistente.');
     }
   }
 
@@ -110,7 +110,7 @@ class PatientController extends BaseController {
    */
   async create(req, res, next) {
     const patient = new this._model(req.body);
-    const healthRecordNumber = new Number('549310' + patient.nationalId);
+    const healthRecordNumber = new Number(patient.nationalId);
     const healthRecord = new HealthRecord({
       healthRecordNumber: healthRecordNumber,
     });
@@ -142,10 +142,10 @@ class PatientController extends BaseController {
       if (healthRecord) {
         return res.status(200).json(healthRecord);
       } else {
-        return res.status(404).json('Health Record not found');
+        return res.status(404).json('Historia Clínica de Paciente inexistente.');
       }
     } else {
-      return res.status(404).json('Patient not found');
+      return res.status(404).json('Paciente inexistente.');
     }
   }
 
@@ -163,15 +163,11 @@ class PatientController extends BaseController {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
       if (patient.__v !== req.body.patientVersion) {
-        res.status(409);
-        res.json('The Patient has been modified by another transaction.');
-        return;
+        return res.status(409).json('El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
       }
       const healthRecord = await HealthRecord.findById(req.body.id);
       if (healthRecord.__v !== req.body.__v) {
-        res.status(409);
-        res.json('The Health Record has been modified by another transaction.');
-        return;
+        return res.status(409).json('La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.');
       }
       for (const [key, value] of Object.entries(req.body)) {
         healthRecord[key] = value;
@@ -179,7 +175,7 @@ class PatientController extends BaseController {
       await healthRecord.save();
       return this.getById(req, res, next);
     } else {
-      return res.status(404).json('Record not found');
+      return res.status(404).json('Paciente inexistente.');
     }
   }
 }

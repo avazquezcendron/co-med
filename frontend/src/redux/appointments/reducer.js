@@ -7,7 +7,8 @@ import {
   DELETE_APPOINTMENT_SUCCESS,
   GET_APPOINTMENTS_REQUEST,
   GET_APPOINTMENTS_SUCCESS,
-  APPOINTMENTS_INITIALIZE
+  APPOINTMENTS_INITIALIZE,
+  SAVE_APPOINTMENT_FAILURE,
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -20,23 +21,6 @@ export const AppointmentsReducer = (
   action
 ) => {
   switch (action.type) {
-    // case NEW_APPOINTMENT:
-    //   return {
-    //     ...state,
-    //     status: statusTypes.SUCCEEDED,
-    //     appointments: [...state.appointments, action.payload],
-    //   };
-
-    // case EDIT_APPOINTMENT:
-    //   return {
-    //     ...state,
-    //     status: statusTypes.SUCCEEDED,
-    //     appointments: state.appointments.map((appointment) =>
-    //       appointment.id === action.payload.id
-    //         ? { ...appointment, ...action.payload.appointmentData }
-    //         : appointment
-    //     )
-    //   };
     case APPOINTMENTS_INITIALIZE:
       return INITIAL_STATE_APPOINTMENTS;
 
@@ -46,48 +30,26 @@ export const AppointmentsReducer = (
     case GET_APPOINTMENTS_SUCCESS:
       return {
         status: statusTypes.LOADED,
-        appointments: action.payload.sort((x, y) => new Date(x.start) - new Date(y.start))
+        appointments: action.payload.sort(
+          (x, y) => new Date(x.start) - new Date(y.start)
+        ),
       };
 
     case SAVE_APPOINTMENT_REQUEST:
       return { ...state, status: statusTypes.LOADING };
 
     case SAVE_APPOINTMENT_SUCCESS:
-      // let appointments = [];
-      // if (action.payload.appointmentData.new) {
-      //   appointments = [...state.appointments, action.payload.appointmentData];
-      // } else {
-      //   appointments = state.appointments.map((appointment) =>
-      //     appointment.id === action.payload.id
-      //       ? { ...appointment, ...action.payload.appointmentData }
-      //       : appointment
-      //   );
-      // }
-
       return {
         status: statusTypes.SUCCEEDED,
-        appointments:[]
+        appointments: [],
       };
 
-    // case ADD_APPOINTMENT_REQUEST:
-    //   return { ...state, status: statusTypes.LOADING };
-
-    // case ADD_APPOINTMENT_SUCCESS:
-    //   return { ...state, status: statusTypes.SUCCEEDED, appointments: [...state.appointments, action.payload ] };
-
-    // case UPDATE_APPOINTMENT_REQUEST:
-    //   return { ...state, status: statusTypes.LOADING };
-
-    // case UPDATE_APPOINTMENT_SUCCESS:
-    //   return {
-    //     ...state,
-    //     status: statusTypes.SUCCEEDED,
-    //     appointments: state.appointments.map((appointment) =>
-    //       appointment.id === action.payload.id
-    //         ? { ...appointment, ...action.payload.appointmentData }
-    //         : appointment
-    //     ),
-    //   };
+    case SAVE_APPOINTMENT_FAILURE:
+      return {
+        ...state,
+        status: statusTypes.FAILED,
+        error: action.payload,
+      };
 
     case DELETE_APPOINTMENT_REQUEST:
       return { ...state, status: statusTypes.LOADING };

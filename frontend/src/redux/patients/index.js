@@ -37,8 +37,8 @@ function* savePatientAsync({ payload }) {
     }
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(patientSaveFailure(errMsg));
   }
@@ -53,8 +53,8 @@ function* updateHRAsync({ payload }) {
     yield put(patientSaveSuccess(data));
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(patientSaveFailure(errMsg));
   }
@@ -68,8 +68,8 @@ function* changeStatusPatientAsync({ payload }) {
     yield put(patientChangeStatusSuccess(data));
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     yield put(patientChangeStatusFailure(errMsg));
   }
@@ -83,8 +83,8 @@ function* fetchPatientsAsync() {
         yield put(patientGetAllSuccess(data));
     } catch (err) {
         const errMsg =
-        err.response && err.response.data.message
-            ? err.response.data.message
+        err.response && err.response.data
+            ? err.response.data
             : err.message;
         yield put(patientGetAllFailure(errMsg));
     }
@@ -98,8 +98,8 @@ function* fetchPatientAsync({ payload }) {
       yield put(patientGetByIdSuccess(data));
   } catch (err) {
       const errMsg =
-      err.response && err.response.data.message
-          ? err.response.data.message
+      err.response && err.response.data
+          ? err.response.data
           : err.message;
       yield put(patientGetByIdFailure(errMsg));
   }

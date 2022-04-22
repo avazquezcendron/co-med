@@ -49,7 +49,7 @@ const AppointmentResumeComponent = (props) => {
         </div>
         <h4 className="col col-md-6 text-muted text-center m-b-40">
           Resumen del Turno
-          {appointment.isActive && (
+          {appointment.isActive && !appointment.new && !appointment.edit  && (
             <ReactToPrint
               trigger={() => (
                 <a

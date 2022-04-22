@@ -5,6 +5,7 @@ export const GET_APPOINTMENTS_SUCCESS = "appointments/getAppointmentsSuccess";
 export const SAVE_APPOINTMENT_WATCHER = "appointments/saveAppointmentWatcher"
 export const SAVE_APPOINTMENT_REQUEST = "appointments/saveAppointmentRequest"
 export const SAVE_APPOINTMENT_SUCCESS = "appointments/saveAppointmentSuccess"
+export const SAVE_APPOINTMENT_FAILURE = "appointments/saveAppointmentFailure"
 export const DELETE_APPOINTMENT_REQUEST = "appointments/deleteAppointmentRequest"
 export const DELETE_APPOINTMENT_SUCCESS = "appointments/deleteAppointmentSuccess"
 export const SET_DATA_APPOINTMENT_FORM = "appointments/setDataAppointmentForm";
@@ -44,19 +45,6 @@ export const getAppointmentsSuccess = (appointments) => {
   };
 };
 
-// export const newAppointment = (newAppointmentData) => {
-//   return {
-//     type: NEW_APPOINTMENT,
-//     payload: newAppointmentData
-//   };
-// };
-
-// export const editAppointment = (id, editAppointmentData) => {
-//   return {
-//     type: EDIT_APPOINTMENT,
-//     payload: { id, editAppointmentData }
-//   };
-// };
 
 export const saveAppointmentRequest = () => {
   return {
@@ -71,31 +59,12 @@ export const saveAppointmentSuccess = (id, appointmentData) => {
   };
 };
 
-// export const addAppointmentRequest = () => {
-//   return {
-//     type: ADD_APPOINTMENT_REQUEST
-//   };
-// };
-
-// export const addAppointmentSuccess = appointmentData => {
-//     return {
-//       type: ADD_APPOINTMENT_SUCCESS,
-//       payload: appointmentData
-//     };
-// };
-
-// export const updateAppointmentRequest = () => {
-//   return {
-//     type: UPDATE_APPOINTMENT_REQUEST
-//   };
-// };
-
-// export const updateAppointmentSuccess = (id, appointmentData) => {
-//     return {
-//       type: UPDATE_APPOINTMENT_SUCCESS,
-//       payload: { id, appointmentData }
-//     };
-// };
+export const saveAppointmentFailure = (error) => {
+  return {
+    type: SAVE_APPOINTMENT_FAILURE,
+    payload: error,
+  };
+};
 
 export const deleteAppointmentRequest = () => {
   return {

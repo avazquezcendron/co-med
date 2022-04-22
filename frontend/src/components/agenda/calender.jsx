@@ -172,6 +172,7 @@ const Calender = () => {
     }
 
     if (isListView) {
+      info.el.style.cursor = 'pointer';
       var dotEl = info.el.getElementsByClassName('fc-list-event-dot')[0];
       if (dotEl) {
         dotEl.style.borderColor = txtColor;

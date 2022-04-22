@@ -32,8 +32,8 @@ export const save = async (appointmentData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al dar de alta el Turno. Detalle: ${errorMsg}`,
@@ -63,8 +63,8 @@ export const update = async (appointmentData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar el Turno. Detalle: ${errorMsg}`,
@@ -112,8 +112,8 @@ export const getAppointmentSlotsConfig = async (loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al obtener la configuración de los turnos. Detalle: ${errorMsg}`,

@@ -24,8 +24,8 @@ export const save = async (newUserData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al dar de alta al usuario. Detalle: ${errorMsg}`,
@@ -55,8 +55,8 @@ export const update = async (userData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
@@ -83,8 +83,8 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
@@ -110,8 +110,8 @@ export const getById = async (id, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
+      err.response && err.response.data
+        ? err.response.data
         : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del usuario. Detalle: ${errorMsg}`,

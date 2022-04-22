@@ -18,37 +18,34 @@ export const MENUITEMS = [
         title: 'Dashboard', icon: Home, type: 'link', path: '/dashboard/default', badgeType: 'primary', active: false
     },
     {
-        title: 'Patients', icon: Users, type: 'link', active: false, bookmark: false, path: '/patient'
+        title: 'Pacientes', icon: Users, type: 'link', active: false, bookmark: false, path: '/patient'
     },
     {
-        title: 'Doctors', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
+        title: 'Doctores', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
     },
     {
-        title: 'Appointments', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
+        title: 'Turnos', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
     },
     {
-        title: 'Reports', icon: TrendingUp, type: 'sub', active: false, children: [
+        title: 'Reportes', icon: FileText, type: 'sub', active: false, children: [
             { path: '/dashboard/project', type: 'link', title: 'General' },
-            { path: '/widgets/chart', type: 'link', title: 'Various' }
+            { path: '/widgets/chart', type: 'link', title: 'Varios' }
         ]
     },
     {
-        title: 'Graphics', icon: PieChart, type: 'sub', active: false, children: [
-            { path: '/charts/googleChart', type: 'link', title: 'Graphics1' },
-            { path: '/charts/chartJs', type: 'link', title: 'Graphics2' },
-            { path: '/charts/chartistComponent', type: 'link', title: 'Graphics3' }
+        title: 'Catálogos', icon: Briefcase, type: 'sub', active: false, children: [
+            { path: '/catalogues/drug', type: 'link', title: 'Fármacos' },
+            { path: '/catalogues/healthInsurance', type: 'link', title: 'Obras Sociales' },
+            { path: '/catalogues/studyType', type: 'link', title: 'Estudios compl.' },
+            { path: '/catalogues/laboratoryType', type: 'link', title: 'Laboratorios (variables)' },
         ]
     },
     {
-        title: 'Forms', icon: FileText, type: 'sub', active: false, children: [
-            { path: '/form-layout/formDefault', title: 'Prescriptions', type: 'link' },
-            { path: '/form-layout/FormWizard', title: 'Templates', type: 'link' }
-        ]
-    },
-    {
-        title: 'Settings', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
+        title: 'Configuración', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
         children: [
-            { path: '/user', icon: Users, title: 'Users', type: 'link' },
+            { path: '/user', icon: Users, title: 'Usuarios', type: 'link' },
+            { path: 'settings/form', icon: FileText, title: 'Formularios', type: 'link' },
+            { path: 'settings/appointment', icon: FileText, title: 'Turnos', type: 'link' },
         ]
     }
     // {

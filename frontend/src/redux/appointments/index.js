@@ -8,6 +8,7 @@ import {
   getAppointmentsSuccess,
   GET_APPOINTMENTS_WATCHER,
   SAVE_APPOINTMENT_WATCHER,
+  saveAppointmentFailure
 } from './actions';
 import { getLoggedUser } from '../selectors';
 
@@ -32,9 +33,10 @@ function* saveAppointmentAsync({ payload }) {
     }
   } catch (err) {
     const errMsg =
-      err.response && err.response.data.message
-        ? err.response.data.message
-        : err.message;
+      err.response && err.response.data
+        ? err.response.data
+        : err.message; 
+        yield put(saveAppointmentFailure(errMsg));    
   }
 }
 
