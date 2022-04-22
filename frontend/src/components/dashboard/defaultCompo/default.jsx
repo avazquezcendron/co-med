@@ -136,13 +136,13 @@ const Default = (props) => {
       const _currentDayAppointments = appointments.filter(
         (x) =>
           new Date(x.start).toLocaleDateString() ===
-            dateNow.toLocaleDateString() && x.isActive
+            dateNow.toLocaleDateString() && !x.isExpired
       );
 
       setCurrentMonthAppointments(
         appointments.filter(
           (x) =>
-            new Date(x.start).getMonth() === dateNow.getMonth() && x.isActive
+            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired
         )
       );
       setCurrentDayAppointments(_currentDayAppointments);
@@ -151,7 +151,7 @@ const Default = (props) => {
         appointments.filter(
           (x) =>
             new Date(x.start).toLocaleDateString() ===
-              dateNow.toLocaleDateString() && !x.isCancelled
+              dateNow.toLocaleDateString() && !x.isExpired
         )
       );
 
@@ -161,7 +161,7 @@ const Default = (props) => {
             new Date(x.start).getFullYear() === dateNow.getFullYear() &&
             new Date(x.start).getMonth() === dateNow.getMonth() &&
             new Date(x.start).getDate() === dateNow.getDate() + 1 &&
-            x.isActive
+            !x.isExpired
         )
       );
 
@@ -519,16 +519,22 @@ const Default = (props) => {
                   .slice(currentPage * pageSize, (currentPage + 1) * pageSize)
                   .map((appointment, index) => (
                     <Fragment key={appointment.id}>
-                      {index === 0 || (index > 0 &&
-                      new Date(appointmentsFiltered[index].start).getDate() !==
+                      {index === 0 ||
+                      (index > 0 &&
                         new Date(
-                          appointmentsFiltered[index - 1].start
-                        ).getDate()) ? (
-                        <div  className="row">
+                          appointmentsFiltered[index].start
+                        ).getDate() !==
+                          new Date(
+                            appointmentsFiltered[index - 1].start
+                          ).getDate()) ? (
+                        <div className="row">
                           <div className="col-xl-5 col-md-4 col-sm-4">
                             <hr />
                           </div>
-                          <div className="col-xl-2 col-md-4 col-sm-4 text-muted text-center f-w-700" style={{alignSelf: 'center'}}>
+                          <div
+                            className="col-xl-2 col-md-4 col-sm-4 text-muted text-center f-w-700"
+                            style={{ alignSelf: 'center' }}
+                          >
                             <i className="icofont icofont-ui-calendar"></i>{' '}
                             {new Date(appointment.start).toLocaleDateString(
                               'es'
@@ -541,7 +547,9 @@ const Default = (props) => {
                       ) : (
                         ''
                       )}
-                      <div key={index} className="media">
+                      <div key={index} className={`media ${appointment.isCancelled ? 'b-r-danger border-4' : ''} ${appointment.isDone ? 'b-r-success border-4' : ''} `}
+                      title={`TURNO ${appointment.isCancelled ? 'CANCELADO' : ''} ${appointment.isDone ? 'FINALIZADO' : ''}  ${appointment.isActive ? 'ACTIVO' : ''}`}
+                      >                        
                         <h6>
                           <i className="icofont icofont-clock-time"></i>{' '}
                           {new Date(appointment.start).toLocaleTimeString(
@@ -579,6 +587,15 @@ const Default = (props) => {
                             {appointment.doctor.fullName} |{' '}
                             {appointment.doctor.specialities.join(', ')}
                           </p>
+                          {/* {appointment.isDone && (
+                          <a
+                            href="#javascript"
+                            className="badge badge-pill badge-success pull-right"
+                            title={'Estado "Inactivo"'}
+                          >
+                            <i className="icon-check"></i>
+                          </a>
+                        )} */}
                         </div>
                       </div>
                     </Fragment>

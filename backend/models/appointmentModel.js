@@ -4,7 +4,7 @@ import moment from 'moment';
 const appointmentSchema = mongoose.Schema(
   {
     start: { type: Date, required: true },
-    end: { type: Date, required: true },
+    end: { type: Date, required: false },
     description: { type: String, required: false },
     appointmentType: { type: String, required: true },
     mode: { type: String, required: true },

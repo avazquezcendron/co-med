@@ -11,43 +11,49 @@ const AppointmentConfirmComponent = (props) => {
   const dispatch = useDispatch();
 
   const generateAppointment = () => {
-    SweetAlert.fire({
-      title: 'Atención',
-      text: `Se dará de alta un turno el día ${
+    if (!appointmentData || !appointmentData.start || !appointmentData.patient || !appointmentData.doctor) {
+      toast.error('Faltan completar datos del turno.', {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    } else {
+      SweetAlert.fire({
+        title: 'Atención',
+        text: `Se dará de alta un turno el día ${
         appointmentData.start
           ? appointmentData.start.toLocaleDateString('es-AR', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            }) +
-            ', ' +
-            appointmentData.start.toLocaleTimeString('es', {
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: false,
-            }) +
-            'hs'
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }) +
+          ', ' +
+          appointmentData.start.toLocaleTimeString('es', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false,
+          }) +
+          'hs'
           : ''
-      } para el paciente ${appointmentData.patient.fullName} con el doctor/a ${
+        } para el paciente ${appointmentData.patient.fullName} con el doctor/a ${
         appointmentData.doctor.fullName
-      }.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Aceptar',
-      cancelButtonText: 'Cancelar',
-      cancelButtonColor: '#ff0000',
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.value) {
-        dispatch(saveAppointmentWatcher(appointmentData));
-        props.modalToggle();
-      } else {
-        toast.error('Se canceló el alta del turno.', {
-          position: toast.POSITION.BOTTOM_RIGHT,
-        });
-      }
-    });
+        }.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#ff0000',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.value) {
+          dispatch(saveAppointmentWatcher(appointmentData));
+          props.modalToggle();
+        } else {
+          toast.error('Se canceló el alta del turno.', {
+            position: toast.POSITION.BOTTOM_RIGHT,
+          });
+        }
+      });
+    }
   };
   return (
     <div className="row  m-50">
