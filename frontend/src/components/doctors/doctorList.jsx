@@ -167,6 +167,7 @@ const DoctorList = (props) => {
                       <h6 className="mb-0">
                         {doctor.licenses.map(
                           (x, index) =>
+                            (index !== 0 ? ' | ' : '') +
                             (x.licenseType.includes('mp') ? 'M.P. ' : 'M.N.') +
                             x.licenseId
                         )}
@@ -216,6 +217,15 @@ const DoctorList = (props) => {
                               title="Agendar turno"
                             >
                               <i className="icon-calendar"></i>
+                            </a>
+                          </li>
+                          <li>
+                            <a
+                              href="#javascritp"
+                              className="text-muted"
+                              title="Consultar disponibilidad de turnos"
+                            >
+                              <i className="icofont icofont-wall-clock"></i>
                             </a>
                           </li>
                           <li>
