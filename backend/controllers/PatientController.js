@@ -9,6 +9,7 @@ class PatientController extends BaseController {
 
     this.updateHealthRecord = this.updateHealthRecord.bind(this);
     this.getHealthRecord = this.getHealthRecord.bind(this);
+    this._applyVisibilityByUserRole = this._applyVisibilityByUserRole.bind(this);
   }
 
   /**
@@ -64,7 +65,8 @@ class PatientController extends BaseController {
       .populate({
         path: 'healthRecord',
       });
-    res.status(200).json(patients);
+    const patientsDTO = patients.map(x => this._applyVisibilityByUserRole(req.user, x));
+    res.status(200).json(patientsDTO);
   }
 
   /**
@@ -98,7 +100,7 @@ class PatientController extends BaseController {
         },
       });
     if (model) {
-      return res.status(200).json(model);
+      return res.status(200).json(this._applyVisibilityByUserRole(req.user, model));
     } else {
       return res.status(404).json('Paciente inexistente.');
     }
@@ -148,7 +150,9 @@ class PatientController extends BaseController {
       if (healthRecord) {
         return res.status(200).json(healthRecord);
       } else {
-        return res.status(404).json('Historia Clínica de Paciente inexistente.');
+        return res
+          .status(404)
+          .json('Historia Clínica de Paciente inexistente.');
       }
     } else {
       return res.status(404).json('Paciente inexistente.');
@@ -169,11 +173,19 @@ class PatientController extends BaseController {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
       if (patient.__v !== req.body.patientVersion) {
-        return res.status(409).json('El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
+        return res
+          .status(409)
+          .json(
+            'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+          );
       }
       const healthRecord = await HealthRecord.findById(req.body.id);
       if (healthRecord.__v !== req.body.__v) {
-        return res.status(409).json('La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.');
+        return res
+          .status(409)
+          .json(
+            'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
+          );
       }
       for (const [key, value] of Object.entries(req.body)) {
         healthRecord[key] = value;
@@ -183,6 +195,27 @@ class PatientController extends BaseController {
     } else {
       return res.status(404).json('Paciente inexistente.');
     }
+  }
+
+  _applyVisibilityByUserRole(user, patientModel) {
+    const patient = JSON.parse(JSON.stringify(patientModel));
+    if (!user.isAdmin) {
+      //TODO: improve user role visibility and security
+      patient.healthRecord = {
+        ...patient.healthRecord,
+        pathologicalBackground: null,
+        noPathologicalBackground: null,
+        hereditaryBackground: null,
+        psychiatricBackgroud: null,
+        nutritionalBackgroud: null,
+        allergiesInfo: null,
+        drugsInfo: null,
+        laboratoryExams: [],
+        studyExams: [],
+        visits: [],
+      };
+    }
+    return patient;
   }
 }
 

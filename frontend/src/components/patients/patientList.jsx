@@ -169,14 +169,14 @@ const PatientList = (props) => {
       sortable: true,
       left: true,
     },
-    {
-      name: 'Nro. Historia Clínica',
-      selector: 'healthRecord.healthRecordNumber',
-      sortable: true,
-      left: true,
-      cell: (row, index, column, id) =>
-        row.healthRecord ? row.healthRecord.healthRecordNumber : ' - ',
-    },
+    // {
+    //   name: 'Nro. Historia Clínica',
+    //   selector: 'healthRecord.healthRecordNumber',
+    //   sortable: true,
+    //   left: true,
+    //   cell: (row, index, column, id) =>
+    //     row.healthRecord ? row.healthRecord.healthRecordNumber : ' - ',
+    // },
     {
       name: 'Obra Social',
       selector: 'healthInsurance',
