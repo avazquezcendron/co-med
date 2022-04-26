@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import es from 'date-fns/locale/es';
 
 import { patientSavetWatcher } from '../../redux/patients/actions';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
 
 const PatientQuickAdd = (props) => {
+  registerLocale('es', es);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
@@ -17,10 +20,18 @@ const PatientQuickAdd = (props) => {
       .then((res) => setHealthInsurancesCompanies(res.data));
   }, []);
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
+  const [dateOfBirth, setdobDate] = useState(null);
 
-  const { register, handleSubmit, errors } = useForm();
+  const { register, handleSubmit, errors, setError, clearErrors } = useForm();
 
   const handleSubmitForm = (data) => {
+    if (!dateOfBirth) {
+      setError('dateOfBirth', {});
+      return;
+    } else {
+      clearErrors('dateOfBirth');
+    }
+
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
@@ -33,9 +44,15 @@ const PatientQuickAdd = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          dispatch(patientSavetWatcher(data));
+          const patientData = { ...data, dateOfBirth };
+          if (patientData.healthInsurances?.length > 0) {
+            if (!patientData.healthInsurances[0].healthInsuranceCompany) {
+              patientData.healthInsurances = [];
+            }
+          }
+          dispatch(patientSavetWatcher(patientData));
           props.modalToggle && props.modalToggle();
-        } 
+        }
       });
     } else {
       errors.showMessages();
@@ -51,6 +68,15 @@ const PatientQuickAdd = (props) => {
         setHealthInsurancePlans(healthInsurance[0].plans);
     } else {
       setHealthInsurancePlans([]);
+    }
+  };
+
+  const handleDoBChange = (date) => {
+    setdobDate(date);
+    if (!date) {
+      setError('dateOfBirth', {});
+    } else {
+      clearErrors('dateOfBirth');
     }
   };
 
@@ -91,6 +117,28 @@ const PatientQuickAdd = (props) => {
               {errors.lastName && 'Ingrese un valor.'}
             </span>
           </div>
+          <label className="col-md-12 col-form-label" htmlFor="inputFecNac">
+            {'Fec. Nacimiento'}
+          </label>
+          <div className="col-md-12">
+            <div
+              className="datepicker-here"
+              data-language="es"
+              id="inputFecNac"
+            >
+              <DatePicker
+                className="form-control digits"
+                placeholderText="dd/MM/yyyy"
+                selected={dateOfBirth}
+                locale="es"
+                dateFormat="dd/MM/yyyy"
+                onChange={handleDoBChange}
+              />
+              <span style={{ color: 'red' }}>
+                {errors.dateOfBirth && 'Ingrese un valor.'}
+              </span>
+            </div>
+          </div>
           <label className="col-md-12 col-form-label" htmlFor="nationalIdType">
             {'Tipo de Documento'}
           </label>
@@ -128,11 +176,11 @@ const PatientQuickAdd = (props) => {
           <div className="col-md-12">
             <select
               className="form-control"
-              name="healthInsurance"
+              name="healthInsurances.0.healthInsuranceCompany"
               id="healthInsurance"
               value={undefined}
               onChange={(e) => handleHealthInsuranceChange(e.target.value)}
-              ref={register({ required: true })}
+              ref={register({ required: false })}
             >
               <option value="">No Posee</option>
               {healthInsurancesCompanies &&
@@ -152,10 +200,10 @@ const PatientQuickAdd = (props) => {
           <div className="col-md-12">
             <select
               className="form-control"
-              name="healthInsurancePlan"
+              name="healthInsurances.0.plan.code"
               id="healthInsurancePlan"
               defaultValue="-"
-              ref={register({ required: true })}
+              ref={register({ required: false })}
             >
               {healthInsurancePlans &&
                 healthInsurancePlans.map((company, i) => (
@@ -172,10 +220,10 @@ const PatientQuickAdd = (props) => {
           <div className="col-md-12">
             <input
               className="form-control"
-              name="healthInsuranceId"
+              name="healthInsurances.0.cardNumber"
               id="healthInsuranceId"
               type="number"
-              ref={register({ required: true })}
+              ref={register({ required: false })}
             />
             <span style={{ color: 'red' }}>
               {errors.healthInsuranceId && 'Ingrese un valor.'}
