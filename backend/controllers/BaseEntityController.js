@@ -2,6 +2,7 @@ import BaseController from './BaseController.js';
 import Drug from '../models/drugModel.js';
 import StudyType from '../models/studyTypeModel.js';
 import AppointmentConfig from '../models/appointmentConfigModel.js';
+import Tag from '../models/tagModel.js';
 
 class BaseEntityController extends BaseController {
   constructor() {
@@ -11,6 +12,7 @@ class BaseEntityController extends BaseController {
     this._modelsDic.set('drug', Drug);
     this._modelsDic.set('studytype', StudyType);
     this._modelsDic.set('appointmentconfig', AppointmentConfig);
+    this._modelsDic.set('tag', Tag);
   }
 
 

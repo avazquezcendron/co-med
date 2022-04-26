@@ -86,11 +86,11 @@ const UserList = (props) => {
   };
 
   const handleRowClick = (row, event) => {
-    props.history.push(`${process.env.PUBLIC_URL}/user/${row.id}?mode=browse`);
+    props.history.push(`${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=browse`);
   };
 
   const handleEditUserClick = (row, event) => {
-    props.history.push(`${process.env.PUBLIC_URL}/user/${row.id}?mode=edit`);
+    props.history.push(`${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=edit`);
   };
 
   const handleUserChangeStatusClick = (user) => {
@@ -263,7 +263,7 @@ const UserList = (props) => {
                     <div className="text-right">
                       <Link
                         className="btn btn-primary"
-                        to={`${process.env.PUBLIC_URL}/user/0`}
+                        to={`${process.env.PUBLIC_URL}/settings/user/0`}
                       >
                         {' '}
                         <PlusCircle />

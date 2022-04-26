@@ -9,7 +9,7 @@ const PatientSchema = mongoose.Schema(
     nationalId: { type: Number, required: true, unique: true },
     nationalIdType: { type: String, required: true },
     nationality: { type: String, required: false },
-    gender: { type: String, required: false },
+    gender: { type: String, required: false, default: 'cisgenero' },
     email: {
       type: String,
       lowercase: true,
@@ -51,6 +51,13 @@ const PatientSchema = mongoose.Schema(
       required: false,
       ref: 'HealthRecord',
     },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: 'Tag',
+      },
+    ],
     healthInsurances: [
       {
         admissionDate: Date,
@@ -69,33 +76,35 @@ const PatientSchema = mongoose.Schema(
         ref: 'Appointment',
       },
     ],
-    status: { type: String, default: 'active' }
+    status: { type: String, default: 'active' },
   },
   {
     timestamps: true,
-    optimisticConcurrency: true
+    optimisticConcurrency: true,
   }
 );
 
 PatientSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
 });
 
-PatientSchema.virtual('fullName').get(function () { 
+PatientSchema.virtual('fullName').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-PatientSchema.virtual('age').get(function () { 
+PatientSchema.virtual('age').get(function () {
   if (this.dateOfBirth) {
-    return Math.floor((Date.now() - this.dateOfBirth.getTime()) / (1000 * 3600 * 24 * 365));
+    return Math.floor(
+      (Date.now() - this.dateOfBirth.getTime()) / (1000 * 3600 * 24 * 365)
+    );
   } else {
     return '';
   }
 });
 
-PatientSchema.virtual('lastVisit').get(function () { 
+PatientSchema.virtual('lastVisit').get(function () {
   if (this.appointments?.length > 0) {
-    return this.appointments.sort(x => x.start)[0].start;
+    return this.appointments.sort((x) => x.start)[0].start;
   } else {
     return '';
   }

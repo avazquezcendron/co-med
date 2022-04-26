@@ -43,7 +43,7 @@ export const MENUITEMS = [
     {
         title: 'Configuración', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
         children: [
-            { path: '/user', icon: Users, title: 'Usuarios', type: 'link' },
+            { path: 'settings/user', icon: Users, title: 'Usuarios', type: 'link' },
             { path: 'settings/form', icon: FileText, title: 'Formularios', type: 'link' },
             { path: 'settings/appointment', icon: FileText, title: 'Turnos', type: 'link' },
         ]

@@ -97,8 +97,8 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/dashboard/default`} component={Default} />
                                     <Route path={`${process.env.PUBLIC_URL}/agenda/appointments`} component={Appointments} />
                                     {/* Users */}
-                                    <Route path={`${process.env.PUBLIC_URL}/user/:id`} component={UserProfile} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/user`} component={UserList} />
+                                    <Route path={`${process.env.PUBLIC_URL}/settings/user/:id`} component={UserProfile} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
                                 
                                     <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
                                     <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />

@@ -143,7 +143,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Género Percibido</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.gender}</p>
+                      <p>{patient.gender || '-'}</p>
                     </div>
                     <div className="col-md-12">
                       <span className="f-w-600">Dirección</span>
@@ -243,7 +243,18 @@ const PatientCard = (props) => {
                       <p>{patient.contactPerson?.addres ? patient.contactPerson?.address : '-'}</p>
                     </div>
                   </div>
-
+                  <div className="col-md-12">
+                    <div className="col-md-12">
+                      <span className="f-w-600">Tags</span>
+                    </div>
+                    <div className="col-md-12 m-b-10">
+                      {patient.tags ?.length > 0 ? patient.tags.map(x => 
+                        <span key={x.id} className="badge badge-info">
+                          {x.name}
+                        </span>
+                      ) : '-'}
+                    </div>
+                  </div>
                   <div className="col-md-12">
                     <div className="col-md-12">
                       <span className="f-w-600">Biografía</span>

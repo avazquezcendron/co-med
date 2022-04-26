@@ -1,18 +1,18 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import defaultuser from '../../assets/images/user/user.png';
-import {
-  patientSavetWatcher,
-  patientInitialize,
-} from '../../redux/patients/actions';
+import { patientSavetWatcher } from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED, LOADING, FAILED } from '../../redux/statusTypes';
 import * as healthInsuranceService from '../../services/healthInsurance.service';
+import * as entityService from '../../services/entity.service';
 import Loader from '../common/loader';
 
 function useQuery() {
@@ -45,13 +45,18 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
 
+  const [tagsCatalogue, setTagsCatalogue] = useState([]);
+  const [tags, setTags] = useState([]);
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
-  const [healthInsuranceCompany, setHealthInsuranceCompany] = useState(null);
+  const [healthInsuranceCompany, setHealthInsuranceCompany] =
+    useState(undefined);
   const [dateOfBirth, setdobDate] = useState(null);
   const [osFecIngresoDate, setosFecIngresoDate] = useState(null);
   useEffect(() => {
-    if (patient.healthInsurances ?.length > 0) {
-      setHealthInsuranceCompany(patient.healthInsurances[0].healthInsuranceCompany.id);
+    if (patient.healthInsurances?.length > 0) {
+      setHealthInsuranceCompany(
+        patient.healthInsurances[0].healthInsuranceCompany.id
+      );
       setHealthInsurancePlans(
         patient.healthInsurances[0].healthInsuranceCompany.plans
       );
@@ -64,6 +69,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
     if (patient.dateOfBirth) {
       setdobDate(new Date(patient.dateOfBirth));
     }
+
+    setTags(patient.tags);
   }, [patient]);
 
   const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
@@ -71,6 +78,10 @@ const PatientPersonalData = ({ history, showAvatar }) => {
     healthInsuranceService
       .getAll(loggedUser)
       .then((res) => setHealthInsurancesCompanies(res.data));
+
+    entityService
+      .getAll('tag', loggedUser)
+      .then((data) => setTagsCatalogue(data));
   }, []);
 
   const [imageUrl, setImageUrl] = useState('');
@@ -140,7 +151,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          const patientData = { ...patient, ...data, dateOfBirth };
+          const patientData = { ...patient, ...data, dateOfBirth, tags: tags.map(x => x.id) };
           if (patientData.healthInsurances?.length > 0) {
             if (!patientData.healthInsurances[0].healthInsuranceCompany) {
               patientData.healthInsurances = [];
@@ -183,7 +194,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   return (
     <Fragment>
       {status === LOADED ||
-      status === SUCCEEDED ||      
+      status === SUCCEEDED ||
       status === FAILED ||
       (mode === 'new' && status !== LOADING) ? (
         <div className="card">
@@ -517,7 +528,10 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                 <hr className="mt-4 mb-4" />
                 <h6>{'Cobertura Médica'}</h6>
                 <div className="form-group row">
-                  <label className="col-md-2 col-form-label" htmlFor="healthInsuranceCompany">
+                  <label
+                    className="col-md-2 col-form-label"
+                    htmlFor="healthInsuranceCompany"
+                  >
                     {'Obra Social'}
                   </label>
                   <div className="col-md-3">
@@ -564,7 +578,9 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                     >
                       {healthInsurancePlans &&
                         healthInsurancePlans.map((plan, i) => (
-                          <option key={plan.code} value={plan.code}>{plan.code}</option>
+                          <option key={plan.code} value={plan.code}>
+                            {plan.code}
+                          </option>
                         ))}
                     </select>
                     <span style={{ color: 'red' }}>
@@ -710,6 +726,21 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                 <hr className="mt-4 mb-4" />
                 <h6>{'Información adicional'}</h6>
                 <div className="form-group row">
+                  <label className="col-md-2 col-form-label" htmlFor="tags">
+                    {'Tags'}
+                  </label>
+                  <div className="col-md-12">
+                    <Typeahead
+                      id="tags"
+                      multiple
+                      labelKey="name"
+                      filterBy={["name"]}
+                      options={tagsCatalogue}
+                      selected={tags}
+                      disabled={mode === 'browse'}
+                      onChange={(selected) => setTags(selected)}
+                    />
+                  </div>
                   <label className="col-md-2 col-form-label" htmlFor="inputBio">
                     {'Biografía'}
                   </label>

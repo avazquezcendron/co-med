@@ -54,14 +54,14 @@ const UserProfile = (props) => {
             userService.save({ ...data, avatarUrl: imageUrl, roles: user.roles }, loggedUser)
               .then((userSaved) =>
                 props.history.push(
-                  `${process.env.PUBLIC_URL}/user/${userSaved.id}?mode=browse`
+                  `${process.env.PUBLIC_URL}/settings/user/${userSaved.id}?mode=browse`
                 )
               );
           } else {
             userService.update({ ...user, ...data, avatarUrl: imageUrl }, loggedUser)
               .then((userUpdated) =>
                 props.history.push(
-                  `${process.env.PUBLIC_URL}/user/${userUpdated.id}?mode=browse`
+                  `${process.env.PUBLIC_URL}/settings/user/${userUpdated.id}?mode=browse`
                 )
               );
           }
@@ -111,9 +111,9 @@ const UserProfile = (props) => {
     }).then((result) => {
       if (result.value) {
         if (!user.id) {
-          props.history.push(`${process.env.PUBLIC_URL}/user`);  
+          props.history.push(`${process.env.PUBLIC_URL}/settings/user`);  
         } else {
-          props.history.push(`${process.env.PUBLIC_URL}/user/${user.id}?mode=browse`);  
+          props.history.push(`${process.env.PUBLIC_URL}/settings/user/${user.id}?mode=browse`);  
         }
         
       }
@@ -170,7 +170,7 @@ const UserProfile = (props) => {
                           <div className="text-right">
                             <Link
                               className="btn btn-primary"
-                              to={`${process.env.PUBLIC_URL}/user/${user.id}?mode=edit`}
+                              to={`${process.env.PUBLIC_URL}/settings/user/${user.id}?mode=edit`}
                             >
                               {' '}
                               <i className="fa fa-pencil mr-2" />

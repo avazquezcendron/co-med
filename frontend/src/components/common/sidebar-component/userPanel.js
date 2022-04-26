@@ -31,7 +31,7 @@ const UserPanel = () => {
                 <div>
                     <img className="img-60 rounded-circle lazyloaded blur-up" src={url ? url : man} alt="#" />
                     <div className="profile-edit">
-                        <Link to={`${process.env.PUBLIC_URL}/user/${loggedUser?.user.id}?mode=browse`}>
+                        <Link to={`${process.env.PUBLIC_URL}/settings/user/${loggedUser?.user.id}?mode=browse`}>
                             <Edit />
                         </Link>
                     </div>

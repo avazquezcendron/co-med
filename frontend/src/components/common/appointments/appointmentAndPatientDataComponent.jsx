@@ -83,6 +83,9 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       setError('patient', {});
     } else {
       clearErrors('patient');
+      if (patient.tags?.length > 0){
+        setDescription(patient.tags.map(x => x.name).join('. '));
+      }
     }
   };
 

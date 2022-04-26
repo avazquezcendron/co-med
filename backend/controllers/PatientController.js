@@ -56,6 +56,9 @@ class PatientController extends BaseController {
     const patients = await this._model
       .find(finalFilter)
       .populate({
+        path: 'tags',
+      })
+      .populate({
         path: 'healthInsurances.healthInsuranceCompany',
       })
       .populate({
@@ -77,6 +80,9 @@ class PatientController extends BaseController {
   async getById(req, res, next) {
     const model = await this._model
       .findById(req.params.id)
+      .populate({
+        path: 'tags',
+      })
       .populate({
         path: 'healthInsurances.healthInsuranceCompany',
       })

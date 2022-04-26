@@ -154,7 +154,7 @@ class AppointmentController extends BaseController {
   _checkDoctorAvailability(doctor, appointmentStart, appointmentId) {
     const docAppointmentsInSameSlot = doctor.appointments.filter(
       (docAppointment) =>
-        docAppointment._id.toString() !== appointmentId.toString() &&
+        docAppointment._id.toString() !== appointmentId?.toString() &&
         docAppointment.isActive &&
         moment(docAppointment.start).isSame(appointmentStart, 'minute')
     );
