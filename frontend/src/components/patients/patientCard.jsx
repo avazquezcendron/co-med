@@ -75,16 +75,16 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Tipo de Documento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.nationalIdType}</p>
+                      <p>{patient.nationalIdType || '-'}</p>
                     </div>
                     <div className="col-md-12">
                       <span className="f-w-600">Fecha Nacimiento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {new Date(patient.dateOfBirth).toLocaleDateString(
+                        {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString(
                           'es-AR'
-                        )}
+                        ) : '-'}
                       </p>
                     </div>
                   </div>
@@ -93,13 +93,13 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Nro. de Documento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.nationalId}</p>
+                      <p>{patient.nationalId || '-'}</p>
                     </div>
                     <div className="col-md-12">
                       <span className="f-w-600">Edad</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.age}</p>
+                      <p>{patient.age  || '-'}</p>
                     </div>
                   </div>
 
@@ -108,7 +108,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Ncionalidad</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.nationality}</p>
+                      <p>{patient.nationality || '-'}</p>
                     </div>
                   </div>
                   <div className="col-md-6 b-l-light border-3">
@@ -116,7 +116,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Email</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.email}</p>
+                      <p>{patient.email || '-'}</p>
                     </div>
                   </div>
 
@@ -135,7 +135,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Teléfono</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.phoneNumber}</p>
+                      <p>{patient.phoneNumber || '-'}</p>
                     </div>
                   </div>
                   <div className="col-md-6 b-l-light border-3">
@@ -150,7 +150,7 @@ const PatientCard = (props) => {
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {patient.address?.street + ', ' + patient.address?.city}
+                        {patient.address?.street ? patient.address?.street + ', ' + patient.address?.city : '-'}
                       </p>
                     </div>
                   </div>
@@ -212,9 +212,9 @@ const PatientCard = (props) => {
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {patient.contactPerson?.firstName +
+                        {patient.contactPerson && patient.contactPerson.firstName ? patient.contactPerson.firstName +
                           ' ' +
-                          patient.contactPerson?.lastName}
+                          patient.contactPerson.lastName : '-'}
                       </p>
                     </div>
                   </div>
@@ -223,7 +223,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Vínculo</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.bond}</p>
+                      <p>{patient.contactPerson?.bond ? patient.contactPerson?.bond : '-'}</p>
                     </div>
                   </div>
 
@@ -232,7 +232,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Teléfono de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.phoneNumber}</p>
+                      <p>{patient.contactPerson?.phoneNumber ? patient.contactPerson?.phoneNumber : '-'}</p>
                     </div>
                   </div>
                   <div className="col-md-6 b-l-light border-3">
@@ -240,7 +240,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Dirección de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.address}</p>
+                      <p>{patient.contactPerson?.addres ? patient.contactPerson?.address : '-'}</p>
                     </div>
                   </div>
 
@@ -249,7 +249,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Biografía</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.bio}</p>
+                      <p>{patient.bio || '-'}</p>
                     </div>
                   </div>
                 </div>

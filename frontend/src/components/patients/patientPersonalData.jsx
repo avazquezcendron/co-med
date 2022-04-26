@@ -46,10 +46,12 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
 
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
+  const [healthInsuranceCompany, setHealthInsuranceCompany] = useState(null);
   const [dateOfBirth, setdobDate] = useState(null);
   const [osFecIngresoDate, setosFecIngresoDate] = useState(null);
   useEffect(() => {
-    if (patient.healthInsurances?.length > 0) {
+    if (patient.healthInsurances ?.length > 0) {
+      setHealthInsuranceCompany(patient.healthInsurances[0].healthInsuranceCompany.id);
       setHealthInsurancePlans(
         patient.healthInsurances[0].healthInsuranceCompany.plans
       );
@@ -78,10 +80,13 @@ const PatientPersonalData = ({ history, showAvatar }) => {
       const healthInsurance = healthInsurancesCompanies.filter(
         (x) => x.id === insuranceId
       );
-      if (healthInsurance.length > 0)
+      if (healthInsurance.length > 0) {
+        setHealthInsuranceCompany(healthInsurance[0].id);
         setHealthInsurancePlans(healthInsurance[0].plans);
+      }
     } else {
       setHealthInsurancePlans([]);
+      setHealthInsuranceCompany(null);
     }
   };
 
@@ -520,7 +525,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       className="form-control"
                       name="healthInsurances.0.healthInsuranceCompany"
                       id="healthInsuranceCompany"
-                      deafaultValue={patient.healthInsurances[0]?.healthInsuranceCompany.id}
+                      value={healthInsuranceCompany}
                       onChange={(e) =>
                         handleHealthInsuranceChange(e.target.value)
                       }
