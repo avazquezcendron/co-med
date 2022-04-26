@@ -123,6 +123,25 @@ const DrugList = (props) => {
     }
   };
 
+  const handleDeleteClick = (drug) => {
+    SweetAlert.fire({
+      title: 'Atención!',
+      text: `Se borrará el registro. Desea continuar?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#ff0000',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.value) {
+        entityService.deleteEntity('drug', drug.id, loggedUser).then((data) => {
+          setStatusUpdate(!statusUpdate);
+        }); 
+      }
+    });
+  };
+
   const handleRowClick = (row, event) => {
     setCurrentDrug(row);
     modalToggle();
@@ -172,7 +191,7 @@ const DrugList = (props) => {
       center: true,
       cell: (row, index, column, id) => (
         <div>
-          <span onClick={() => handleEditDrugClick(row)}>
+          <span onClick={() => handleDeleteClick(row)}>
             <i
               className="fa fa-trash"
               style={{

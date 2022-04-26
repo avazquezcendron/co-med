@@ -15,6 +15,7 @@ class BaseController {
     this.update = this.update.bind(this);
     this.inactivate = this.inactivate.bind(this);
     this.activate = this.activate.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   /**
@@ -103,6 +104,21 @@ class BaseController {
       return res.status(404).json('Registro no encontrado.');
     }
   }
+  
+  /**
+   * @desc   Delete <model>
+   * @route  DELETE /api/<model>/:id
+   * @access Private
+   *
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {function} next The callback to the next program handler
+   * @return {Object} res The response object
+   */
+  async delete(req, res, next) {
+    let model = await this._model.deleteOne({ _id: req.params.id });
+    return res.status(200).json('Registro borrado.');
+  }
 
   /**
    * @desc   Inactivate <model>
@@ -147,6 +163,8 @@ class BaseController {
       return res.status(404).json('Registro no encontrado.');
     }
   }
+
+  
 }
 
 export default BaseController;

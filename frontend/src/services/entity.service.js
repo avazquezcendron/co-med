@@ -122,3 +122,30 @@ export const changeStatus = async (entity, id, currentStatus, loggedUser) => {
     throw err;
   }
 };
+
+export const deleteEntity = async (entity, id, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.delete(`${process.env.PUBLIC_URL}/api/${entity}/${id}`, config);
+    toast.success('El registro se ha borrado con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data
+        ? err.response.data
+        : err.message;
+    toast.error(
+      `Ocurrió un error al borrar al registro. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};

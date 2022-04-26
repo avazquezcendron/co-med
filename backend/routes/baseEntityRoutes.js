@@ -15,6 +15,7 @@ router
   .route('/:entity/:id')
   .get(checkUserAuth, asyncHandler(baseEntityController.getById))
   .put(checkUserAuth, asyncHandler(baseEntityController.update))
+  .delete(checkUserAuth, asyncHandler(baseEntityController.delete))
 
 router
   .route('/:entity/:id/inactivate')

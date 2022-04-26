@@ -129,6 +129,15 @@ class BaseEntityController extends BaseController {
       return res.status(404).json("Invalid route.");
     }
   }
+
+  async delete(req, res, next) {
+    if (this._modelsDic.has(req.params.entity)) {
+      super._model = this._modelsDic.get(req.params.entity);
+      return super.delete(req, res, next);  
+    } else {
+      return res.status(404).json("Invalid route.");
+    }
+  }
 }
 
 export default BaseEntityController;
