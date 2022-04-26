@@ -87,7 +87,7 @@ const PatientHealthRecord = (props) => {
                     Prescripciones
                   </a>
                 </li>
-                {loggedUser.isAdmin && (
+                {loggedUser.user.isAdmin && (
                   <Fragment>
                     <li className="nav-item">
                       <a
@@ -163,7 +163,7 @@ const PatientHealthRecord = (props) => {
                     <PatientPrescriptions />
                   </div>
                 </TabPane>
-                {loggedUser.isAdmin && (
+                {loggedUser.user.isAdmin && (
                   <Fragment>
                     <TabPane tabId="antecedentes" className="fade show">
                       <div className="col-md-12">
