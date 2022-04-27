@@ -12,13 +12,13 @@ import notFoundImg from '../../assets/images/search-not-found.png';
 import * as entityService from '../../services/entity.service';
 import Loader from '../common/loader';
 
-const DrugList = (props) => {
+const LaboratoryTypeList = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
-  const { register, handleSubmit, errors, setError, clearErrors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
-  const [drugs, setDrugs] = useState('');
-  const [currentDrug, setCurrentDrug] = useState({});
+  const [laboratoryTypes, setLaboratoryTypes] = useState('');
+  const [currentLaboratoryType, setCurrentLaboratoryType] = useState({});
   const [statusUpdate, setStatusUpdate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,23 +26,23 @@ const DrugList = (props) => {
   const modalToggle = (clearEntity) => {
     setModal(!modal);
     if (clearEntity) {
-      setCurrentDrug({});
+      setCurrentLaboratoryType({});
     }
   };
 
   useEffect(() => {
     setIsLoading(true);
-    entityService.getAll('drug', loggedUser).then((data) => {
-      setDrugs(data);
+    entityService.getAll('laboratoryType', loggedUser).then((data) => {
+      setLaboratoryTypes(data);
       setIsLoading(false);
     });
   }, [statusUpdate]);
 
   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
   const [filterText, setFilterText] = useState('');
-  const filteredDrugs =
-    drugs && drugs.length > 0
-      ? drugs.filter((item) => {
+  const filteredLaboratoryTypes =
+    laboratoryTypes && laboratoryTypes.length > 0
+      ? laboratoryTypes.filter((item) => {
           return (
             JSON.stringify(item)
               .toLowerCase()
@@ -106,9 +106,9 @@ const DrugList = (props) => {
       SweetAlert.fire({
         title: 'Atención',
         text:
-          (currentDrug.id
-            ? 'Se actualizará el fármaco con descripción '
-            : 'Se dará de alta un nuevo fármaco con descripción ') +
+          (currentLaboratoryType.id
+            ? 'Se actualizará la variable de laboratorio con descripción '
+            : 'Se dará de alta la variable de laboratorio con descripción ') +
           '"' +
           data.description +
           '".',
@@ -120,15 +120,11 @@ const DrugList = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          if (currentDrug.id) {
+          if (currentLaboratoryType.id) {
             entityService
               .update(
-                'drug',
-                {
-                  ...currentDrug,
-                  ...data,
-                  // requiresPrescription: data.requiresPrescription.length > 0,
-                },
+                'laboratoryType',
+                { ...currentLaboratoryType, ...data },
                 loggedUser
               )
               .then((data) => {
@@ -137,14 +133,7 @@ const DrugList = (props) => {
               });
           } else {
             entityService
-              .save(
-                'drug',
-                {
-                  ...data,
-                  // requiresPrescription: data.requiresPrescription.length > 0,
-                },
-                loggedUser
-              )
+              .save('laboratoryType', data, loggedUser)
               .then((data) => {
                 setStatusUpdate(!statusUpdate);
                 modalToggle(true);
@@ -157,7 +146,7 @@ const DrugList = (props) => {
     }
   };
 
-  const handleDeleteClick = (drug) => {
+  const handleDeleteClick = (laboratoryType) => {
     SweetAlert.fire({
       title: 'Atención!',
       text: `Se borrará el registro. Desea continuar?`,
@@ -169,23 +158,23 @@ const DrugList = (props) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.value) {
-        entityService.deleteEntity('drug', drug.id, loggedUser).then((data) => {
-          setStatusUpdate(!statusUpdate);
-        });
+        entityService
+          .deleteEntity('laboratoryType', laboratoryType.id, loggedUser)
+          .then((data) => {
+            setStatusUpdate(!statusUpdate);
+          });
       }
     });
   };
 
   const handleRowClick = (row, event) => {
-    setCurrentDrug(row);
+    setCurrentLaboratoryType(row);
     modalToggle();
   };
 
-  const handleEditDrugClick = (row, event) => {};
-
   const columnsConfig = [
     {
-      cell: () => <i className="icofont icofont-pills" />,
+      cell: () => <i className="icofont icofont-laboratory" />,
       width: '56px', // custom width for icon button
       style: {
         borderBottom: '1px solid #FFFFFF',
@@ -193,34 +182,16 @@ const DrugList = (props) => {
       },
     },
     {
+      name: 'Código',
+      selector: 'code',
+      sortable: true,
+      left: true,
+    },
+    {
       name: 'Descripción',
       selector: 'description',
       sortable: true,
       left: true,
-    },
-    {
-      name: 'Composición',
-      selector: 'composition',
-      sortable: true,
-      left: true,
-    },
-    {
-      name: 'Formato',
-      selector: 'format',
-      sortable: true,
-      left: true,
-    },
-    {
-      name: 'Requiere Prescripción',
-      selector: 'requiresPrescription',
-      sortable: true,
-      center: true,
-      cell: (row, index, column, id) =>
-        row.requiresPrescription ? (
-          <i className="fa fa-check text-muted f-w-700"></i>
-        ) : (
-          ''
-        ),
     },
     {
       sortable: false,
@@ -238,7 +209,7 @@ const DrugList = (props) => {
                 padding: 11,
                 color: 'red',
               }}
-              title="Borrar Fármaco"
+              title="Borrar Variable"
             ></i>
           </span>
         </div>
@@ -248,7 +219,7 @@ const DrugList = (props) => {
 
   return (
     <Fragment>
-      <Breadcrumb title="Fármacos" parent="Catálogos" />
+      <Breadcrumb title="Laboratorios (variables)" parent="Catálogos" />
       {!isLoading ? (
         <Container fluid={true}>
           <Row>
@@ -257,7 +228,7 @@ const DrugList = (props) => {
                 <div className="card-header project-list">
                   <Row>
                     <Col md="6">
-                      <h5>Listado de Fármacos</h5>
+                      <h5>{'Listado de Laboratorios (variables)'}</h5>
                     </Col>
                     <Col md="6">
                       <div className="text-right">
@@ -276,7 +247,7 @@ const DrugList = (props) => {
                   <div className="table-responsive support-table">
                     <DataTable
                       columns={columnsConfig}
-                      data={filteredDrugs}
+                      data={filteredLaboratoryTypes}
                       // striped={true}
                       // center={true}
                       pagination
@@ -295,7 +266,7 @@ const DrugList = (props) => {
                           <img className="img-fluid" src={notFoundImg} alt="" />
                           <br />
                           <span className="txt-info">
-                            No se encontraron fármacos...
+                            No se encontraron variables...
                           </span>
                         </Col>
                       }
@@ -307,7 +278,9 @@ const DrugList = (props) => {
           </Row>
           <Modal isOpen={modal} toggle={() => modalToggle(true)} size="lg">
             <ModalHeader toggle={() => modalToggle(true)}>
-              {currentDrug.id ? currentDrug.description : 'Nuevo Fármaco'}
+              {currentLaboratoryType.id
+                ? currentLaboratoryType.description
+                : 'Nueva Variable'}
             </ModalHeader>
             <ModalBody>
               <div className="card">
@@ -319,6 +292,25 @@ const DrugList = (props) => {
                     <div className="form-group row">
                       <label
                         className="col-md-12 col-form-label"
+                        htmlFor="code"
+                      >
+                        {'Código'}
+                      </label>
+                      <div className="col-md-12">
+                        <input
+                          className="form-control"
+                          name="code"
+                          id="code"
+                          defaultValue={currentLaboratoryType.code}
+                          type="text"
+                          ref={register({ required: true })}
+                        />
+                        <span style={{ color: 'red' }}>
+                          {errors.code && 'Ingrese un valor.'}
+                        </span>
+                      </div>
+                      <label
+                        className="col-md-12 col-form-label"
                         htmlFor="description"
                       >
                         {'Descripción'}
@@ -328,69 +320,13 @@ const DrugList = (props) => {
                           className="form-control"
                           name="description"
                           id="description"
-                          defaultValue={currentDrug.description}
+                          defaultValue={currentLaboratoryType.description}
                           type="text"
                           ref={register({ required: true })}
                         />
                         <span style={{ color: 'red' }}>
                           {errors.description && 'Ingrese un valor.'}
                         </span>
-                      </div>
-                      <label
-                        className="col-md-12 col-form-label"
-                        htmlFor="composition"
-                      >
-                        {'Composición'}
-                      </label>
-                      <div className="col-md-12">
-                        <input
-                          className="form-control"
-                          defaultValue={currentDrug.composition}
-                          name="composition"
-                          id="composition"
-                          type="text"
-                          ref={register({ required: false })}
-                        />
-                        <span style={{ color: 'red' }}>
-                          {errors.composition && 'Ingrese un valor.'}
-                        </span>
-                      </div>
-                      <label
-                        className="col-md-12 col-form-label"
-                        htmlFor="format"
-                      >
-                        {'Formato'}
-                      </label>
-                      <div className="col-md-12">
-                        <input
-                          className="form-control"
-                          defaultValue={currentDrug.format}
-                          name="format"
-                          id="format"
-                          type="text"
-                          ref={register({ required: false })}
-                        />
-                        <span style={{ color: 'red' }}>
-                          {errors.format && 'Ingrese un valor.'}
-                        </span>
-                      </div>
-                      <div className="col-md-12 mt-4">
-                        <div className="">
-                          <input
-                            className="checkbox_animated"
-                            defaultChecked={currentDrug.requiresPrescription}
-                            name="requiresPrescription"
-                            id="requiresPrescription"
-                            type="checkbox"
-                            ref={register({ required: false })}
-                          />
-                          <label
-                            className="mb-0"
-                            htmlFor="requiresPrescription"
-                          >
-                            {'Requiere Prescripción'}
-                          </label>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -418,4 +354,4 @@ const DrugList = (props) => {
   );
 };
 
-export default DrugList;
+export default LaboratoryTypeList;

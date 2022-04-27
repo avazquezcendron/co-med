@@ -282,72 +282,66 @@ const PatientList = (props) => {
 
   return (
     <Fragment>
+      <Breadcrumb title={props.t('Patients')} />
       {status === LOADED ? (
-        <Fragment>
-          <Breadcrumb title={props.t('Patients')} />
-          <Container fluid={true}>
-            <Row>
-              <Col md="12" lg="12" xl="12">
-                <div className="card">
-                  <div className="card-header project-list">
-                    <Row>
-                      <Col md="6">
-                        <h5>{props.t('PatientList')}</h5>
-                      </Col>
-                      <Col md="6">
-                        <div className="text-right">
-                          <Link
-                            className="btn btn-primary"
-                            to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
-                            onClick={() => dispatch(patientInitialize())}
-                          >
-                            {' '}
-                            <PlusCircle />
-                            {props.t('New')}
-                          </Link>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                  <div className="card-body datatable-react">
-                    <div className="table-responsive support-table">
-                      <DataTable
-                        columns={columnsConfig}
-                        data={filteredUsers}
-                        // striped={true}
-                        // center={true}
-                        pagination
-                        highlightOnHover
-                        pointerOnHover
-                        noHeader
-                        subHeader
-                        subHeaderAlign={'left'}
-                        subHeaderComponent={subHeaderComponent}
-                        paginationPerPage={20}
-                        paginationComponentOptions={paginationComponentOptions}
-                        customStyles={customStyles}
-                        onRowClicked={handleRowClick}
-                        noDataComponent={
-                          <Col md="12" className="text-center m-50">
-                            <img
-                              className="img-fluid"
-                              src={notFoundImg}
-                              alt=""
-                            />
-                            <br />
-                            <span className="txt-info">
-                              No se encontraron pacientes...
-                            </span>
-                          </Col>
-                        }
-                      />
-                    </div>
+        <Container fluid={true}>
+          <Row>
+            <Col md="12" lg="12" xl="12">
+              <div className="card">
+                <div className="card-header project-list">
+                  <Row>
+                    <Col md="6">
+                      <h5>{props.t('PatientList')}</h5>
+                    </Col>
+                    <Col md="6">
+                      <div className="text-right">
+                        <Link
+                          className="btn btn-primary"
+                          to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
+                          onClick={() => dispatch(patientInitialize())}
+                        >
+                          {' '}
+                          <PlusCircle />
+                          {props.t('New')}
+                        </Link>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+                <div className="card-body datatable-react">
+                  <div className="table-responsive support-table">
+                    <DataTable
+                      columns={columnsConfig}
+                      data={filteredUsers}
+                      // striped={true}
+                      // center={true}
+                      pagination
+                      highlightOnHover
+                      pointerOnHover
+                      noHeader
+                      subHeader
+                      subHeaderAlign={'left'}
+                      subHeaderComponent={subHeaderComponent}
+                      paginationPerPage={20}
+                      paginationComponentOptions={paginationComponentOptions}
+                      customStyles={customStyles}
+                      onRowClicked={handleRowClick}
+                      noDataComponent={
+                        <Col md="12" className="text-center m-50">
+                          <img className="img-fluid" src={notFoundImg} alt="" />
+                          <br />
+                          <span className="txt-info">
+                            No se encontraron pacientes...
+                          </span>
+                        </Col>
+                      }
+                    />
                   </div>
                 </div>
-              </Col>
-            </Row>
-          </Container>
-        </Fragment>
+              </div>
+            </Col>
+          </Row>
+        </Container>
       ) : (
         <Loader show={true} />
       )}
