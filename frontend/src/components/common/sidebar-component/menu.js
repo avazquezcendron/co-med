@@ -38,6 +38,7 @@ export const MENUITEMS = [
             { path: '/catalogues/healthInsurance', type: 'link', title: 'Obras Sociales' },
             { path: '/catalogues/studyType', type: 'link', title: 'Estudios compl.' },
             { path: '/catalogues/laboratoryType', type: 'link', title: 'Laboratorios (variables)' },
+            { path: '/catalogues/tag', type: 'link', title: 'Tags' },
         ]
     },
     {

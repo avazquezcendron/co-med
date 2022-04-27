@@ -26,6 +26,9 @@ import Appointments from './components/agenda/appointments';
 //catalogues
 import DrugList from './components/catalogues/drugList';
 import LaboratoryTypeList from './components/catalogues/laboratoryTypeList';
+import StudyTypeList from './components/catalogues/studyTypeList';
+import TagList from './components/catalogues/tagList';
+import HealthInsuranceList from './components/catalogues/healthInsuranceList';
 
 import UnlockUser from './pages/unlockUser';
 import ComingSoon from './pages/comingsoon';
@@ -111,6 +114,9 @@ const Root = () => {
 
                                     <Route exact path={`${process.env.PUBLIC_URL}/catalogues/drug`} component={DrugList} />
                                     <Route exact path={`${process.env.PUBLIC_URL}/catalogues/laboratoryType`} component={LaboratoryTypeList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/tag`} component={TagList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/healthInsurance`} component={HealthInsuranceList} />
 
                                     <Route path={`${process.env.PUBLIC_URL}/todo-app/todo`} component={Todo} />
                                     <Route path={`${process.env.PUBLIC_URL}/email-app/emailDefault`} component={EmailDefault} />

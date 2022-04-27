@@ -106,7 +106,7 @@ export const getAppointmentSlotsConfig = async (loggedUser) => {
       },
     };
     const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/appointmentconfig/`,
+      `${process.env.PUBLIC_URL}/api/appointmentConfig/`,
       config
     );
     return data;

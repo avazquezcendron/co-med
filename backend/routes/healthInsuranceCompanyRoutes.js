@@ -15,6 +15,7 @@ router
   .route('/:id')
   .get(checkUserAuth, asyncHandler(healthInsuranceCompanyController.getById))
   .put(checkUserAuth, asyncHandler(healthInsuranceCompanyController.update))
+  .delete(checkUserAuth, asyncHandler(healthInsuranceCompanyController.delete))
 
 router
   .route('/:id/inactivate')
