@@ -174,7 +174,7 @@ const StudyTypeList = (props) => {
 
   const columnsConfig = [
     {
-      cell: () => <i className="icofont icofont-heartbeat" />,
+      cell: () => <i className="icofont icofont-heartbeat text-muted" />,
       width: '56px', // custom width for icon button
       style: {
         borderBottom: '1px solid #FFFFFF',

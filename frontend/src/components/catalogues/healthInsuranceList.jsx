@@ -21,12 +21,17 @@ const HealthInsuranceList = (props) => {
   const [currenthealthInsurance, setCurrenthealthInsurance] = useState({});
   const [statusUpdate, setStatusUpdate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [currentEditRow, setCurrentEditRow] = useState({});
+  const [isEditRow, setIsEditRow] = useState(false);
 
   const [modal, setModal] = useState(false);
   const modalToggle = (clearEntity) => {
     setModal(!modal);
     if (clearEntity) {
       setCurrenthealthInsurance({});
+      setPlans([]);
+      setIsEditRow(false);
     }
   };
 
@@ -120,11 +125,12 @@ const HealthInsuranceList = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
+          const hiData = { ...currenthealthInsurance, ...data, plans: plans }
           if (currenthealthInsurance.id) {
             entityService
               .update(
                 'healthInsurance',
-                { ...currenthealthInsurance, ...data },
+                hiData,
                 loggedUser
               )
               .then((data) => {
@@ -133,7 +139,7 @@ const HealthInsuranceList = (props) => {
               });
           } else {
             entityService
-              .save('healthInsurance', data, loggedUser)
+              .save('healthInsurance', hiData, loggedUser)
               .then((data) => {
                 setStatusUpdate(!statusUpdate);
                 modalToggle(true);
@@ -169,27 +175,57 @@ const HealthInsuranceList = (props) => {
 
   const handleRowClick = (row, event) => {
     setCurrenthealthInsurance(row);
+    const plansCopy = row.plans.map((plan) => {
+      return { ...plan, isEdit: false };
+    });
+    setPlans(plansCopy);
     modalToggle();
   };
 
-  const handlePlanRowClick = (pDrug, index) => {
-    // setprescriptionDrugs([pDrug.drug]);
-    // setQuantity(pDrug.quantity);
-    // setIndications(pDrug.indications);
-    // setcurrentIndex(index);
+  const handlePlanDeleteRow = (e, code) => {
+    e.preventDefault();
+    setPlans(
+      plans.filter(
+        (plan) => plan.code !== code
+      )
+    );
   };
 
-  const handlePlanDeleteRow = (e, index) => {
+  const addNewPlan = (e) => {
     e.preventDefault();
-    // setprescriptionDrugsList(
-    //   prescriptionDrugsList.filter((x, i) => i !== index)
-    // );
-    // clearForm();
+    const newPlans = [...plans, { code: '', isEdit: true }];
+    setPlans(newPlans);
+    setCurrentEditRow({
+      code: '',
+      newCode: '',
+      isEdit: true,
+    });
+    setIsEditRow(true);
+  };
+
+  const updatePlan = (index) => {
+    if (
+      !currentEditRow.newCode ||
+      plans.filter((plan) => plan.code === currentEditRow.newCode).length > 0
+    )
+      return;
+    setPlans(
+      plans.map((plan) =>
+        plan.code === currentEditRow.code && currentEditRow.newCode !== ''
+          ? {
+              code: currentEditRow.newCode,
+              isEdit: !plan.isEdit,
+            }
+          : plan
+      )
+    );
+    setCurrentEditRow({});
+    setIsEditRow(false);
   };
 
   const columnsConfig = [
     {
-      cell: () => <i className="icofont icofont-first-aid-alt" />,
+      cell: () => <i className="icofont icofont-first-aid-alt text-muted" />,
       width: '56px', // custom width for icon button
       style: {
         borderBottom: '1px solid #FFFFFF',
@@ -344,13 +380,15 @@ const HealthInsuranceList = (props) => {
                         </span>
                       </div>
                     </div>
-                    <a
-                      href="#javascript"
-                      className="pull-right m-b-10"
-                      // onClick={addDrugToPrescription}
-                    >
-                      <i className="fa fa-plus"></i> Agregar Plan
-                    </a>
+                    {!isEditRow && (
+                      <a
+                        href="#javascript"
+                        className="pull-right m-b-10"
+                        onClick={addNewPlan}
+                      >
+                        <i className="fa fa-plus"></i> Agregar Plan
+                      </a>
+                    )}
                     <h6>{'Planes'}</h6>
                     <div className="table-responsive">
                       <table className="table table-hover table-sm">
@@ -362,35 +400,104 @@ const HealthInsuranceList = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {currenthealthInsurance?.plans?.length > 0
-                            ? currenthealthInsurance.plans.map(
-                                (plan, index) => (
-                                  <tr
-                                    key={index}
-                                    onClick={() =>
-                                      handlePlanRowClick(plan, index)
-                                    }
-                                  >
-                                    <th scope="row">
-                                      <i className="icofont icofont-list"></i>
-                                    </th>
-                                    <td>{plan.code}</td>
-                                    <td>
-                                      <a
-                                        href="#javascript"
-                                        onClick={(e) =>
-                                          handlePlanDeleteRow(e, index)
+                          {plans.length > 0
+                            ? plans.map((plan, index) => (
+                                <tr key={index}>
+                                  <th scope="row" style={{ width: '120px' }}>
+                                    <i className="icofont icofont-list text-info"></i>
+                                  </th>
+                                  <td>
+                                    {plan.isEdit ? (
+                                      <input
+                                        required
+                                        type="text"
+                                        value={currentEditRow.newCode || ''}
+                                        onChange={(e) =>
+                                          setCurrentEditRow({
+                                            ...currentEditRow,
+                                            newCode: e.target.value,
+                                          })
                                         }
-                                      >
-                                        <i
-                                          className="fa fa-trash text-muted"
-                                          title="Borrar"
-                                        ></i>
-                                      </a>
-                                    </td>
-                                  </tr>
-                                )
-                              )
+                                      />
+                                    ) : (
+                                      plan.code
+                                    )}
+                                  </td>
+
+                                  <td className="text-center">
+                                    {(plans.filter(x => x.code !== plan.code && x.isEdit).length === 0) && (
+                                      <Fragment>
+                                        {!plan.isEdit ? (
+                                          <Fragment>
+                                            <a
+                                              href="#javascript"
+                                              onClick={(e) => {
+                                                plan.isEdit = !plan.isEdit;
+                                                setIsEditRow(true);
+                                                setCurrentEditRow({
+                                                  ...plan,
+                                                  newCode: plan.code,
+                                                });
+                                              }}
+                                            >
+                                              <i
+                                                className={
+                                                  'fa fa-pencil text-success'
+                                                }
+                                                title={'Edtiar'}
+                                              ></i>
+                                            </a>
+                                            <a
+                                              href="#javascript"
+                                              onClick={(e) =>
+                                                handlePlanDeleteRow(e, plan.code)
+                                              }
+                                            >
+                                              <i
+                                                className="fa fa-trash text-danger ml-4"
+                                                title="Borrar"
+                                              ></i>
+                                            </a>
+                                          </Fragment>
+                                        ) : (
+                                          <Fragment>
+                                            <a
+                                              href="#javascript"
+                                              onClick={(e) => updatePlan(index)}
+                                            >
+                                              <i
+                                                className={
+                                                  'fa fa-save text-primary'
+                                                }
+                                                title={'Guardar'}
+                                              ></i>
+                                            </a>
+                                            <a
+                                              href="#javascript"
+                                              onClick={(e) => {
+                                                plan.isEdit = !plan.isEdit;
+                                                setIsEditRow(false);
+                                                setPlans(
+                                                  plans.filter(
+                                                    (plan) => plan.code !== ''
+                                                  )
+                                                );
+                                              }}
+                                            >
+                                              <i
+                                                className={
+                                                  'fa fa-times text-danger ml-4'
+                                                }
+                                                title={'Cancelar'}
+                                              ></i>
+                                            </a>
+                                          </Fragment>
+                                        )}
+                                      </Fragment>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))
                             : null}
                         </tbody>
                       </table>
@@ -404,7 +511,7 @@ const HealthInsuranceList = (props) => {
                     >
                       {'Cancelar'}
                     </button>
-                    <button className="btn btn-primary ml-1">
+                    <button className="btn btn-primary ml-1" disabled={isEditRow}>
                       {'Guardar'}
                     </button>
                   </div>

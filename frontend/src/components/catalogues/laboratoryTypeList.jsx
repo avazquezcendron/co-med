@@ -174,7 +174,7 @@ const LaboratoryTypeList = (props) => {
 
   const columnsConfig = [
     {
-      cell: () => <i className="icofont icofont-laboratory" />,
+      cell: () => <i className="icofont icofont-laboratory text-muted" />,
       width: '56px', // custom width for icon button
       style: {
         borderBottom: '1px solid #FFFFFF',

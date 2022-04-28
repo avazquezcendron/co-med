@@ -185,7 +185,7 @@ const DrugList = (props) => {
 
   const columnsConfig = [
     {
-      cell: () => <i className="icofont icofont-pills" />,
+      cell: () => <i className="icofont icofont-pills text-muted" />,
       width: '56px', // custom width for icon button
       style: {
         borderBottom: '1px solid #FFFFFF',

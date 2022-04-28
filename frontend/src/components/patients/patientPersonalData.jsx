@@ -11,7 +11,6 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import defaultuser from '../../assets/images/user/user.png';
 import { patientSavetWatcher } from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED, LOADING, FAILED } from '../../redux/statusTypes';
-import * as healthInsuranceService from '../../services/healthInsurance.service';
 import * as entityService from '../../services/entity.service';
 import Loader from '../common/loader';
 
@@ -75,9 +74,9 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
   useEffect(() => {
-    healthInsuranceService
-      .getAll(loggedUser)
-      .then((res) => setHealthInsurancesCompanies(res.data));
+    entityService
+      .getAll('healthInsurance', loggedUser)
+      .then((data) => setHealthInsurancesCompanies(data));
 
     entityService
       .getAll('tag', loggedUser)

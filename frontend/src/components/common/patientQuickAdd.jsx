@@ -6,7 +6,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 
 import { patientSavetWatcher } from '../../redux/patients/actions';
-import * as healthInsuranceService from '../../services/healthInsurance.service';
+import * as entityService from '../../services/entity.service';
 
 const PatientQuickAdd = (props) => {
   registerLocale('es', es);
@@ -15,9 +15,9 @@ const PatientQuickAdd = (props) => {
 
   const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
   useEffect(() => {
-    healthInsuranceService
-      .getAll(loggedUser)
-      .then((res) => setHealthInsurancesCompanies(res.data));
+    entityService
+      .getAll('healthInsurance', loggedUser)
+      .then((data) => setHealthInsurancesCompanies(data));
   }, []);
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
   const [dateOfBirth, setdobDate] = useState(null);
