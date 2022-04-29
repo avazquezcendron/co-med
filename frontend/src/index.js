@@ -12,18 +12,25 @@ import App from "./components/app";
 // Import custom Components 
 import Default from './components/dashboard/defaultCompo/default';
 
-// users
+// Settings
+import AppointmentConfigList from './components/configurations/appointmentConfigList';
+
+// Users
 import UserProfile from './components/users/userProfile';
 import UserList from './components/users/userList';
+
+// Doctors
 import DoctorList from './components/doctors/doctorList';
 import DoctorProfile from './components/doctors/doctorProfile';
+
+// Patients
 import PatientList from './components/patients/patientList';
 import PatientProfile from './components/patients/patientProfile';
 
-//agenda
+// Agenda
 import Appointments from './components/agenda/appointments';
 
-//catalogues
+// Catalogues
 import DrugList from './components/catalogues/drugList';
 import LaboratoryTypeList from './components/catalogues/laboratoryTypeList';
 import StudyTypeList from './components/catalogues/studyTypeList';
@@ -105,6 +112,7 @@ const Root = () => {
                                     {/* Users */}
                                     <Route path={`${process.env.PUBLIC_URL}/settings/user/:id`} component={UserProfile} />
                                     <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
+                                    <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} />
                                 
                                     <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
                                     <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />

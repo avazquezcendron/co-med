@@ -75,7 +75,12 @@ class DoctorController extends BaseController {
       slotPreparation,
       sessions: timeArr,
     } = slotConfig[0];
-    let defaultDate = new Date(req.body.date).toISOString().substring(0, 10);
+    const serachDate = new Date(req.body.date);
+    let serchDay = serachDate.getDay();
+    if (serchDay === 0) {
+      serchDay = 7;
+    }
+    let defaultDate = serachDate.toISOString().substring(0, 10);
     let sessions = [];
     let _timeArrStartTime;
     let _timeArrEndTime;
@@ -133,7 +138,7 @@ class DoctorController extends BaseController {
             id: slotId,
             startTime: new Date(_startSlot),
             endTime: _endSlot,
-            available: moment(_startSlot).isSameOrAfter(moment()) && doctorAppointments.filter(appointment => appointment.isActive && moment(appointment.start).isSame(_startSlot, 'minute')).length === 0
+            available: moment(_startSlot).isSameOrAfter(moment()) && timeArr[i].daysOfWeek[serchDay - 1] === 1 && doctorAppointments.filter(appointment => appointment.isActive && moment(appointment.start).isSame(_startSlot, 'minute')).length === 0
           });
         }
 

@@ -177,7 +177,7 @@ const TagList = (props) => {
       cell: () => <i className="icofont icofont-tag text-muted" />,
       width: '56px', // custom width for icon button
       style: {
-        borderBottom: '1px solid #FFFFFF',
+        // borderBottom: '1px solid #FFFFFF',
         marginBottom: '-1px',
       },
     },

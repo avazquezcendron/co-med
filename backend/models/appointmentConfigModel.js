@@ -26,11 +26,25 @@ const appointmentConfigSchema = mongoose.Schema(
 );
 
 appointmentConfigSchema.set('toJSON', {
-  virtuals: true,
+  virtuals: true
+});
+
+appointmentConfigSchema.set('toObject', {
+  virtuals: true
 });
 
 appointmentConfigSchema.path('sessions').schema.virtual('name').get(function () { 
   return this.sessionType === 'morning' ? 'Mañana' : 'Tarde';
+});
+
+appointmentConfigSchema.path('sessions').schema.virtual('daysOfWeekString').get(function () { 
+  const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const daysString = this.daysOfWeek.map(x => days[x - 1]);
+  return daysString;
+});
+
+appointmentConfigSchema.virtual('doctorName').get(function () { 
+  return this.doctor ? this.doctor.fullName : '';
 });
 
 const AppointmentConfig = mongoose.model(

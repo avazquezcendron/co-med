@@ -79,12 +79,12 @@ export const update = async (appointmentData, loggedUser) => {
 export const getBussinesHoursBySlot = (slotConfig) => {
   return [
     {
-      daysOfWeek: slotConfig.sessions[0].daysOfWeek,
+      daysOfWeek: slotConfig.sessions[0].daysOfWeek.map((x, index) => x === 1 ? index + 1 : null).filter(x  => x),
       startTime: slotConfig.sessions[0].startTime, //'08:30',
       endTime: slotConfig.sessions[0].endTime,
     },
     {
-      daysOfWeek: slotConfig.sessions[1].daysOfWeek,
+      daysOfWeek: slotConfig.sessions[1].daysOfWeek.map((x, index) => x === 1 ? index + 1 : null).filter(x  => x),
       startTime: slotConfig.sessions[1].startTime, //'08:30',
       endTime: slotConfig.sessions[1].endTime,
     },
@@ -123,89 +123,4 @@ export const getAppointmentSlotsConfig = async (loggedUser) => {
     );
     throw err;
   }
-};
-
-export const getAppointmentSessions = async (loggedUser) => {
-  const slotConfig = await getAppointmentSlotsConfig(loggedUser);
-
-  if (slotConfig?.length === 0) return [];
-
-  const {
-    slotHours,
-    slotMinutes,
-    slotPreparation,
-    sessions: timeArr,
-  } = slotConfig[0];
-  let defaultDate = new Date().toISOString().substring(0, 10);
-  let sessions = [];
-  let _timeArrStartTime;
-  let _timeArrEndTime;
-  let _tempSlotStartTime;
-  let _endSlot;
-  let _startSlot;
-  let slotId = 0;
-  // Loop over timeArr
-  for (var i = 0; i < timeArr.length; i++) {
-    let session = { sessionName: timeArr[i].name, slots: [] };
-
-    // Creating time stamp using time from timeArr and default date
-    _timeArrStartTime = new Date(
-      defaultDate + ' ' + timeArr[i].startTime
-    ).getTime();
-    _timeArrEndTime = new Date(
-      defaultDate + ' ' + timeArr[i].endTime
-    ).getTime();
-    _tempSlotStartTime = _timeArrStartTime;
-    // Loop around till _tempSlotStartTime is less end time from timeArr
-    while (
-      new Date(_tempSlotStartTime).getTime() <
-      new Date(_timeArrEndTime).getTime()
-    ) {
-      _endSlot = new Date(_tempSlotStartTime);
-      _startSlot = new Date(_tempSlotStartTime);
-      slotId++;
-
-      //Adding minutes and hours from config to create slot and overiding the value of _tempSlotStartTime
-      _tempSlotStartTime = _endSlot.setHours(
-        parseInt(_endSlot.getHours()) + parseInt(slotHours)
-      );
-      _tempSlotStartTime = _endSlot.setMinutes(
-        parseInt(_endSlot.getMinutes()) + parseInt(slotMinutes)
-      );
-
-      // Check _tempSlotStartTime is less than end time after adding minutes and hours, if true push into slotsArr
-      if (
-        new Date(_tempSlotStartTime).getTime() <=
-        new Date(_timeArrEndTime).getTime()
-      ) {
-        // DateTime object is converted to time with the help of javascript functions
-        // If you want 24 hour format you can pass hour12 false
-        session.slots.push({
-          // timeSlotStart: new Date(_startSlot).toLocaleTimeString('es', {
-          //   hour: 'numeric',
-          //   minute: 'numeric',
-          //   hour12: false,
-          // }),
-          // timeSlotEnd: _endSlot.toLocaleTimeString('es', {
-          //   hour: 'numeric',
-          //   minute: 'numeric',
-          //   hour12: false,
-          // })
-          id: slotId,
-          startTime: new Date(_startSlot),
-          endTime: _endSlot,
-          available: i % 2 === 0 ? true : false, //TODO: remove this. This must be setted based on doctor's availability
-        });
-      }
-
-      //preparation time is added in last to maintain the break period
-      _tempSlotStartTime = _endSlot.setMinutes(
-        _endSlot.getMinutes() + parseInt(slotPreparation)
-      );
-    }
-
-    sessions.push(session);
-  }
-
-  return sessions;
 };
