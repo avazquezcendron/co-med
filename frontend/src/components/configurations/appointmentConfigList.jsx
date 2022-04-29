@@ -34,6 +34,7 @@ const AppointmentConfigList = (props) => {
     setModal(!modal);
     if (clearEntity) {
       setCurrentAppointmentConfig({});
+      setDoctor({});
     }
   };
 
@@ -120,10 +121,9 @@ const AppointmentConfigList = (props) => {
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
-        text:
-          (currentAppointmentConfig.id
-            ? 'Se actualizará la configuración de turnos.'
-            : 'Se dará de alta la configuración de turnos.'),
+        text: currentAppointmentConfig.id
+          ? 'Se actualizará la configuración de turnos.'
+          : 'Se dará de alta la configuración de turnos.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -132,16 +132,20 @@ const AppointmentConfigList = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          const configData = { ...currentAppointmentConfig, ...data, doctor: doctor.id || null };
-          configData.sessions[0].daysOfWeek = data.sessions[0].daysOfWeek.map((x, index) => x ? 1 : 0);
-          configData.sessions[1].daysOfWeek = data.sessions[1].daysOfWeek.map((x, index) => x ? 1 : 0);
+          const configData = {
+            ...currentAppointmentConfig,
+            ...data,
+            doctor: doctor.id || null,
+          };
+          configData.sessions[0].daysOfWeek = data.sessions[0].daysOfWeek.map(
+            (x, index) => (x ? 1 : 0)
+          );
+          configData.sessions[1].daysOfWeek = data.sessions[1].daysOfWeek.map(
+            (x, index) => (x ? 1 : 0)
+          );
           if (currentAppointmentConfig.id) {
             entityService
-              .update(
-                'appointmentConfig',
-                configData,
-                loggedUser
-              )
+              .update('appointmentConfig', configData, loggedUser)
               .then((data) => {
                 setStatusUpdate(!statusUpdate);
                 modalToggle(true);
@@ -203,6 +207,13 @@ const AppointmentConfigList = (props) => {
       },
     },
     {
+      name: 'Descripción',
+      selector: 'description',
+      sortable: true,
+      left: true,
+      cell: (row, index, column, id) => <span title={row.description}>{row.description}</span>,
+    },
+    {
       name: 'Duración en horas',
       selector: 'slotHours',
       sortable: true,
@@ -238,7 +249,9 @@ const AppointmentConfigList = (props) => {
       cell: (row, index, column, id) =>
         `${row.sessions[0].startTime} -  ${
           row.sessions[0].endTime
-        } (${row.sessions[0].daysOfWeek.map((x, index) => x === 1 ? days[index] : '').filter(x => x)})`,
+        } (${row.sessions[0].daysOfWeek
+          .map((x, index) => (x === 1 ? days[index] : ''))
+          .filter((x) => x)})`,
     },
     {
       name: 'Sessión 2 (Tarde)',
@@ -248,7 +261,9 @@ const AppointmentConfigList = (props) => {
       cell: (row, index, column, id) =>
         `${row.sessions[1].startTime} -  ${
           row.sessions[1].endTime
-        } (${row.sessions[1].daysOfWeek.map((x, index) => x === 1 ? days[index] : '').filter(x => x)})`,
+        } (${row.sessions[1].daysOfWeek
+          .map((x, index) => (x === 1 ? days[index] : ''))
+          .filter((x) => x)})`,
     },
     {
       sortable: false,
@@ -342,7 +357,7 @@ const AppointmentConfigList = (props) => {
           <Modal isOpen={modal} toggle={() => modalToggle(true)} size="lg">
             <ModalHeader toggle={() => modalToggle(true)}>
               {currentAppointmentConfig.id
-                ? 'Editando Configuración de Turnos'
+                ? `Editando Configuración de Turnos "${currentAppointmentConfig.description}"`
                 : 'Nueva Configuración de Turnos'}
             </ModalHeader>
             <ModalBody>
@@ -353,6 +368,27 @@ const AppointmentConfigList = (props) => {
                 >
                   <div className="card-body">
                     <h5>{'Configuración del Turno'}</h5>
+                    <div className="form-group row">
+                      <label
+                        className="col-md-12 col-form-label"
+                        htmlFor="description"
+                      >
+                        {'Descripción'}
+                      </label>
+                      <div className="col-md-12">
+                        <input
+                          className="form-control"
+                          name="description"
+                          id="description"
+                          defaultValue={currentAppointmentConfig.description}
+                          type="text"
+                          ref={register({ required: true })}
+                        />
+                        <span style={{ color: 'red' }}>
+                          {errors.description && 'Ingrese un valor.'}
+                        </span>
+                      </div>
+                    </div>
                     <div className="form-group row">
                       <div className="col-md-3">
                         <div className="row">
@@ -367,7 +403,7 @@ const AppointmentConfigList = (props) => {
                               className="form-control"
                               name="slotHours"
                               id="slotHours"
-                              defaultValue={currentAppointmentConfig.slotHours}
+                              defaultValue={currentAppointmentConfig.slotHours || 0}
                               type="number"
                               ref={register({ required: true })}
                             />
@@ -391,7 +427,7 @@ const AppointmentConfigList = (props) => {
                               name="slotMinutes"
                               id="slotMinutes"
                               defaultValue={
-                                currentAppointmentConfig.slotMinutes
+                                currentAppointmentConfig.slotMinutes || 30
                               }
                               type="number"
                               ref={register({ required: true })}
@@ -416,7 +452,7 @@ const AppointmentConfigList = (props) => {
                               name="slotPreparation"
                               id="slotPreparation"
                               defaultValue={
-                                currentAppointmentConfig.slotPreparation
+                                currentAppointmentConfig.slotPreparation || 0
                               }
                               type="number"
                               ref={register({ required: true })}

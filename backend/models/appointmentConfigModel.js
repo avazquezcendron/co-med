@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const appointmentConfigSchema = mongoose.Schema(
   {
+    description: { type: String },
     date: { type: Date, required: false },
     slotHours: { type: Number, required: true, default: 0 },
     slotMinutes: { type: Number, required: true, default: 30 },
