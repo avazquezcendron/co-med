@@ -23,8 +23,16 @@ class AppointmentController extends BaseController {
    * @return {Object} res The response object
    */
   async getAll(req, res, next) {
+    let filterAppointments = {};
+    if (!req.user.isAdmin && req.user.isDoctor) {
+      filterAppointments = { doctor: req.user.doctor.id };
+    } else {
+      if (req.query.doctorId) {
+        filterAppointments = { doctor: req.query.doctorId };
+      }
+    }
     const appointments = await this._model
-      .find({})
+      .find(filterAppointments)
       .populate({
         path: 'doctor',
       })

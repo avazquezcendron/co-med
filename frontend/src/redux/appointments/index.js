@@ -12,10 +12,10 @@ import {
 } from './actions';
 import { getLoggedUser } from '../selectors';
 
-function* fetchAppointmentsAsync() {
+function* fetchAppointmentsAsync({ payload }) {
   yield put(getAppointmentsRequest());
   const loggedUser = yield select(getLoggedUser);
-  const appointments = yield call(appointmentService.getAll, loggedUser);
+  const appointments = yield call(appointmentService.getAll, payload, loggedUser);
   yield put(getAppointmentsSuccess(appointments));
 }
 

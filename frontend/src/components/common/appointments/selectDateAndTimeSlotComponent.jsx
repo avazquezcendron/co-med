@@ -131,7 +131,8 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
                       month: 'long',
                       day: 'numeric',
                     })}
-                  </u>
+                  </u>{' '}
+                  con el doctor/a {appointment.doctor.fullName}
                 </mark>
               </p>
             )}

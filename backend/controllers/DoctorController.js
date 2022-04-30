@@ -23,14 +23,14 @@ class DoctorController extends BaseController {
   async getAll(req, res, next) {
     const status = req.query.status;
     const filterBy = req.query.filterBy;
-    const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
-    const searchRgx = rgx(filterBy);
     const filter = {};
     if (status) {
       filter.status = status;
     }
 
     if (filterBy) {
+      const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
+      const searchRgx = rgx(filterBy);
       const filterByParsed = parseInt(filterBy);
       filter.$or = [
         { firstName: { $regex: searchRgx } },
@@ -54,9 +54,9 @@ class DoctorController extends BaseController {
   }
 
   async getSessions(req, res, next) {
-    const slotConfig = await AppointmentConfig.find({}); //TODO: analizar la configuración de slots por Doctor
+    const appointmentsConfig = await AppointmentConfig.find({});
 
-    if (slotConfig.length === 0)
+    if (appointmentsConfig.length === 0)
       return res
         .status(200)
         .json('No hay sesiones de turnos configuradas para el Doctor.');
@@ -69,17 +69,28 @@ class DoctorController extends BaseController {
 
     const doctorAppointments = doctor.appointments;
 
+    const doctorAppointmentsConfig = appointmentsConfig.filter(x => x.doctor?.toString() === req.params.id);
+    const generalAppointmentsConfig = appointmentsConfig.filter(x => !x.doctor);
+
+    let appointmentsConfigFinal = {};
+    if (doctorAppointmentsConfig.length > 0) {
+      appointmentsConfigFinal = doctorAppointmentsConfig[0];
+    } else if (generalAppointmentsConfig.length > 0) {
+      appointmentsConfigFinal = generalAppointmentsConfig[0];
+    } else {
+      return res
+      .status(200)
+      .json('No hay sesiones de turnos configuradas para el Doctor.');
+    }
+
     const {
       slotHours,
       slotMinutes,
       slotPreparation,
       sessions: timeArr,
-    } = slotConfig[0];
+    } = appointmentsConfigFinal;
     const serachDate = new Date(req.body.date);
     let serchDay = serachDate.getDay();
-    if (serchDay === 0) {
-      serchDay = 7;
-    }
     let defaultDate = serachDate.toISOString().substring(0, 10);
     let sessions = [];
     let _timeArrStartTime;
@@ -90,7 +101,7 @@ class DoctorController extends BaseController {
     let slotId = 0;
     // Loop over timeArr
     for (var i = 0; i < timeArr.length; i++) {
-      let session = { sessionName: timeArr[i].name, slots: [] };
+      let session = { sessionName: timeArr[i].sessionType, slots: [] };
 
       // Creating time stamp using time from timeArr and default date
       _timeArrStartTime = new Date(
@@ -122,23 +133,11 @@ class DoctorController extends BaseController {
           new Date(_tempSlotStartTime).getTime() <=
           new Date(_timeArrEndTime).getTime()
         ) {
-          // DateTime object is converted to time with the help of javascript functions
-          // If you want 24 hour format you can pass hour12 false
           session.slots.push({
-            // timeSlotStart: new Date(_startSlot).toLocaleTimeString('es', {
-            //   hour: 'numeric',
-            //   minute: 'numeric',
-            //   hour12: false,
-            // }),
-            // timeSlotEnd: _endSlot.toLocaleTimeString('es', {
-            //   hour: 'numeric',
-            //   minute: 'numeric',
-            //   hour12: false,
-            // })
             id: slotId,
             startTime: new Date(_startSlot),
             endTime: _endSlot,
-            available: moment(_startSlot).isSameOrAfter(moment()) && timeArr[i].daysOfWeek[serchDay - 1] === 1 && doctorAppointments.filter(appointment => appointment.isActive && moment(appointment.start).isSame(_startSlot, 'minute')).length === 0
+            available: moment(_startSlot).isSameOrAfter(moment()) && timeArr[i].daysOfWeek[serchDay] === 1 && doctorAppointments.filter(appointment => appointment.isActive && moment(appointment.start).isSame(_startSlot, 'minute')).length === 0
           });
         }
 

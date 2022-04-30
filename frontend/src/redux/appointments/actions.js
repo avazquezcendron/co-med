@@ -19,9 +19,10 @@ export const appointmentsInitialize = () => {
   };
 };
 
-export const getAppointmentsWatcher = () => {
+export const getAppointmentsWatcher = (doctorId) => {
   return {
     type: GET_APPOINTMENTS_WATCHER,
+    payload: doctorId
   };
 };
 

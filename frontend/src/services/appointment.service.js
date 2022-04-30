@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export const getAll = async (loggedUser) => {
+export const getAll = async (doctorId, loggedUser) => {
   const config = {
     headers: {
       Authorization: `Bearer ${loggedUser?.token}`,
     },
   };
+  const filterByDoctor = doctorId ? `?doctorId=${doctorId}` : '';
   const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/appointment`,
+    `${process.env.PUBLIC_URL}/api/appointment${filterByDoctor}`,
     config
   );
   return data;
@@ -79,12 +80,12 @@ export const update = async (appointmentData, loggedUser) => {
 export const getBussinesHoursBySlot = (slotConfig) => {
   return [
     {
-      daysOfWeek: slotConfig.sessions[0].daysOfWeek.map((x, index) => x === 1 ? index + 1 : null).filter(x  => x),
+      daysOfWeek: slotConfig.sessions[0].daysOfWeek.map((x, index) => x === 1 ?  index : null).filter(x  => x !== null),
       startTime: slotConfig.sessions[0].startTime, //'08:30',
       endTime: slotConfig.sessions[0].endTime,
     },
     {
-      daysOfWeek: slotConfig.sessions[1].daysOfWeek.map((x, index) => x === 1 ? index + 1 : null).filter(x  => x),
+      daysOfWeek: slotConfig.sessions[1].daysOfWeek.map((x, index) => x === 1 ? index : null).filter(x  => x !== null),
       startTime: slotConfig.sessions[1].startTime, //'08:30',
       endTime: slotConfig.sessions[1].endTime,
     },

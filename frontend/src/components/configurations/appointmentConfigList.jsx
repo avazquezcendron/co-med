@@ -16,7 +16,7 @@ import * as doctorService from '../../services/doctor.service';
 import Loader from '../common/loader';
 
 const AppointmentConfigList = (props) => {
-  const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
@@ -137,9 +137,11 @@ const AppointmentConfigList = (props) => {
             ...data,
             doctor: doctor.id || null,
           };
+          configData.sessions[0].sessionType = 'Mañana';
           configData.sessions[0].daysOfWeek = data.sessions[0].daysOfWeek.map(
             (x, index) => (x ? 1 : 0)
           );
+          configData.sessions[1].sessionType = 'Tarde';
           configData.sessions[1].daysOfWeek = data.sessions[1].daysOfWeek.map(
             (x, index) => (x ? 1 : 0)
           );
@@ -233,13 +235,9 @@ const AppointmentConfigList = (props) => {
     },
     {
       name: 'Doctor/a',
-      selector: '',
+      selector: 'doctorName',
       sortable: true,
-      left: true,
-      cell: (row, index, column, id) =>
-        row.doctor
-          ? doctors.filter((x) => x.id === row.doctor)[0]?.fullName
-          : '-',
+      left: true
     },
     {
       name: 'Sessión 1 (Mañana)',
@@ -403,7 +401,7 @@ const AppointmentConfigList = (props) => {
                               className="form-control"
                               name="slotHours"
                               id="slotHours"
-                              defaultValue={currentAppointmentConfig.slotHours || 0}
+                              defaultValue={currentAppointmentConfig.slotHours}
                               type="number"
                               ref={register({ required: true })}
                             />
@@ -427,7 +425,7 @@ const AppointmentConfigList = (props) => {
                               name="slotMinutes"
                               id="slotMinutes"
                               defaultValue={
-                                currentAppointmentConfig.slotMinutes || 30
+                                currentAppointmentConfig.slotMinutes
                               }
                               type="number"
                               ref={register({ required: true })}
@@ -452,7 +450,7 @@ const AppointmentConfigList = (props) => {
                               name="slotPreparation"
                               id="slotPreparation"
                               defaultValue={
-                                currentAppointmentConfig.slotPreparation || 0
+                                currentAppointmentConfig.slotPreparation
                               }
                               type="number"
                               ref={register({ required: true })}
@@ -583,10 +581,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[0] === 1
+                                          .daysOfWeek[1] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.0"
+                                  name="sessions.0.daysOfWeek.1"
                                   id="sessions0daysOfWeekMon"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -608,10 +606,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[1] === 1
+                                          .daysOfWeek[2] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.1"
+                                  name="sessions.0.daysOfWeek.2"
                                   id="sessions0daysOfWeekMar"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -633,10 +631,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[2] === 1
+                                          .daysOfWeek[3] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.2"
+                                  name="sessions.0.daysOfWeek.3"
                                   id="sessions0daysOfWeekMie"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -658,10 +656,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[3] === 1
+                                          .daysOfWeek[4] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.3"
+                                  name="sessions.0.daysOfWeek.4"
                                   id="sessions0daysOfWeekJue"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -683,10 +681,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[4] === 1
+                                          .daysOfWeek[5] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.4"
+                                  name="sessions.0.daysOfWeek.5"
                                   id="sessions0daysOfWeekVie"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -708,10 +706,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[5] === 1
+                                          .daysOfWeek[6] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.5"
+                                  name="sessions.0.daysOfWeek.6"
                                   id="sessions0daysOfWeekSab"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -733,10 +731,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[0]
-                                          .daysOfWeek[6] === 1
+                                          .daysOfWeek[0] === 1
                                       : false
                                   }
-                                  name="sessions.0.daysOfWeek.6"
+                                  name="sessions.0.daysOfWeek.0"
                                   id="sessions0daysOfWeekDom"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -824,10 +822,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[0] === 1
+                                          .daysOfWeek[1] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.0"
+                                  name="sessions.1.daysOfWeek.1"
                                   id="sessions1daysOfWeekMon"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -849,10 +847,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[1] === 1
+                                          .daysOfWeek[2] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.1"
+                                  name="sessions.1.daysOfWeek.2"
                                   id="sessions1daysOfWeekMar"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -874,10 +872,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[2] === 1
+                                          .daysOfWeek[3] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.2"
+                                  name="sessions.1.daysOfWeek.3"
                                   id="sessions1daysOfWeekMie"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -899,10 +897,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[3] === 1
+                                          .daysOfWeek[4] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.3"
+                                  name="sessions.1.daysOfWeek.4"
                                   id="sessions1daysOfWeekJue"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -924,10 +922,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[4] === 1
+                                          .daysOfWeek[5] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.4"
+                                  name="sessions.1.daysOfWeek.5"
                                   id="sessions1daysOfWeekVie"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -949,10 +947,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[5] === 1
+                                          .daysOfWeek[6] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.5"
+                                  name="sessions.1.daysOfWeek.6"
                                   id="sessions1daysOfWeekSab"
                                   type="checkbox"
                                   ref={register({ required: false })}
@@ -974,10 +972,10 @@ const AppointmentConfigList = (props) => {
                                   defaultChecked={
                                     currentAppointmentConfig.sessions
                                       ? currentAppointmentConfig.sessions[1]
-                                          .daysOfWeek[6] === 1
+                                          .daysOfWeek[0] === 1
                                       : false
                                   }
-                                  name="sessions.1.daysOfWeek.6"
+                                  name="sessions.1.daysOfWeek.0"
                                   id="sessions1daysOfWeekDom"
                                   type="checkbox"
                                   ref={register({ required: false })}

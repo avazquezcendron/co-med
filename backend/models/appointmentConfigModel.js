@@ -34,13 +34,9 @@ appointmentConfigSchema.set('toObject', {
   virtuals: true
 });
 
-appointmentConfigSchema.path('sessions').schema.virtual('name').get(function () { 
-  return this.sessionType === 'morning' ? 'Mañana' : 'Tarde';
-});
-
 appointmentConfigSchema.path('sessions').schema.virtual('daysOfWeekString').get(function () { 
-  const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  const daysString = this.daysOfWeek.map(x => days[x - 1]);
+  const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const daysString = this.daysOfWeek.map(x => days[x]);
   return daysString;
 });
 

@@ -12,7 +12,6 @@ class BaseEntityController extends BaseController {
     this._modelsDic = new Map();
     this._modelsDic.set('drug', Drug);
     this._modelsDic.set('studyType', StudyType);
-    this._modelsDic.set('appointmentConfig', AppointmentConfig);
     this._modelsDic.set('tag', Tag);
     this._modelsDic.set('laboratoryType', LaboratoryType);
   }

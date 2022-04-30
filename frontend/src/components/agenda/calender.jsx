@@ -9,6 +9,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import SweetAlert from 'sweetalert2';
 import { toast } from 'react-toastify';
+import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 import moment from 'moment';
 
 import { BasicCalendars } from '../../constant';
@@ -26,14 +28,19 @@ const Calender = () => {
   function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
+  const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   const query = useQuery();
   const filter = query.get('filter');
   const { appointments, status } = useSelector((store) => store.Appointments);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
+  const [appointmentsConfig, setAppointmentsConfig] = useState([]);
+  const [appointmentConfig, setAppointmentConfig] = useState({});
   const [slotDuration, setslotDuration] = useState('');
   const [businessHours, setbusinessHours] = useState([]);
+  const [filterSidebar, setFilterSidebar] = useState(true);
+  const [sidebaron, setSidebaron] = useState(true);
 
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
@@ -42,11 +49,11 @@ const Calender = () => {
 
   useEffect(() => {
     appointmentService.getAppointmentSlotsConfig(loggedUser).then((data) => {
-      if (data?.length > 0) {
-        const { slotHours, slotMinutes } = data[0];
-        setslotDuration(slotHours?.toString() + ':' + slotMinutes?.toString());
-        setbusinessHours(appointmentService.getBussinesHoursBySlot(data[0]));
-      }
+      setAppointmentsConfig(data);
+      const appointmentsConfigGeneral = data.filter((x) => !x.doctor);
+      setAppointmentConfig(
+        appointmentsConfigGeneral.length > 0 ? appointmentsConfigGeneral[0] : {}
+      );
     });
   }, []);
 
@@ -54,12 +61,22 @@ const Calender = () => {
     dispatch(getAppointmentsWatcher());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (appointmentConfig.id) {
+      dispatch(getAppointmentsWatcher(appointmentConfig.doctor?.id));
+      const { slotHours, slotMinutes } = appointmentConfig;
+      setslotDuration(slotHours.toString().padStart(2, '0') + ':' + slotMinutes.toString().padStart(2, '0') + ':00');
+      setbusinessHours(appointmentService.getBussinesHoursBySlot(appointmentConfig));
+    }
+  }, [appointmentConfig]);
+
   const handleNewAppointment = (calenderData) => {
     if (selectAllow(calenderData)) {
       dispatch(
         setDataAppointmentForm({
           start: calenderData?.start,
-          end: calenderData?.end,
+          end: calenderData ?.end,
+          doctor: appointmentConfig.doctor,
           new: true,
         })
       );
@@ -101,7 +118,10 @@ const Calender = () => {
   };
 
   const handleEventDrop = (info) => {
-    if (selectAllow(info.event) && (info.event.extendedProps.isActive || info.event.extendedProps.isExpired)) {
+    if (
+      selectAllow(info.event) &&
+      (info.event.extendedProps.isActive || info.event.extendedProps.isExpired)
+    ) {
       SweetAlert.fire({
         title: 'Atención',
         text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
@@ -168,7 +188,7 @@ const Calender = () => {
       txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
       title = 'TURNO FINALIZADO. ' + title;
     } else {
-      title = 'TURNO ACTIVO. ' + title;
+      title = title ? 'TURNO ACTIVO. ' + title : '';
     }
 
     if (isListView) {
@@ -194,18 +214,115 @@ const Calender = () => {
     info.el.title = title;
   };
 
+  const handleAppointmentsConfigChange = (selected) => {
+    let appointmentConfig = selected.length > 0 ? selected[0] : {};
+    setAppointmentConfig(appointmentConfig);
+    if (appointmentConfig.id) onClickFilter();
+  };
+
+  const onClickFilter = () => {
+    setFilterSidebar(!filterSidebar);
+    if (sidebaron) {
+      setSidebaron(false);
+      document.querySelector('.product-wrapper').classList.add('sidebaron');
+    } else {
+      setSidebaron(true);
+      document.querySelector('.product-wrapper').classList.remove('sidebaron');
+    }
+  };
+
   return (
     <Fragment>
       {status === LOADED || status === FAILED || status === SUCCEEDED ? (
-        <div className="container-fluid">
-          <div className="row">
+        <div className="container-fluid product-wrapper">
+          <div className="row product-grid">
             <AppointmentModalComponent
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
               // appointmentData={appointmentData}
               setAppointmentModal={setAppointmentModal}
             />
-            <div className="col-sm-12">
+            <div className="col-md-3">
+              <div className={`product-sidebar ${filterSidebar ? '' : 'open'}`}>
+                <div className="filter-section">
+                  <div className="card">
+                    <div className="card-header">
+                      <h6 className="mb-0 f-w-600">
+                        {'Seleccionar configuración de turnos'}
+                        <span className="pull-right">
+                          <i
+                            className="fa fa-chevron-down toggle-data"
+                            onClick={onClickFilter}
+                          ></i>
+                        </span>
+                      </h6>
+                    </div>
+                    <div className="left-filter">
+                      <div className="card-body filter-cards-view animate-chk">
+                        <div className="form-group row product-filter">
+                          <div className="col-md-12">
+                            <p>
+                              Seleccione la configuración de turnos que se
+                              utilizará para la visualización del calendario.
+                              Puede utilizar una configuración general de Co-Med
+                              o seleccionar una configuración específica por
+                              doctor/a.
+                            </p>
+                            <Typeahead
+                              id="appointmentsConfig"
+                              name="appointmentsConfig"
+                              options={appointmentsConfig}
+                              labelKey={(option) => option.description}
+                              filterBy={['description']}
+                              clearButton
+                              onChange={(selected) =>
+                                handleAppointmentsConfigChange(selected)
+                              }
+                              selected={
+                                appointmentsConfig.length > 0
+                                  ? appointmentsConfig.filter(
+                                      (x) => x.id === appointmentConfig.id
+                                    )
+                                  : null
+                              }
+                              renderMenuItemChildren={(option, props) => (
+                                <Fragment>
+                                  <Highlighter search={props.text}>
+                                    {option.description}
+                                  </Highlighter>
+                                  <div className="mt-1">
+                                    {option.sessions.map((x, index) => (
+                                      <Fragment key={index}>
+                                        <small className="text-muted">
+                                          {`${x.sessionType}: ${
+                                            x.startTime
+                                          } - ${x.endTime} | ${x.daysOfWeek
+                                            .map((y, index) =>
+                                              y === 1 ? days[index] : ''
+                                            )
+                                            .filter((x) => x)}`}
+                                        </small>
+                                        <br />
+                                      </Fragment>
+                                    ))}
+                                    {!option.doctor && (
+                                      <span className="badge badge-primary">
+                                        Configuración general Co-Med
+                                      </span>
+                                    )}
+                                  </div>
+                                </Fragment>
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={`col-md-12 product-wrapper-grid`}>
               <div className="card">
                 <div className="card-header">
                   <div className="pull-right">
@@ -221,6 +338,33 @@ const Calender = () => {
                   <h5>{BasicCalendars}</h5>
                 </div>
                 <div className="card-body">
+                  {appointmentConfig.description ? (
+                    <p className="mb-5">
+                      <mark>
+                        <i className="fa fa-info-circle mr-1"></i>
+                        Configuración de turnos seleccionada: "
+                        <b>{appointmentConfig.description}</b>" ->{' '}
+                        Turnos de {`${appointmentConfig.slotHours}:${appointmentConfig.slotMinutes}hs de duración. Franja horaria: `}
+                        {appointmentConfig.sessions.map((x, index) => (
+                          <Fragment key={index}>
+                            <span className="text-muted">
+                              <b>{x.sessionType}: </b>
+                              {`${x.startTime} - ${x.endTime} (${x.daysOfWeek
+                                .map((y, index) => (y === 1 ? days[index] : ''))
+                                .filter((x) => x)}) `}
+                            </span>
+                          </Fragment>
+                        ))}
+                      </mark>
+                    </p>
+                  ) : (
+                    <p>
+                      <mark>
+                        <i className="fa fa-warning mr-1"></i>
+                        Debe seleccionar un configuración de turnos!
+                      </mark>
+                    </p>
+                  )}
                   {businessHours.length > 0 ? (
                     <FullCalendar
                       initialView={
@@ -244,7 +388,7 @@ const Calender = () => {
                       weekends={true}
                       businessHours={businessHours}
                       slotDuration={slotDuration}
-                      slotLabelInterval={slotDuration}
+                      // slotLabelInterval={'01:00'}//{slotDuration}
                       slotMinTime={'06:00:00'}
                       //   slotMaxTime={'22:00:00'}
                       nowIndicator={true}
