@@ -50,10 +50,15 @@ const Calender = () => {
   useEffect(() => {
     appointmentService.getAppointmentSlotsConfig(loggedUser).then((data) => {
       setAppointmentsConfig(data);
-      const appointmentsConfigGeneral = data.filter((x) => !x.doctor);
-      setAppointmentConfig(
-        appointmentsConfigGeneral.length > 0 ? appointmentsConfigGeneral[0] : {}
-      );
+      let appointmentsConfigDefault = data.length > 0 ? data[0] : {};
+      if (loggedUser.user.isDoctor) {
+        const appointmentsConfigDr = data.filter((x) => x.doctor);
+        if (appointmentsConfigDr.length > 0) {
+          appointmentsConfigDefault = appointmentsConfigDr[0];          
+        }
+      }
+      
+      setAppointmentConfig(appointmentsConfigDefault);
     });
   }, []);
 

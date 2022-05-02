@@ -16,13 +16,13 @@ const checkUserAuth = asyncHandler(async (req, res, next) => {
       next()
     } catch (err) {
       res.status(401)
-      res.json('Not authorized, token failed')
+      res.json('Acceso no autorizado. Contacte al administrador.')
     }
   }
 
   if (!token) {
     res.status(401)
-    res.json('Not authorized, token failed')
+    res.json('Acceso no autorizado. Contacte al administrador.')
   }
 })
 

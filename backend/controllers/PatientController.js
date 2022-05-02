@@ -65,7 +65,17 @@ class PatientController extends BaseController {
       .populate({
         path: 'healthRecord',
       });
-    const patientsDTO = patients.map(x => this._applyVisibilityByUserRole(req.user, x));
+    
+    let patientsDTO = patients;
+    if (!req.user.isAdmin) {
+      if (req.user.isDoctor) {
+        patientsDTO = patients.filter(x => x.healthRecord?.visits.includes(x => x.doctor._id.equals(req.user.doctor?._id)));// TODO: pasar al query
+      }      
+      else {
+        // TODO: analizar si hace "TANTA falta" el filtro de privacidad en el getAll
+        patientsDTO = patients.map(x => this._applyVisibilityByUserRole(req.user, x));
+      }
+    }    
     res.status(200).json(patientsDTO);
   }
 
@@ -199,21 +209,27 @@ class PatientController extends BaseController {
 
   _applyVisibilityByUserRole(user, patientModel) {
     const patient = JSON.parse(JSON.stringify(patientModel));
+    //TODO: improve user role visibility and security
+    const hrWithVisibilityApplied = {
+      ...patient.healthRecord,
+      pathologicalBackground: null,
+      noPathologicalBackground: null,
+      hereditaryBackground: null,
+      psychiatricBackgroud: null,
+      nutritionalBackgroud: null,
+      allergiesInfo: null,
+      drugsInfo: null,
+      laboratoryExams: [],
+      studyExams: [],
+      visits: [],
+    };
     if (!user.isAdmin) {
-      //TODO: improve user role visibility and security
-      patient.healthRecord = {
-        ...patient.healthRecord,
-        pathologicalBackground: null,
-        noPathologicalBackground: null,
-        hereditaryBackground: null,
-        psychiatricBackgroud: null,
-        nutritionalBackgroud: null,
-        allergiesInfo: null,
-        drugsInfo: null,
-        laboratoryExams: [],
-        studyExams: [],
-        visits: [],
-      };
+      if (user.isReceptionist) {
+        patient.healthRecord = hrWithVisibilityApplied;
+      }
+      // else if (user.isDoctor && !patient.healthRecord ?.visits.includes(x => x.doctor._id.equals(user.doctor._id))){
+      //     patient.healthRecord = hrWithVisibilityApplied;
+      // }
     }
     return patient;
   }

@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 import { BrowserRouter, Switch, Route,Redirect } from 'react-router-dom';
@@ -63,7 +63,7 @@ import configDB from './data/customizer/config'
 const Root = () => {
 
     const abortController = new AbortController();
-    const jwt_token = localStorage.getItem('loggedUser');
+    const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
 
     useEffect(() => {
 
@@ -100,7 +100,7 @@ const Root = () => {
                             <Route path={`${process.env.PUBLIC_URL}/pages/errors/error500`} component={Error500} />
                             <Route path={`${process.env.PUBLIC_URL}/pages/errors/error503`} component={Error503} />
                             
-                            {jwt_token ?
+                            {loggedUser?.token ?
                             
                                 <App>
                                     {/* dashboard menu */}
@@ -109,22 +109,32 @@ const Root = () => {
                                     }} />
                                     <Route path={`${process.env.PUBLIC_URL}/dashboard/default`} component={Default} />
                                     <Route path={`${process.env.PUBLIC_URL}/agenda/appointments`} component={Appointments} />
-                                    {/* Users */}
+                                    
+                                    {
+                                    (loggedUser.user.isAdmin || loggedUser.user.isReceptionist) ?
+                                        <Fragment>
+                                            
+                                            <Route path={`${process.env.PUBLIC_URL}/settings/user/:id`} component={UserProfile} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} />
+                                        
+                                            <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
+                                            <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />
+
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/drug`} component={DrugList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/laboratoryType`} component={LaboratoryTypeList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/tag`} component={TagList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/healthInsurance`} component={HealthInsuranceList} />
+
+                                        </Fragment>
+                                    :
+                                        <Redirect to={`${process.env.PUBLIC_URL}/dashboard/default`} />
+                                }
+                                
                                     <Route path={`${process.env.PUBLIC_URL}/settings/user/:id`} component={UserProfile} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} />
-                                
-                                    <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
-                                    <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />
-                                
                                     <Route exact path={`${process.env.PUBLIC_URL}/patient`} component={PatientList} />
                                     <Route path={`${process.env.PUBLIC_URL}/patient/:id`} component={PatientProfile} />
-
-                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/drug`} component={DrugList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/laboratoryType`} component={LaboratoryTypeList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/tag`} component={TagList} />
-                                    <Route exact path={`${process.env.PUBLIC_URL}/catalogues/healthInsurance`} component={HealthInsuranceList} />
 
                                     <Route path={`${process.env.PUBLIC_URL}/todo-app/todo`} component={Todo} />
                                     <Route path={`${process.env.PUBLIC_URL}/email-app/emailDefault`} component={EmailDefault} />

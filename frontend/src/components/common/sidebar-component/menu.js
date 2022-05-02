@@ -21,7 +21,7 @@ export const MENUITEMS = [
         title: 'Pacientes', icon: Users, type: 'link', active: false, bookmark: false, path: '/patient'
     },
     {
-        title: 'Doctores', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor'
+        title: 'Doctores', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor', onlyAdminAndRecep: true
     },
     {
         title: 'Turnos', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
@@ -33,7 +33,7 @@ export const MENUITEMS = [
         ]
     },
     {
-        title: 'Catálogos', icon: Briefcase, type: 'sub', active: false, children: [
+        title: 'Catálogos', icon: Briefcase, type: 'sub', active: false, onlyAdminAndRecep: true,  children: [
             { path: '/catalogues/drug', type: 'link', title: 'Fármacos' },
             { path: '/catalogues/healthInsurance', type: 'link', title: 'Obras Sociales' },
             { path: '/catalogues/studyType', type: 'link', title: 'Estudios compl.' },
@@ -42,7 +42,7 @@ export const MENUITEMS = [
         ]
     },
     {
-        title: 'Configuración', icon: Settings, path: '/sample/samplepage', type: 'sub', active: false,
+        title: 'Configuración', icon: Settings, onlyAdminAndRecep: true, type: 'sub', active: false,
         children: [
             { path: '/settings/user', icon: Users, title: 'Usuarios', type: 'link' },
             { path: '/settings/form', icon: FileText, title: 'Formularios', type: 'link' },

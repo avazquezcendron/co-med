@@ -1,6 +1,7 @@
 import BaseController from './BaseController.js';
 import Doctor from '../models/doctorModel.js';
 import AppointmentConfig from '../models/appointmentConfigModel.js';
+import User from '../models/userModel.js';
 import moment from 'moment';
 
 class DoctorController extends BaseController {
@@ -9,6 +10,68 @@ class DoctorController extends BaseController {
 
     this.getSessions = this.getSessions.bind(this);
   }
+
+
+   /**
+   * @desc   Create <model>
+   * @route  POST /api/<model>/:id
+   * @access Private
+   *
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {function} next The callback to the next program handler
+   * @return {Object} res The response object
+   */
+    async create(req, res, next) {
+      const createModel = new this._model(req.body);
+      const savedModel = await createModel.save();
+      if (savedModel && req.body.user) {
+        const user = await User.findById(req.body.user);
+        if (user) {
+          user.doctor = savedModel._id;
+          await user.save();
+        }
+      }
+      req.params = {
+        ...req.params,
+        id: savedModel._id
+      };
+      return this.getById(req, res, next);
+    }
+  
+    /**
+     * @desc   Update <model>
+     * @route  PUT /api/<model>/:id
+     * @access Private
+     *
+     * @param {Object} req The request object
+     * @param {Object} res The response object
+     * @param {function} next The callback to the next program handler
+     * @return {Object} res The response object
+     */
+    async update(req, res, next) {
+      let model = await this._model.findById(req.params.id);
+      if (model) {
+        if (model.__v !== req.body.__v) {
+          return res.status(409).json('El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
+        }
+  
+        for (const [key, value] of Object.entries(req.body)) {
+          model[key] = value;
+        }
+        await model.save();
+        if (model && req.body.user) {
+          const user = await User.findById(req.body.user);
+          if (user) {
+            user.doctor = model._id;
+            await user.save();
+          }
+        }
+        return this.getById(req, res, next);
+      } else {
+        return res.status(404).json('Registro no encontrado.');
+      }
+    }
 
   /**
    * @desc   Get All <model>

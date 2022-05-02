@@ -437,7 +437,7 @@ const DoctorProfile = (props) => {
                                 type="text"
                                 name="nationality"
                                 defaultValue={doctor.nationality}
-                                ref={register({ required: false })}
+                                ref={register({ required: true })}
                               />
                               <span style={{ color: 'red' }}>
                                 {errors.nationality && 'Ingrese un valor.'}

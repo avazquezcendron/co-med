@@ -25,7 +25,7 @@ class AppointmentController extends BaseController {
   async getAll(req, res, next) {
     let filterAppointments = {};
     if (!req.user.isAdmin && req.user.isDoctor) {
-      filterAppointments = { doctor: req.user.doctor.id };
+      filterAppointments = { doctor: req.user.doctor?._id };
     } else {
       if (req.query.doctorId) {
         filterAppointments = { doctor: req.query.doctorId };

@@ -28,6 +28,12 @@ const UserProfile = (props) => {
   const [user, setUser] = useState({});
 
   useEffect(() => {
+    if (!loggedUser.user.isAdmin && !loggedUser.user.isReceptionist && loggedUser.user.id !== id) {
+      props.history.push(`${process.env.PUBLIC_URL}/`);
+    }
+  }, []);
+
+  useEffect(() => {
     if (id !== '0')
       userService.getById(id, loggedUser).then((user) => setUser(user));
   }, [mode, id]);
@@ -144,7 +150,7 @@ const UserProfile = (props) => {
   return (
     <Fragment>
       <Breadcrumb
-        parent={{ title: 'Usuarios', url: 'user' }}
+        parent={!loggedUser.user.isAdmin && !loggedUser.user.isReceptionist ? 'Usuarios' : { title: 'Usuarios', url: 'settings/user' }}
         title={
           id === '0' ? 'Nuevo Usuario' : `${user.firstName} ${user.lastName}`
         }

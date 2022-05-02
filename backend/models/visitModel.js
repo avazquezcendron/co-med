@@ -40,6 +40,16 @@ const visitSchema = mongoose.Schema(
     evaluation: { type: String, required: true },
     studyOrders: [ studyOrderSchema ],
     laboratoryOrders: [ laboratoryOrderSchema ],
+    healthRecord: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'HealthRecord',
+    },
+    doctor: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Doctor',
+    },
     prescriptions: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -9,6 +9,9 @@ import { translate } from 'react-switch-lang';
 import configDB from '../../../data/customizer/config';
 
 const Sidebar = (props) => {
+    const { loggedUser } = useSelector((store) => store.UserLogin);
+    const layout = useSelector(content => content.Customizer.layout);
+
     const [margin, setMargin] = useState(0);
     const [width, setWidth] = useState(0);
     const [hideLeftArrowRTL, setHideLeftArrowRTL] = useState(true);
@@ -17,7 +20,6 @@ const Sidebar = (props) => {
     const [hideLeftArrow, setHideLeftArrow] = useState(true);
     const [mainmenu, setMainMenu] = useState(MENUITEMS);
     const wrapper = configDB.data.settings.sidebar.wrapper;
-    const layout = useSelector(content => content.Customizer.layout);
 
     useEffect(() => {
         window.addEventListener('resize', handleResize)
@@ -199,70 +201,72 @@ const Sidebar = (props) => {
                             onClick={(wrapper === 'horizontal_sidebar' && layout === 'rtl') ? scrollToLeftRTL : scrollToLeft}><i className="fa fa-angle-left"></i></li>
                         {
                             MENUITEMS.map((menuItem, i) =>
-                                <li className={`${menuItem.active ? 'active' : ''}`} key={i}>
-                                    {(menuItem.sidebartitle) ?
-                                        <div className="sidebar-title">{menuItem.sidebartitle}</div>
-                                        : ''}
-                                    {(menuItem.type === 'sub') ?
-                                        <a className="sidebar-header" href="#javascript" onClick={() => toggletNavActive(menuItem)}>
-                                            <menuItem.icon />
-                                            <span>{props.t(menuItem.title)}</span>
-                                            <i className="fa fa-angle-right pull-right"></i>
-                                        </a>
-                                        : ''}
-                                    {(menuItem.type === 'link') ?
-                                        <Link
-                                            to={`${process.env.PUBLIC_URL}${menuItem.path}`}
-                                            className={`sidebar-header ${menuItem.active ? '' : ''}`}
+                                !menuItem.onlyAdminAndRecep || (menuItem.onlyAdminAndRecep && (loggedUser.user.isAdmin || loggedUser.user.isReceptionist)) ?
+                                    <li className={`${menuItem.active ? 'active' : ''}`} key={i}>
+                                        {(menuItem.sidebartitle) ?
+                                            <div className="sidebar-title">{menuItem.sidebartitle}</div>
+                                            : ''}
+                                        {(menuItem.type === 'sub') ?
+                                            <a className="sidebar-header" href="#javascript" onClick={() => toggletNavActive(menuItem)}>
+                                                <menuItem.icon />
+                                                <span>{props.t(menuItem.title)}</span>
+                                                <i className="fa fa-angle-right pull-right"></i>
+                                            </a>
+                                            : ''}
+                                        {(menuItem.type === 'link') ?
+                                            <Link
+                                                to={`${process.env.PUBLIC_URL}${menuItem.path}`}
+                                                className={`sidebar-header ${menuItem.active ? '' : ''}`}
 
-                                            onClick={() => toggletNavActive(menuItem)}
-                                        >
-                                            <menuItem.icon /><span>{props.t(menuItem.title)}</span>
-                                            {menuItem.children ?
-                                                <i className="fa fa-angle-right pull-right"></i> : ''}
-                                        </Link>
-                                        : ''}
-                                    {menuItem.children ?
-                                        <ul
-                                            className={`sidebar-submenu ${menuItem.active ? 'menu-open' : ''}`}
-                                            style={menuItem.active ? { opacity: 1, transition: 'opacity 500ms ease-in' } : {}}
-                                        >
-                                            {menuItem.children.map((childrenItem, index) =>
-                                                <li key={index} className={childrenItem.children ? childrenItem.active ? 'active' : '' : ''}>
-                                                    {(childrenItem.type === 'sub') ?
-                                                        <a href="#javascript" onClick={() => toggletNavActive(childrenItem)} >
-                                                            <i className="fa fa-circle"></i>{props.t(childrenItem.title)} <i className="fa fa-angle-right pull-right"></i></a>
-                                                        : ''}
+                                                onClick={() => toggletNavActive(menuItem)}
+                                            >
+                                                <menuItem.icon /><span>{props.t(menuItem.title)}</span>
+                                                {menuItem.children ?
+                                                    <i className="fa fa-angle-right pull-right"></i> : ''}
+                                            </Link>
+                                            : ''}
+                                        {menuItem.children ?
+                                            <ul
+                                                className={`sidebar-submenu ${menuItem.active ? 'menu-open' : ''}`}
+                                                style={menuItem.active ? { opacity: 1, transition: 'opacity 500ms ease-in' } : {}}
+                                            >
+                                                {menuItem.children.map((childrenItem, index) =>
+                                                    <li key={index} className={childrenItem.children ? childrenItem.active ? 'active' : '' : ''}>
+                                                        {(childrenItem.type === 'sub') ?
+                                                            <a href="#javascript" onClick={() => toggletNavActive(childrenItem)} >
+                                                                <i className="fa fa-circle"></i>{props.t(childrenItem.title)} <i className="fa fa-angle-right pull-right"></i></a>
+                                                            : ''}
 
-                                                    {(childrenItem.type === 'link') ?
-                                                        <Link
-                                                            to={`${process.env.PUBLIC_URL}${childrenItem.path}`}
-                                                            className={childrenItem.active ? 'active' : ''}
-                                                            onClick={() => toggletNavActive(childrenItem)}
-                                                        >
-                                                            <i className="fa fa-circle"></i>{props.t(childrenItem.title)} </Link>
-                                                        : ''}
-                                                    {childrenItem.children ?
-                                                        <ul className={`sidebar-submenu ${childrenItem.active ? 'menu-open' : 'active'}`}>
-                                                            {childrenItem.children.map((childrenSubItem, key) =>
-                                                                <li className={childrenSubItem.active ? 'active' : ''} key={key}>
-                                                                    {(childrenSubItem.type === 'link') ?
-                                                                        <Link
-                                                                            to={`${process.env.PUBLIC_URL}${childrenSubItem.path}`}
-                                                                            className={childrenSubItem.active ? 'active' : ''}
-                                                                            onClick={() => toggletNavActive(childrenSubItem)}
-                                                                        >
-                                                                            <i className="fa fa-circle"></i>{props.t(childrenSubItem.title)}</Link>
-                                                                        : ''}
-                                                                </li>
-                                                            )}
-                                                        </ul>
-                                                        : ''}
-                                                </li>
-                                            )}
-                                        </ul>
-                                        : ''}
-                                </li>
+                                                        {(childrenItem.type === 'link') ?
+                                                            <Link
+                                                                to={`${process.env.PUBLIC_URL}${childrenItem.path}`}
+                                                                className={childrenItem.active ? 'active' : ''}
+                                                                onClick={() => toggletNavActive(childrenItem)}
+                                                            >
+                                                                <i className="fa fa-circle"></i>{props.t(childrenItem.title)} </Link>
+                                                            : ''}
+                                                        {childrenItem.children ?
+                                                            <ul className={`sidebar-submenu ${childrenItem.active ? 'menu-open' : 'active'}`}>
+                                                                {childrenItem.children.map((childrenSubItem, key) =>
+                                                                    <li className={childrenSubItem.active ? 'active' : ''} key={key}>
+                                                                        {(childrenSubItem.type === 'link') ?
+                                                                            <Link
+                                                                                to={`${process.env.PUBLIC_URL}${childrenSubItem.path}`}
+                                                                                className={childrenSubItem.active ? 'active' : ''}
+                                                                                onClick={() => toggletNavActive(childrenSubItem)}
+                                                                            >
+                                                                                <i className="fa fa-circle"></i>{props.t(childrenSubItem.title)}</Link>
+                                                                            : ''}
+                                                                    </li>
+                                                                )}
+                                                            </ul>
+                                                            : ''}
+                                                    </li>
+                                                )}
+                                            </ul>
+                                            : ''}
+                                    </li>
+                                    : ''
                             )
                         }
                         <li className={`right-arrow ${layout === 'rtl' ? hideRightArrowRTL ? 'd-none' : '' : hideRightArrow ? 'd-none' : ''}`}
