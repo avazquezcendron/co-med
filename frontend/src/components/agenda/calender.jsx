@@ -50,14 +50,27 @@ const Calender = () => {
   useEffect(() => {
     appointmentService.getAppointmentSlotsConfig(loggedUser).then((data) => {
       setAppointmentsConfig(data);
-      let appointmentsConfigDefault = data.length > 0 ? data[0] : {};
-      if (loggedUser.user.isDoctor) {
-        const appointmentsConfigDr = data.filter((x) => x.doctor);
-        if (appointmentsConfigDr.length > 0) {
-          appointmentsConfigDefault = appointmentsConfigDr[0];          
+      const appointmentsConfigSelected = localStorage.getItem(
+        'appointmentsConfigSelected'
+      );
+      let appointmentsConfigDefault = {};
+      if (appointmentsConfigSelected) {
+        appointmentsConfigDefault = JSON.parse(appointmentsConfigSelected);
+      } else {
+        if (loggedUser.user.isDoctor) {
+          const appointmentsConfigDr = data.filter((x) => x.doctor);
+          if (appointmentsConfigDr.length > 0) {
+            appointmentsConfigDefault = appointmentsConfigDr[0];
+          }
+        } else {
+          appointmentsConfigDefault = data.length > 0 ? data[0] : {};
         }
+        localStorage.setItem(
+          'appointmentsConfigSelected',
+          JSON.stringify(appointmentsConfigDefault)
+        );
       }
-      
+
       setAppointmentConfig(appointmentsConfigDefault);
     });
   }, []);
@@ -70,8 +83,15 @@ const Calender = () => {
     if (appointmentConfig.id) {
       dispatch(getAppointmentsWatcher(appointmentConfig.doctor?.id));
       const { slotHours, slotMinutes } = appointmentConfig;
-      setslotDuration(slotHours.toString().padStart(2, '0') + ':' + slotMinutes.toString().padStart(2, '0') + ':00');
-      setbusinessHours(appointmentService.getBussinesHoursBySlot(appointmentConfig));
+      setslotDuration(
+        slotHours.toString().padStart(2, '0') +
+          ':' +
+          slotMinutes.toString().padStart(2, '0') +
+          ':00'
+      );
+      setbusinessHours(
+        appointmentService.getBussinesHoursBySlot(appointmentConfig)
+      );
     }
   }, [appointmentConfig]);
 
@@ -80,7 +100,7 @@ const Calender = () => {
       dispatch(
         setDataAppointmentForm({
           start: calenderData?.start,
-          end: calenderData ?.end,
+          end: calenderData?.end,
           doctor: appointmentConfig.doctor,
           new: true,
         })
@@ -222,6 +242,10 @@ const Calender = () => {
   const handleAppointmentsConfigChange = (selected) => {
     let appointmentConfig = selected.length > 0 ? selected[0] : {};
     setAppointmentConfig(appointmentConfig);
+    localStorage.setItem(
+      'appointmentsConfigSelected',
+      JSON.stringify(appointmentConfig)
+    );
     if (appointmentConfig.id) onClickFilter();
   };
 
@@ -348,8 +372,8 @@ const Calender = () => {
                       <mark>
                         <i className="fa fa-info-circle mr-1"></i>
                         Configuración de turnos seleccionada: "
-                        <b>{appointmentConfig.description}</b>" ->{' '}
-                        Turnos de {`${appointmentConfig.slotHours}:${appointmentConfig.slotMinutes}hs de duración. Franja horaria: `}
+                        <b>{appointmentConfig.description}</b>" -> Turnos de{' '}
+                        {`${appointmentConfig.slotHours}:${appointmentConfig.slotMinutes}hs de duración. Franja horaria: `}
                         {appointmentConfig.sessions.map((x, index) => (
                           <Fragment key={index}>
                             <span className="text-muted">

@@ -27,8 +27,15 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
   const [isDisabled, setIsDisabled] = useState(false);
 
   useEffect(() => {
-    const doctor = appointment.doctor || loggedUser.user?.doctor || {};
-    setDoctors([doctor]);
+    let doctorAppointmentConfig;
+    const appointmentsConfigSelected = localStorage.getItem(
+      'appointmentsConfigSelected'
+    );
+    if (appointmentsConfigSelected) {
+      doctorAppointmentConfig = JSON.parse(appointmentsConfigSelected).doctor;
+    }
+    const doctor = appointment.doctor || loggedUser.user?.doctor || doctorAppointmentConfig;
+    setDoctors(doctor ? [doctor] : []);
     setDoctor(doctor);
     if (loggedUser.user?.isDoctor && !loggedUser.user?.isAdmin) {
       setIsDisabled(true);
