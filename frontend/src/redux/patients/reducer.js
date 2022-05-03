@@ -19,6 +19,11 @@ import {
   PATIENT_GET_VISITS_REQUEST,
   PATIENT_GET_VISITS_SUCCESS,
   PATIENT_GET_VISITS_FAILURE,
+  PATIENT_SAVE_VISIT_REQUEST,
+  PATIENT_SAVE_VISIT_SUCCESS,
+  PATIENT_SAVE_VISIT_FAILURE,
+  PATIENT_INITIALIZE_VISIT_FORM,
+  PATIENT_RESET_VISIT_FORM
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -156,6 +161,46 @@ export const VisitsReducer = (state = INITIAL_STATE_VISITS, action) => {
         error: action.payload,
         visits: [],
       };
+
+    default:
+      return state;
+  }
+};
+
+const INITIAL_STATE_VISIT = {
+  visit: {},
+  status: '',
+};
+export const VisitReducer = (state = INITIAL_STATE_VISIT, action) => {
+  switch (action.type) {
+    case PATIENT_SAVE_VISIT_REQUEST:
+      return {
+        ...state,
+        status: statusTypes.LOADING,
+      };
+
+    case PATIENT_SAVE_VISIT_SUCCESS:
+      return {
+        status: statusTypes.SUCCEEDED,
+        visit: action.payload,
+      };
+
+    case PATIENT_SAVE_VISIT_FAILURE:
+      return {
+        ...state,
+        status: statusTypes.FAILED,
+        error: action.payload,
+      };
+
+    case PATIENT_INITIALIZE_VISIT_FORM:
+      return {
+        ...state,
+        status: statusTypes.LOADED,
+        visit: action.payload,
+      };
+    
+    case PATIENT_RESET_VISIT_FORM:
+      return INITIAL_STATE_VISIT;
 
     default:
       return state;

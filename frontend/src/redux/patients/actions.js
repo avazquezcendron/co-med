@@ -18,6 +18,13 @@ export const PATIENT_GET_VISITS_REQUEST = 'patient/patientGetVisitsRequest';
 export const PATIENT_GET_VISITS_SUCCESS = 'patient/patientGetVisitsSuccess';
 export const PATIENT_GET_VISITS_FAILURE = 'patient/patientGetVisitsFailure';
 
+export const PATIENT_SAVE_VISIT_WATCHER = 'patient/patientSaveVisitWatcher';
+export const PATIENT_SAVE_VISIT_REQUEST = 'patient/patientSaveVisitsRequest';
+export const PATIENT_SAVE_VISIT_SUCCESS = 'patient/patientSaveVisitSuccess';
+export const PATIENT_SAVE_VISIT_FAILURE = 'patient/patientSaveVisitFailure';
+export const PATIENT_INITIALIZE_VISIT_FORM = 'patient/patientInitializeVisitForm';
+export const PATIENT_RESET_VISIT_FORM = 'patient/patientResetVisitForm';
+
 export const PATIENT_SAVE_WATCHER = 'patient/patientSaveWatcher';
 export const PATIENT_SAVE_REQUEST = 'patient/patientSaveRequest';
 export const PATIENT_SAVE_SUCCESS = 'patient/patientSaveSuccess';
@@ -100,13 +107,6 @@ export const patientGetByIdFailure = (error) => {
   };
 };
 
-export const patientSavetWatcher = (patient) => {
-  return {
-    type: PATIENT_SAVE_WATCHER,
-    payload: patient,
-  };
-};
-
 export const patientUpdateHRWatcher = (payload) => {
   return {
     type: PATIENT_UPDATE_HR_WATCHER,
@@ -139,6 +139,53 @@ export const patientGetVisitsFailure = (error) => {
     payload: error,
   };
 }
+
+
+export const patientSaveVisitWatcher = (patient) => {
+  return {
+    type: PATIENT_SAVE_VISIT_WATCHER,
+    payload: patient,
+  };
+};
+
+export const patientSaveVisitsRequest = () => {
+  return {
+    type: PATIENT_SAVE_VISIT_REQUEST,
+  };
+};
+export const patientSaveVisitSuccess = (patient) => {
+  return {
+    type: PATIENT_SAVE_VISIT_SUCCESS,
+    payload: patient,
+  };
+};
+
+export const patientSaveVisitFailure = (error) => {
+  return {
+    type: PATIENT_SAVE_VISIT_FAILURE,
+    payload: error,
+  };
+};
+
+export const patientInitializeVisitForm = (visit) => {
+  return {
+    type: PATIENT_INITIALIZE_VISIT_FORM,
+    payload: visit,
+  };
+};
+
+export const patientResetVisitForm = () => {
+  return {
+    type: PATIENT_RESET_VISIT_FORM
+  };
+};
+
+export const patientSavetWatcher = (patient) => {
+  return {
+    type: PATIENT_SAVE_WATCHER,
+    payload: patient,
+  };
+};
 
 export const patientSaveRequest = () => {
   return {

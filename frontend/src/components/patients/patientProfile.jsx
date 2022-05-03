@@ -1,15 +1,13 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { translate } from 'react-switch-lang';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PatientCard from './patientCard';
 import Breadcrumb from '../common/breadcrumb';
 import PatientHealthRecord from './patientHealthRecord';
 import PatientVisitHistory from './patientVisitHistory';
-import { patientGetByIdWatcher, patientInitialize } from '../../redux/patients/actions';
-import { LOADED, LOADING, SUCCEEDED } from '../../redux/statusTypes';
-import Loader from '../common/loader';
+import { patientGetByIdWatcher } from '../../redux/patients/actions';
 import PatientPersonalData from './patientPersonalData';
 
 function useQuery() {
@@ -17,7 +15,7 @@ function useQuery() {
 }
 
 const PatientProfile = (props) => {
-  const { patient, status } = useSelector((store) => store.Patient);
+  const { patient } = useSelector((store) => store.Patient);
   const dispatch = useDispatch();
 
   const { id } = useParams();

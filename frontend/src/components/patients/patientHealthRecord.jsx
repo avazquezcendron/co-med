@@ -23,17 +23,18 @@ const PatientHealthRecord = (props) => {
   const mode = query.get('mode');
 
   const { loggedUser } = useSelector((store) => store.UserLogin);
-
+  const { status: visitStatus } = useSelector((store) => store.Visit);
   const { patient, status } = useSelector((store) => store.Patient);
 
   const [dataTab, setdataTab] = useState('datos');
   const [isHealthRecord, setisHealthRecord] = useState(true);
 
   useEffect(() => {
+    setisHealthRecord(visitStatus !== LOADED);
     return () => {
       // dispatch(patientInitialize());
     };
-  }, []);
+  }, [visitStatus]);
 
   return (
     <Fragment>

@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Collapse } from 'reactstrap';
 import { useSelector } from 'react-redux';
 
@@ -8,8 +8,15 @@ import { SUCCEEDED, LOADED, FAILED } from '../../redux/statusTypes';
 
 const PatientCard = (props) => {
   const { patient, status } = useSelector((store) => store.Patient);
+  const { status: visitStatus } = useSelector((store) => store.Visit);
+  const { visits } = useSelector((store) => store.Visits);
 
   const [isProfile, setisProfile] = useState(true);
+
+  useEffect(() => {
+    setisProfile(visitStatus !== LOADED);
+  }, [visitStatus]);
+
   return (
     <Fragment>
       {status === LOADED || status === SUCCEEDED || status === FAILED ? (
@@ -18,16 +25,20 @@ const PatientCard = (props) => {
             <div className="row m-b-2 ">
               <div className="col-md-10">
                 <div className="row">
-                  <div className="col-auto">
+                  <div className="col-auto  text-center">
                     <img
                       className="img-70 rounded-circle"
                       alt=""
                       src={patient.avatarUrl || defaultuser}
                     />
+                    <br />
+                    <span className="badge badge-light text-info mt-2">
+                      {patient.age} años
+                    </span>
                   </div>
                   <div className="col">
                     <h5 className="mb-1">{patient.fullName}</h5>
-                    {patient.status === 'active' ? (
+                    {/* {patient.status === 'active' ? (
                       <span className="badge badge-success pull-right">
                         Activo
                       </span>
@@ -39,15 +50,63 @@ const PatientCard = (props) => {
                       <span className="badge badge-light pull-right">
                         Inactivo
                       </span>
-                    )}
-                    <h6 className="mb-0 text-muted">
-                      Número de H.C.{' '}
-                      <span className="badge badge-secondary bottom ">
-                        {patient.healthRecord?.healthRecordNumber}
-                      </span>
-                    </h6>
-                    {patient.lastVisit && (
-                      <p className="f-s-italic text-muted">{`Su última visita fue el ${patient.lastVisit}`}</p>
+                    )} */}
+                    <div className="row">
+                      <div className="col-md-4 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Obra Social
+                          </small>
+                          <small className="col-md-12 f-w-700">
+                            {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].healthInsuranceCompany.description : '-'}
+                          </small>
+                        </div>
+                      </div>
+                      <div className="col-md-3 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Plan
+                          </small>
+                          <small className="col-md-12 f-w-700">
+                          {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].plan.code : '-'}
+                          </small>
+                        </div>
+                      </div>
+                      <div className="col-md-5 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Nro. de Credencial
+                          </small>
+                          <small className="col-md-12 f-w-700">
+                          {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].cardNumber : '-'}
+                          </small>
+                        </div>
+                      </div>
+                      <div className="col-md-6 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Doc. Tipo: {patient.nationalIdType}
+                          </small>
+                          <small className="col-md-12 f-w-700">
+                            {patient.nationalId}
+                          </small>
+                        </div>
+                      </div><div className="col-md-6 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Nro. de H.C.
+                          </small>
+                          <small className="col-md-12 f-w-700">
+                            {patient.healthRecord?.healthRecordNumber}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+
+                    {visits?.length > 0 && (
+                      <p className="f-s-italic text-muted">{`Su última visita fue el ${new Date(
+                        visits[0].createdAt
+                      ).toLocaleDateString('es')}`}</p>
                     )}
                   </div>
                 </div>
@@ -82,9 +141,11 @@ const PatientCard = (props) => {
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString(
-                          'es-AR'
-                        ) : '-'}
+                        {patient.dateOfBirth
+                          ? new Date(patient.dateOfBirth).toLocaleDateString(
+                              'es-AR'
+                            )
+                          : '-'}
                       </p>
                     </div>
                   </div>
@@ -99,7 +160,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Edad</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.age  || '-'}</p>
+                      <p>{patient.age || '-'}</p>
                     </div>
                   </div>
 
@@ -150,7 +211,11 @@ const PatientCard = (props) => {
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {patient.address?.street ? patient.address?.street + ', ' + patient.address?.city : '-'}
+                        {patient.address?.street
+                          ? patient.address?.street +
+                            ', ' +
+                            patient.address?.city
+                          : '-'}
                       </p>
                     </div>
                   </div>
@@ -212,9 +277,12 @@ const PatientCard = (props) => {
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>
-                        {patient.contactPerson && patient.contactPerson.firstName ? patient.contactPerson.firstName +
-                          ' ' +
-                          patient.contactPerson.lastName : '-'}
+                        {patient.contactPerson &&
+                        patient.contactPerson.firstName
+                          ? patient.contactPerson.firstName +
+                            ' ' +
+                            patient.contactPerson.lastName
+                          : '-'}
                       </p>
                     </div>
                   </div>
@@ -223,7 +291,11 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Vínculo</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.bond ? patient.contactPerson?.bond : '-'}</p>
+                      <p>
+                        {patient.contactPerson?.bond
+                          ? patient.contactPerson?.bond
+                          : '-'}
+                      </p>
                     </div>
                   </div>
 
@@ -232,7 +304,11 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Teléfono de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.phoneNumber ? patient.contactPerson?.phoneNumber : '-'}</p>
+                      <p>
+                        {patient.contactPerson?.phoneNumber
+                          ? patient.contactPerson?.phoneNumber
+                          : '-'}
+                      </p>
                     </div>
                   </div>
                   <div className="col-md-6 b-l-light border-3">
@@ -240,7 +316,11 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Dirección de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.contactPerson?.addres ? patient.contactPerson?.address : '-'}</p>
+                      <p>
+                        {patient.contactPerson?.addres
+                          ? patient.contactPerson?.address
+                          : '-'}
+                      </p>
                     </div>
                   </div>
                   <div className="col-md-12">
@@ -248,11 +328,13 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Tags</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      {patient.tags ?.length > 0 ? patient.tags.map(x => 
-                        <span key={x.id} className="badge badge-info">
-                          {x.name}
-                        </span>
-                      ) : '-'}
+                      {patient.tags?.length > 0
+                        ? patient.tags.map((x) => (
+                            <span key={x.id} className="badge badge-info">
+                              {x.name}
+                            </span>
+                          ))
+                        : '-'}
                     </div>
                   </div>
                   <div className="col-md-12">
