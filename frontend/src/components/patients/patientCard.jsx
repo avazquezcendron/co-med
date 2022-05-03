@@ -51,15 +51,18 @@ const PatientCard = (props) => {
                         Inactivo
                       </span>
                     )} */}
-                    <div className="row">
+                    <div className="row  text-muted">
                       <div className="col-md-4 mb-2">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Obra Social
                           </small>
-                          <small className="col-md-12 f-w-700">
-                            {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].healthInsuranceCompany.description : '-'}
-                          </small>
+                          <span className="col-md-12 f-w-600">
+                            {patient.healthInsurances?.length > 0
+                              ? patient.healthInsurances[0]
+                                  .healthInsuranceCompany.description
+                              : '-'}
+                          </span>
                         </div>
                       </div>
                       <div className="col-md-3 mb-2">
@@ -67,9 +70,11 @@ const PatientCard = (props) => {
                           <small className="col-md-12 text-muted f-w-700">
                             Plan
                           </small>
-                          <small className="col-md-12 f-w-700">
-                          {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].plan.code : '-'}
-                          </small>
+                          <span className="col-md-12 f-w-600">
+                            {patient.healthInsurances?.length > 0
+                              ? patient.healthInsurances[0].plan.code
+                              : '-'}
+                          </span>
                         </div>
                       </div>
                       <div className="col-md-5 mb-2">
@@ -77,28 +82,31 @@ const PatientCard = (props) => {
                           <small className="col-md-12 text-muted f-w-700">
                             Nro. de Credencial
                           </small>
-                          <small className="col-md-12 f-w-700">
-                          {patient.healthInsurances?.length > 0 ? patient.healthInsurances[0].cardNumber : '-'}
+                          <span className="col-md-12 f-w-600">
+                            {patient.healthInsurances?.length > 0
+                              ? patient.healthInsurances[0].cardNumber
+                              : '-'}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-md-4 mb-2">
+                        <div className="row">
+                          <small className="col-md-12 text-muted f-w-700">
+                            Doc. Tipo: {patient.nationalIdType}
                           </small>
+                          <span className="col-md-12 f-w-600">
+                            {patient.nationalId}
+                          </span>
                         </div>
                       </div>
                       <div className="col-md-6 mb-2">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
-                            Doc. Tipo: {patient.nationalIdType}
-                          </small>
-                          <small className="col-md-12 f-w-700">
-                            {patient.nationalId}
-                          </small>
-                        </div>
-                      </div><div className="col-md-6 mb-2">
-                        <div className="row">
-                          <small className="col-md-12 text-muted f-w-700">
                             Nro. de H.C.
                           </small>
-                          <small className="col-md-12 f-w-700">
+                          <span className="col-md-12 f-w-600">
                             {patient.healthRecord?.healthRecordNumber}
-                          </small>
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -128,15 +136,17 @@ const PatientCard = (props) => {
           <Collapse isOpen={isProfile}>
             <div className="card">
               <div className="card-body">
-                <div className="row filter-cards-view">
+                <div className="row filter-cards-view text-muted">
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-id mr-1"></i>
                       <span className="f-w-600">Tipo de Documento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>{patient.nationalIdType || '-'}</p>
                     </div>
                     <div className="col-md-12">
+                      <i className="icofont icofont-calendar mr-1"></i>
                       <span className="f-w-600">Fecha Nacimiento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -151,12 +161,14 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-id mr-1"></i>
                       <span className="f-w-600">Nro. de Documento</span>
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>{patient.nationalId || '-'}</p>
                     </div>
                     <div className="col-md-12">
+                      <i className="icofont icofont-calendar mr-1"></i>
                       <span className="f-w-600">Edad</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -166,6 +178,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-world mr-1"></i>
                       <span className="f-w-600">Ncionalidad</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -174,6 +187,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-envelope mr-1"></i>
                       <span className="f-w-600">Email</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -183,6 +197,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-users-alt-4 mr-1"></i>
                       <span className="f-w-600">Sexo Biológico</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -193,6 +208,7 @@ const PatientCard = (props) => {
                       </p>
                     </div>
                     <div className="col-md-12">
+                      <i className="icofont icofont-mobile-phone mr-1"></i>
                       <span className="f-w-600">Teléfono</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -201,12 +217,14 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-users-social mr-1"></i>
                       <span className="f-w-600">Género Percibido</span>
                     </div>
                     <div className="col-md-12 m-b-10">
                       <p>{patient.gender || '-'}</p>
                     </div>
                     <div className="col-md-12">
+                      <i className="icofont icofont-social-google-map mr-1"></i>
                       <span className="f-w-600">Dirección</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -222,6 +240,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-first-aid-alt mr-1"></i>
                       <span className="f-w-600">Obra Social</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -235,6 +254,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-medical mr-1"></i>
                       <span className="f-w-600">Plan</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -248,6 +268,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-id-card mr-1"></i>
                       <span className="f-w-600">Nro. de Credencial</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -260,6 +281,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-calendar mr-1"></i>
                       <span className="f-w-600">Fecha Ingreso</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -273,6 +295,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-user-alt-4 mr-1"></i>
                       <span className="f-w-600">Persona de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -288,6 +311,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-social-meetme mr-1"></i>
                       <span className="f-w-600">Vínculo</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -301,6 +325,7 @@ const PatientCard = (props) => {
 
                   <div className="col-md-6">
                     <div className="col-md-12">
+                      <i className="icofont icofont-mobile-phone mr-1"></i>
                       <span className="f-w-600">Teléfono de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -313,6 +338,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-6 b-l-light border-3">
                     <div className="col-md-12">
+                      <i className="icofont icofont-social-google-map mr-1"></i>
                       <span className="f-w-600">Dirección de Contacto</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -325,6 +351,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-12">
                     <div className="col-md-12">
+                      <i className="icofont icofont-tag mr-1"></i>
                       <span className="f-w-600">Tags</span>
                     </div>
                     <div className="col-md-12 m-b-10">
@@ -339,6 +366,7 @@ const PatientCard = (props) => {
                   </div>
                   <div className="col-md-12">
                     <div className="col-md-12">
+                      <i className="icofont icofont-ui-text-chat mr-1"></i>
                       <span className="f-w-600">Biografía</span>
                     </div>
                     <div className="col-md-12 m-b-10">

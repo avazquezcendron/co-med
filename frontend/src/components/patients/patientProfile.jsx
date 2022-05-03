@@ -44,13 +44,13 @@ const PatientProfile = (props) => {
                   </div>
                 ) : (
                   <Fragment>
-                    <div className="col-lg-4  style-1 default-according faq-accordion">
+                    <div className="col-xl-4 col-lg-12  style-1 default-according faq-accordion">
                       <PatientCard />
                     </div>
-                    <div className="col-lg-8 style-1 default-according faq-accordion">
+                    <div className="col-xl-8 col-lg-12 style-1 default-according faq-accordion">
                       <PatientHealthRecord />
                     </div>
-                    <div className="col-md-12  style-1 default-according faq-accordion">
+                    <div className="col-xl-12 col-lg-12  style-1 default-according faq-accordion">
                       <PatientVisitHistory />
                     </div>
                   </Fragment>

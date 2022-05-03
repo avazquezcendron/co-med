@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import DataTable from 'react-data-table-component';
+import { TabContent, TabPane, Collapse } from 'reactstrap';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -25,6 +26,8 @@ const PatientVisitForm = (props) => {
   const dispatch = useDispatch();
 
   const { register, handleSubmit, setValue, errors } = useForm();
+
+  const [dataTab, setdataTab] = useState('prescripciones');
 
   const query = useQuery();
   const mode = query.get('mode');
@@ -78,9 +81,48 @@ const PatientVisitForm = (props) => {
       visitStatus === FAILED ||
       (mode === 'new' && visitStatus !== LOADING) ? (
         <Fragment>
-          <div className="col-md-9">
-            <h5>{'Consulta'}</h5>
-            <span>{'Detalle de la consulta del paciente.'}</span>
+          <div className="col-md-8 offset-md-1">
+            <div className="row text-muted bg-light b-r-10 p-50 b-primary">
+              <div className="col-md-3 mb-2">
+                <div className="row">
+                  <span className="col-md-12 f-w-700">
+                    <i className="icofont icofont-calendar mr-1"></i>Fecha
+                  </span>
+                  <span className="col-md-12 f-w-500">
+                    {new Date(visit.createdAt).toLocaleDateString('es')}
+                  </span>
+                </div>
+              </div>
+              <div className="col-md-3 mb-2">
+                <div className="row">
+                  <span className="col-md-12  f-w-700">
+                    <i className="icofont icofont-user-alt-4 mr-1"></i>Paciente
+                  </span>
+                  <span className="col-md-12 f-w-500">{patient.fullName}</span>
+                </div>
+              </div>
+              <div className="col-md-3 mb-2">
+                <div className="row">
+                  <span className="col-md-12  f-w-700">
+                    <i className="icofont icofont-doctor mr-1"></i>Atendido por
+                  </span>
+                  <span className="col-md-12 f-w-500">
+                    {visit.doctor.fullName}
+                  </span>
+                </div>
+              </div>
+              <div className="col-md-3 mb-2">
+                <div className="row">
+                  <span className="col-md-12  f-w-700">
+                    <i className="icofont icofont-stethoscope-alt mr-1"></i>
+                    Especialidades
+                  </span>
+                  <span className="col-md-12 f-w-500">
+                    {visit.doctor.specialities.join(', ')}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="col-md-3">
             <div className="text-right">
@@ -148,10 +190,11 @@ const PatientVisitForm = (props) => {
                     {''}
                   </label>
                   <div className="col-md-12">
-                    <input
+                    <textarea
                       className="form-control"
                       id="diagnosis"
-                      type="text"
+                      rows="5"
+                      spellCheck="false"
                       name="diagnosis"
                       defaultValue={visit.diagnosis}
                       ref={register({ required: true })}
@@ -188,10 +231,7 @@ const PatientVisitForm = (props) => {
                 <hr className="mt-4 mb-4" />
                 <h6>{'Notas'}</h6>
                 <div className="form-group row">
-                  <label
-                    className="col-md-2 col-form-label"
-                    htmlFor="notes"
-                  >
+                  <label className="col-md-2 col-form-label" htmlFor="notes">
                     {''}
                   </label>
                   <div className="col-md-12">
@@ -227,6 +267,92 @@ const PatientVisitForm = (props) => {
                   </div>
                 )}
               </fieldset>
+              <hr className="mt-4 mb-4" />
+              <h6>{'Indicaciones'}</h6>
+              <p className="text-muted">
+                Indicaiones, órdenes de estudios, prescripciones, órdenes de laboratorio y demás información
+                pertiente a la consulta.
+              </p>
+              <ul className="nav nav-tabs nav-secondary m-b-30">
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'prescripciones' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('prescripciones')}
+                  >
+                    <i className="icofont icofont-pills"></i>
+                    Prescripciones
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'laboratorios' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('laboratorios')}
+                  >
+                    <i className="icofont icofont-laboratory"></i>
+                    Órdenes de Laboratorios
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'estudioscompl' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('estudioscompl')}
+                  >
+                    <i className="icofont icofont-heartbeat"></i>
+                    Órdenes de Estudios
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'metricas' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('metricas')}
+                  >
+                    <i className="icofont icofont-pulse"></i>
+                    Métricas y Signos Vitales
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'otros' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('otros')}
+                  >
+                    <i className="icofont icofont-file-text"></i>
+                    Otros
+                  </a>
+                </li>
+              </ul>
+              <TabContent activeTab={dataTab}>
+                <TabPane tabId="prescripciones" className="fade show">
+                  <div className="col-md-12"></div>
+                </TabPane>
+
+                <TabPane tabId="laboratorios" className="fade show">
+                  <div className="col-md-12"></div>
+                </TabPane>
+                <TabPane tabId="estudioscompl" className="fade show">
+                  <div className="col-md-12"></div>
+                </TabPane>
+                <TabPane tabId="metricas" className="fade show">
+                  <div className="col-md-12"></div>
+                </TabPane>
+                <TabPane tabId="otros" className="fade show">
+                  <div className="col-md-12"></div>
+                </TabPane>
+              </TabContent>
             </form>
           </div>
         </Fragment>
