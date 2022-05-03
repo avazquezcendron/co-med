@@ -179,3 +179,13 @@ export const getPatientsByFilter = async (filter, loggedUser) => {
     );
   }
 };
+
+export const getVisits = async (patientId, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/patient/${patientId}/visit`, config);
+  return data;
+};

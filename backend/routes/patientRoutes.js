@@ -21,6 +21,12 @@ router
   .get(checkUserAuth, asyncHandler(patientController.getHealthRecord))
   .put(checkUserAuth, asyncHandler(patientController.updateHealthRecord))
 
+  router
+  .route('/:id/visit')
+  .get(checkUserAuth, asyncHandler(patientController.getVisits))
+  .put(checkUserAuth, asyncHandler(patientController.updateVisit))
+  .post(checkUserAuth, asyncHandler(patientController.createVisit))
+
 router
   .route('/:id/inactivate')
   .get(checkUserAuth, asyncHandler(patientController.inactivate))

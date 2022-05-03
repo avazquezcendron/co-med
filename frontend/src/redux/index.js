@@ -12,7 +12,7 @@ import TodoApp from './todo/reducer';
 import Customizer from './customizer/reducer';
 import { AppointmentsReducer, AppointmentFormReducer } from './appointments/reducer';
 import { UserLoginReducer, UsersReducer } from './user/reducer';
-import { PatientsReducer, PatientReducer } from './patients/reducer';
+import { PatientsReducer, PatientReducer, VisitsReducer } from './patients/reducer';
 import { DoctorsReducer, DoctorReducer } from './doctors/reducer';
 
 const reducers = combineReducers({
@@ -23,6 +23,7 @@ const reducers = combineReducers({
     Users: UsersReducer,
     Patients: PatientsReducer,
     Patient: PatientReducer,
+    Visits: VisitsReducer,
     Doctors: DoctorsReducer,
     Doctor: DoctorReducer,
     Customizer

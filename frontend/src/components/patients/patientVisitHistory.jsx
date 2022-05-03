@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { Collapse } from 'reactstrap';
 import {
@@ -8,15 +9,42 @@ import {
 import 'react-vertical-timeline-component/style.min.css';
 import es from 'date-fns/locale/es';
 import { Star, Search, Circle } from 'react-feather';
+import { useSelector, useDispatch } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import SweetAlert from 'sweetalert2';
+
+import notFoundImg from '../../assets/images/search-not-found.png';
+import { patientGetVisitsWatcher } from '../../redux/patients/actions';
+import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
+import Loader from '../common/loader';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 const PatientVisitHistory = (props) => {
   registerLocale('es', es);
 
+  const query = useQuery();
+  const mode = query.get('mode');
+
+  const { loggedUser } = useSelector((store) => store.UserLogin);
+  const { patient, status: patientStatus } = useSelector(
+    (store) => store.Patient
+  );
+  const { visits, status: visitsStatus } = useSelector((store) => store.Visits);
+  const dispatch = useDispatch();
+
   const [isVisitHistory, setisVisitHistory] = useState(true);
-  const patient = props.patient;
-    
+
   const [startDate, setstartDate] = useState(new Date());
   const [endDate, setendDate] = useState(null);
+
+  useEffect(() => {
+    if (patient.id) {
+      dispatch(patientGetVisitsWatcher(patient.id));
+    }
+  }, [patient]);
 
   const handleChange = (dates) => {
     const [start, end] = dates;
@@ -30,219 +58,186 @@ const PatientVisitHistory = (props) => {
   };
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <div className="row mb-2 ">
-          <div className="col-md-9">
-            <h4 className="card-title mb-0">
-              {'Historial de Consultas'}
-            </h4>
+    <Fragment>
+      {visitsStatus === LOADED ||
+      visitsStatus === SUCCEEDED ||
+      visitsStatus === FAILED ||
+      (mode === 'new' && visitsStatus !== LOADING) ? (
+        <div className="card">
+          <div className="card-header">
+            <div className="row mb-2 ">
+              <div className="col-md-9">
+                <h4 className="card-title mb-0">{'Historial de Consultas'}</h4>
+              </div>
+              <div className="col-md-3">
+                <button
+                  className="btn btn-link pl-0 pull-right"
+                  onClick={() => setisVisitHistory(!isVisitHistory)}
+                  data-toggle="collapse"
+                  data-target="#collapseicon3"
+                  aria-expanded={isVisitHistory}
+                  aria-controls="collapseicon3"
+                >
+                  {''}
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="col-md-3">
-            <button
-              className="btn btn-link pl-0 pull-right"
-              onClick={() => setisVisitHistory(!isVisitHistory)}
-              data-toggle="collapse"
-              data-target="#collapseicon3"
-              aria-expanded={isVisitHistory}
-              aria-controls="collapseicon3"
-            >
-              {''}
-            </button>
-          </div>
-        </div>
-      </div>
-      <Collapse isOpen={isVisitHistory}>
-        {/* <div className="card-body"> */}
-          <div className="row">
-            <div className="col-md-3">
-              <div className=" xs-mt-search">
-                <div className=" faq-header">
-                  <h5>{'Filtrar por fecha y/o especialidad'}</h5>
-                </div>
-                <div className=" faq-body">
-                  <div className="datepicker-here m-b-10" data-language="es">
-                    <DatePicker
-                      className="form-control digits"
-                      // selected={startDate}
-                      onChange={handleChange}
-                      locale="es"
-                      inline
-                      selectsRange
-                      startDate={startDate}
-                      endDate={endDate}
-                    />
+          <Collapse isOpen={isVisitHistory}>
+            {/* <div className="card-body"> */}
+            <div className="row">
+              <div className="col-md-3">
+                <div className=" xs-mt-search">
+                  <div className=" faq-header">
+                    <h5>{'Filtrar por fecha y/o especialidad'}</h5>
                   </div>
-                  <div className="faq-form">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Ingresar especialidad.."
-                    />
-                    <Search className="search-icon" />
+                  <div className=" faq-body">
+                    <div className="datepicker-here m-b-10" data-language="es">
+                      <DatePicker
+                        className="form-control digits"
+                        // selected={startDate}
+                        onChange={handleChange}
+                        locale="es"
+                        inline
+                        selectsRange
+                        startDate={startDate}
+                        endDate={endDate}
+                      />
+                    </div>
+                    <div className="faq-form">
+                      <input
+                        className="form-control"
+                        type="text"
+                        placeholder="Ingresar especialidad.."
+                      />
+                      <Search className="search-icon" />
+                    </div>
                   </div>
                 </div>
               </div>
+              <div className="col-md-9">
+                <VerticalTimeline layout={'1-column'} className="m-b-30">
+                  {visits.length > 0 ? (
+                    visits.map((visit, index) =>
+                      index < visits.length - 1 ? (
+                        <VerticalTimelineElement
+                          className="vertical-timeline-element--work"
+                          animate={true}
+                          // date="25/01/2021 14:00 PM"
+                          icon={<Circle />}
+                        >
+                          <div className="blog-box blog-list row">
+                            <div className="col-md-8">
+                              <div className="blog-details">
+                                <div className="blog-date digits">
+                                  <span>
+                                    {new Date(visit.createdAt).getDate()}
+                                  </span>{' '}
+                                  {new Date(visit.createdAt).toLocaleDateString(
+                                    'es-AR',
+                                    { year: 'numeric', month: 'long' }
+                                  )}
+                                </div>
+                                <h6>{visit.reason} </h6>
+                                <div className="blog-bottom-content">
+                                  <ul className="blog-social">
+                                    <li>
+                                      {`Atendido por: ${visit.doctor.fullName}`}
+                                    </li>
+                                    <li className="digits">
+                                      {`${visit.doctor.specialities.join(
+                                        ', '
+                                      )}`}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-4">
+                              <button
+                                className="btn btn-primary "
+                                type="submit"
+                              >
+                                <i className="fa fa-eye m-r-5"></i>
+                                {'Ver Consulta Completa'}
+                              </button>
+                            </div>
+                          </div>
+                        </VerticalTimelineElement>
+                      ) : (
+                        <VerticalTimelineElement
+                          iconStyle={{
+                            background: 'rgb(16, 204, 82)',
+                            color: '#fff',
+                          }}
+                          icon={<Star />}
+                          animate={true}
+                        >
+                          <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
+                            <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
+                              <i
+                                className="icon-signal"
+                                title={'Primera Consulta'}
+                              ></i>
+                            </div>
+                            <div className="col-md-8 ">
+                              <div className="blog-details">
+                                <div className="blog-date digits">
+                                  <span>
+                                    {new Date(visit.createdAt).getDate()}
+                                  </span>{' '}
+                                  {new Date(visit.createdAt).toLocaleDateString(
+                                    'es-AR',
+                                    { year: 'numeric', month: 'long' }
+                                  )}
+                                </div>
+                                <h6>{visit.reason} </h6>
+                                <div className="blog-bottom-content">
+                                  <ul className="blog-social">
+                                    <li>
+                                      {`Atendido por: ${visit.doctor.fullName}`}
+                                    </li>
+                                    <li className="digits">
+                                      {`${visit.doctor.specialities.join(
+                                        ', '
+                                      )}`}
+                                    </li>
+                                  </ul>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="col-md-4">
+                              <button
+                                className="btn btn-primary "
+                                type="submit"
+                              >
+                                <i className="fa fa-eye m-r-5"></i>
+                                {'Ver Consulta Completa'}
+                              </button>
+                            </div>
+                          </div>
+                        </VerticalTimelineElement>
+                      )
+                    )
+                  ) : (
+                    <div className="col-md-12 text-center m-50">
+                      <img className="img-fluid" src={notFoundImg} alt="" />
+                      <br />
+                      <span className="txt-info">
+                        El paciente aún no tiene consultas cargadas...
+                      </span>
+                    </div>
+                  )}
+                </VerticalTimeline>
+              </div>
             </div>
-            <div className="col-md-9">
-              <VerticalTimeline layout={'1-column'} className="m-b-30">
-                <VerticalTimelineElement
-                  className="vertical-timeline-element--work"
-                  animate={true}
-                  // date="25/01/2021 14:00 PM"
-                  icon={<Circle />}
-                >
-                  <div className="blog-box blog-list row">
-                    <div className="col-md-8">
-                      <div className="blog-details">
-                        <div className="blog-date digits">
-                          <span>{'10'}</span> {'Enero 2022'}
-                        </div>
-                        <h6>{'Síntomas compatibles con COVID'} </h6>
-                        <div className="blog-bottom-content">
-                          <ul className="blog-social">
-                            <li>{'Atendido por: Dra. Tayhana Ortolá'}</li>
-                            <li className="digits">{'Clínica Médica, Virtual'}</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <button className="btn btn-primary " type="submit">
-                        <i className="fa fa-eye m-r-5"></i>
-                        {'Ver Consulta Completa'}
-                      </button>
-                    </div>
-                  </div>
-                </VerticalTimelineElement>
-                <VerticalTimelineElement
-                  className="vertical-timeline-element--work"
-                  animate={true}
-                  // date="25/01/2021 14:00 PM"
-                  icon={<Circle />}
-                >
-                  <div className="blog-box blog-list row">
-                    <div className="col-md-8">
-                      <div className="blog-details">
-                        <div className="blog-date digits">
-                          <span>{'10'}</span> {'Enero 2022'}
-                        </div>
-                        <h6>{'Síntomas compatibles con COVID'} </h6>
-                        <div className="blog-bottom-content">
-                          <ul className="blog-social">
-                            <li>{'Atendido por: Dra. Tayhana Ortolá'}</li>
-                            <li className="digits">{'Clínica Médica, Presencial'}</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <button className="btn btn-primary " type="submit">
-                        <i className="fa fa-eye m-r-5"></i>
-                        {'Ver Consulta Completa'}
-                      </button>
-                    </div>
-                  </div>
-                </VerticalTimelineElement>
-                <VerticalTimelineElement
-                  className="vertical-timeline-element--work"
-                  animate={true}
-                  // date="25/01/2021 14:00 PM"
-                  icon={<Circle />}
-                >
-                  <div className="blog-box blog-list row">
-                    <div className="col-md-8">
-                      <div className="blog-details">
-                        <div className="blog-date digits">
-                          <span>{'10'}</span> {'Enero 2022'}
-                        </div>
-                        <h6>{'Síntomas compatibles con COVID'} </h6>
-                        <div className="blog-bottom-content">
-                          <ul className="blog-social">
-                            <li className="p-r-10">
-                              {'Atendido por: Dra. Tayhana Ortolá'}
-                            </li>
-                            <li className="digits">{'Clínica Médica, Presencial'}</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <button className="btn btn-primary " type="submit">
-                        <i className="fa fa-eye m-r-5"></i>
-                        {'Ver Consulta Completa'}
-                      </button>
-                    </div>
-                  </div>
-                </VerticalTimelineElement>
-                <VerticalTimelineElement
-                  className="vertical-timeline-element--work"
-                  animate={true}
-                  // date="25/01/2021 14:00 PM"
-                  icon={<Circle />}
-                >
-                  <div className="blog-box blog-list row">
-                    <div className="col-md-8">
-                      <div className="blog-details">
-                        <div className="blog-date digits">
-                          <span>{'10'}</span> {'Enero 2022'}
-                        </div>
-                        <h6>{'Síntomas compatibles con COVID'} </h6>
-                        <div className="blog-bottom-content">
-                          <ul className="blog-social">
-                            <li>{'Atendido por: Dra. Tayhana Ortolá'}</li>
-                            <li className="digits">{'Clínica Médica, Virtual'}</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <button className="btn btn-primary " type="submit">
-                        <i className="fa fa-eye m-r-5"></i>
-                        {'Ver Consulta Completa'}
-                      </button>
-                    </div>
-                  </div>
-                </VerticalTimelineElement>
-                <VerticalTimelineElement
-                  iconStyle={{
-                    background: 'rgb(16, 204, 82)',
-                    color: '#fff',
-                  }}
-                  icon={<Star />}
-                >
-                  <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
-                    <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
-                      <i className="icon-signal" title={'Primera Consulta'}></i>
-                    </div>
-                    <div className="col-md-8 ">
-                      <div className="blog-details">
-                        <div className="blog-date digits">
-                          <span>{'10'}</span> {'Enero 2022'}
-                        </div>
-                        <h6>{'Síntomas compatibles con COVID'} </h6>
-                        <div className="blog-bottom-content">
-                          <ul className="blog-social">
-                            <li>{'Atendido por: Dra. Tayhana Ortolá'}</li>
-                            <li className="digits">{'Clínica Médica, Presencial'}</li>
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <button className="btn btn-primary " type="submit">
-                        <i className="fa fa-eye m-r-5"></i>
-                        {'Ver Consulta Completa'}
-                      </button>
-                    </div>
-                  </div>
-                </VerticalTimelineElement>
-              </VerticalTimeline>
-            </div>
-          </div>                  
-        {/* </div>                   */}
-      </Collapse>
-    </div>
+            {/* </div>                   */}
+          </Collapse>
+        </div>
+      ) : (
+        <Loader show={true} />
+      )}
+    </Fragment>
   );
 };
 

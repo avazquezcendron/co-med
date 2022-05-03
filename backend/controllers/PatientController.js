@@ -2,6 +2,7 @@ import BaseController from './BaseController.js';
 import Patient from '../models/patientModel.js';
 import HealthRecord from '../models/healthRecordModel.js';
 import Prescription from '../models/prescriptionModel.js';
+import Visit from '../models/visitModel.js';
 
 class PatientController extends BaseController {
   constructor() {
@@ -9,7 +10,11 @@ class PatientController extends BaseController {
 
     this.updateHealthRecord = this.updateHealthRecord.bind(this);
     this.getHealthRecord = this.getHealthRecord.bind(this);
-    this._applyVisibilityByUserRole = this._applyVisibilityByUserRole.bind(this);
+    this._applyVisibilityByUserRole =
+      this._applyVisibilityByUserRole.bind(this);
+    this.getVisits = this.getVisits.bind(this);
+    this.createVisit = this.createVisit.bind(this);
+    this.updateVisit = this.updateVisit.bind(this);
   }
 
   /**
@@ -65,17 +70,22 @@ class PatientController extends BaseController {
       .populate({
         path: 'healthRecord',
       });
-    
+
     let patientsDTO = patients;
     if (!req.user.isAdmin) {
       if (req.user.isDoctor) {
-        patientsDTO = patients.filter(x => x.healthRecord?.visits.includes(x => x.doctor._id.equals(req.user.doctor?._id)));// TODO: pasar al query
-      }      
-      else {
+        patientsDTO = patients.filter((x) =>
+          x.healthRecord?.visits.includes((x) =>
+            x.doctor._id.equals(req.user.doctor?._id)
+          )
+        ); // TODO: pasar al query
+      } else {
         // TODO: analizar si hace "TANTA falta" el filtro de privacidad en el getAll
-        patientsDTO = patients.map(x => this._applyVisibilityByUserRole(req.user, x));
+        patientsDTO = patients.map((x) =>
+          this._applyVisibilityByUserRole(req.user, x)
+        );
       }
-    }    
+    }
     res.status(200).json(patientsDTO);
   }
 
@@ -110,7 +120,9 @@ class PatientController extends BaseController {
         },
       });
     if (model) {
-      return res.status(200).json(this._applyVisibilityByUserRole(req.user, model));
+      return res
+        .status(200)
+        .json(this._applyVisibilityByUserRole(req.user, model));
     } else {
       return res.status(404).json('Paciente inexistente.');
     }
@@ -180,6 +192,80 @@ class PatientController extends BaseController {
    * @return {Object} res The response object
    */
   async updateHealthRecord(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      if (patient.__v !== req.body.patientVersion) {
+        return res
+          .status(409)
+          .json(
+            'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+          );
+      }
+      const healthRecord = await HealthRecord.findById(req.body.id);
+      if (healthRecord.__v !== req.body.__v) {
+        return res
+          .status(409)
+          .json(
+            'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
+          );
+      }
+      for (const [key, value] of Object.entries(req.body)) {
+        healthRecord[key] = value;
+      }
+      await healthRecord.save();
+      return this.getById(req, res, next);
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async getVisits(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const visits = await Visit.find({
+        healthRecord: patient.healthRecord._id,
+      }).sort({ createdAt: 'desc' }).populate({path: 'doctor'});
+      if (visits) {
+        return res.status(200).json(visits);
+      } else {
+        return res
+          .status(404)
+          .json('El Paciente no tiene consultas registradas.');
+      }
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async updateVisit(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      if (patient.__v !== req.body.patientVersion) {
+        return res
+          .status(409)
+          .json(
+            'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+          );
+      }
+      const healthRecord = await HealthRecord.findById(req.body.id);
+      if (healthRecord.__v !== req.body.__v) {
+        return res
+          .status(409)
+          .json(
+            'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
+          );
+      }
+      for (const [key, value] of Object.entries(req.body)) {
+        healthRecord[key] = value;
+      }
+      await healthRecord.save();
+      return this.getById(req, res, next);
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async createVisit(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
       if (patient.__v !== req.body.patientVersion) {
