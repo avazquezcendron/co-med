@@ -1,13 +1,18 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 const laboratoryExamSchema = mongoose.Schema(
   {
-    value: { type: String, required: true },    
-    laboratoryType: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'LaboratoryType',
-    },
+    fileUrl: { type: String },
+    laboratories: [
+      {
+        value: { type: String, required: true },
+        laboratorType: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: 'LaboratoryType',
+        },
+      },
+    ],
     healthRecord: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -17,12 +22,12 @@ const laboratoryExamSchema = mongoose.Schema(
   {
     timestamps: true,
   }
-)
-  
+);
+
 laboratoryExamSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
 });
 
-const LaboratoryExam = mongoose.model('LaboratoryExam', laboratoryExamSchema)
+const LaboratoryExam = mongoose.model('LaboratoryExam', laboratoryExamSchema);
 
-export default LaboratoryExam
+export default LaboratoryExam;

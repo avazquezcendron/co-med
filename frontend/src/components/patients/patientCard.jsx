@@ -23,7 +23,7 @@ const PatientCard = (props) => {
         <div className="card">
           <div className="card-header">
             <div className="row m-b-2 ">
-              <div className="col-md-10">
+              <div className="col-md-11">
                 <div className="row">
                   <div className="col-auto  text-center">
                     <img
@@ -36,8 +36,9 @@ const PatientCard = (props) => {
                       {patient.age} años
                     </span>
                   </div>
-                  <div className="col">
+                  <div className="col bg-light b-r-10 text-muted">
                     <h5 className="mb-1">{patient.fullName}</h5>
+                    <hr className="mt-1 mb-1" />
                     {/* {patient.status === 'active' ? (
                       <span className="badge badge-success pull-right">
                         Activo
@@ -51,13 +52,13 @@ const PatientCard = (props) => {
                         Inactivo
                       </span>
                     )} */}
-                    <div className="row  text-muted">
+                    <div className="row p-1">
                       <div className="col-md-4 mb-2">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Obra Social
                           </small>
-                          <span className="col-md-12 f-w-600">
+                          <span className="col-md-12 f-w-500 f-12">
                             {patient.healthInsurances?.length > 0
                               ? patient.healthInsurances[0]
                                   .healthInsuranceCompany.description
@@ -70,7 +71,7 @@ const PatientCard = (props) => {
                           <small className="col-md-12 text-muted f-w-700">
                             Plan
                           </small>
-                          <span className="col-md-12 f-w-600">
+                          <span className="col-md-12 f-w-500 f-12">
                             {patient.healthInsurances?.length > 0
                               ? patient.healthInsurances[0].plan.code
                               : '-'}
@@ -82,29 +83,29 @@ const PatientCard = (props) => {
                           <small className="col-md-12 text-muted f-w-700">
                             Nro. de Credencial
                           </small>
-                          <span className="col-md-12 f-w-600">
+                          <span className="col-md-12 f-w-500 f-12">
                             {patient.healthInsurances?.length > 0
                               ? patient.healthInsurances[0].cardNumber
                               : '-'}
                           </span>
                         </div>
                       </div>
-                      <div className="col-md-4 mb-2">
+                      <div className="col-md-4 ">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Doc. Tipo: {patient.nationalIdType}
                           </small>
-                          <span className="col-md-12 f-w-600">
+                          <span className="col-md-12 f-w-500 f-12">
                             {patient.nationalId}
                           </span>
                         </div>
                       </div>
-                      <div className="col-md-6 mb-2">
+                      <div className="col-md-6 ">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Nro. de H.C.
                           </small>
-                          <span className="col-md-12 f-w-600">
+                          <span className="col-md-12 f-w-500 f-12">
                             {patient.healthRecord?.healthRecordNumber}
                           </span>
                         </div>
@@ -119,7 +120,7 @@ const PatientCard = (props) => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-2">
+              <div className="col-md-1">
                 <button
                   className="btn btn-link pl-0 pull-right"
                   onClick={() => setisProfile(!isProfile)}

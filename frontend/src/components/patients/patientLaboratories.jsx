@@ -71,7 +71,10 @@ const PatientLaboratories = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Laboratorios'}</h5>
-                  <span>{'Exámenes de laboratorio del paciente.'}</span>
+                  <span className="text-muted f-12 m-t-5"
+                    style={{
+                      letterSpacing: 1,
+                    }}>{'Exámenes de laboratorio del paciente.'}</span>
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">

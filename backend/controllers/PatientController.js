@@ -224,7 +224,11 @@ class PatientController extends BaseController {
     if (patient) {
       const visits = await Visit.find({
         healthRecord: patient.healthRecord?._id,
-      }).sort({ createdAt: 'desc' }).populate({path: 'doctor'});
+      }).sort({ createdAt: 'desc' })
+        .populate({ path: 'doctor' })
+        .populate({ path: 'studyOrders.studyType' })
+        .populate({ path: 'laboratoryOrders', populate: { path: 'laboratoryType' } })
+        .populate({ path: 'prescriptions.drug' });
       if (visits) {
         return res.status(200).json(visits);
       } else {

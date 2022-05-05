@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const studyOrderSchema = mongoose.Schema(
   {
-    instructions: { type: String, required: true },
+    indications: { type: String, required: true },
     diagnosis: { type: String, required: true },
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
@@ -17,29 +17,32 @@ const studyOrderSchema = mongoose.Schema(
 
 const laboratoryOrderSchema = mongoose.Schema(
   {
-    instructions: { type: String, required: true },
+    indications: { type: String, required: true },
     diagnosis: { type: String, required: true },
-    laboratory: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'LaboratoryType',
-    },
+    laboratories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'LaboratoryType',
+      },
+    ],
   },
   {
     timestamps: true,
-    optimisticConcurrency: true
+    optimisticConcurrency: true,
   }
 );
 
 const visitSchema = mongoose.Schema(
   {
     reason: { type: String, required: true },
-    notes: { type: String, required: true },
+    notes: { type: String, required: false },
     diagnosis: { type: String, required: true },
     symptom: { type: String, required: true },
-    evaluation: { type: String, required: true },
-    studyOrders: [ studyOrderSchema ],
-    laboratoryOrders: [ laboratoryOrderSchema ],
+    evaluation: { type: String, required: false },
+    indications: { type: String, required: false },
+    studyOrders: [studyOrderSchema],
+    laboratoryOrders: [laboratoryOrderSchema],
     healthRecord: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -64,7 +67,7 @@ const visitSchema = mongoose.Schema(
 );
 
 visitSchema.set('toJSON', {
-  virtuals: true
+  virtuals: true,
 });
 
 const Visit = mongoose.model('Visit', visitSchema);

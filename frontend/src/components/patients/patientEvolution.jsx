@@ -32,7 +32,10 @@ const PatientPrescriptions = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Evolución'}</h5>
-                  <span>
+                  <span className="text-muted f-12 m-t-5"
+                    style={{
+                      letterSpacing: 1,
+                    }}>
                     {'Gráficos y reportes de la evolución del paciente.'}
                   </span>
                 </div>

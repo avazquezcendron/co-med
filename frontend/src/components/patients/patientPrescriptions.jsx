@@ -32,9 +32,9 @@ const PatientPrescriptions = (props) => {
   };
 
   const addPrescription = () => {
-    // prescriptionModalToggle();
-  };  
-    
+    prescriptionModalToggle();
+  };
+
   const paginationComponentOptions = {
     rowsPerPageText: 'Filas por página',
     rangeSeparatorText: 'de',
@@ -71,7 +71,14 @@ const PatientPrescriptions = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Prescripciones'}</h5>
-                  <span>{'Prescripciones del paciente.'}</span>
+                  <span
+                    className="text-muted f-12 m-t-5"
+                    style={{
+                      letterSpacing: 1,
+                    }}
+                  >
+                    {'Prescripciones del paciente.'}
+                  </span>
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">

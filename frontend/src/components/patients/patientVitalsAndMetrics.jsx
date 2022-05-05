@@ -71,7 +71,10 @@ const PatientVitalsAndMetrics = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Estudios Complementarios'}</h5>
-                  <span>{'Métricas y signos vitales del paciente.'}</span>
+                  <span className="text-muted f-12 m-t-5"
+                    style={{
+                      letterSpacing: 1,
+                    }}>{'Métricas y signos vitales del paciente.'}</span>
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">

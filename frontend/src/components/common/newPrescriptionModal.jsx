@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  Fragment,
-  Component,
-} from 'react';
+import React, { useState, useEffect, useRef, Fragment, Component } from 'react';
 import { Modal, ModalHeader, ModalBody, UncontrolledTooltip } from 'reactstrap';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
@@ -15,13 +9,11 @@ import ReactToPrint from 'react-to-print';
 
 import * as entityService from '../../services/entity.service';
 import logo from '../../assets/images/co-med-logo.jpg';
-// import logo2 from '../../assets/images/co-med-logo-2.png';
-// import logo3 from '../../assets/images/co-med-logo-3.png';
-// import logogris from '../../assets/images/co-med-logo-gris.jpg';
 
 const NewPrescriptionModalComponent = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const { patient } = useSelector((store) => store.Patient);
+  const { visit } = useSelector((store) => store.Visit);
   const { doctor } = useSelector((store) => store.Doctor);
 
   const { register, handleSubmit, errors, setError, clearErrors } = useForm();
@@ -40,7 +32,7 @@ const NewPrescriptionModalComponent = (props) => {
     drugs: [],
     doctor: doctor || loggedUser.doctor || {},
     healthRecord: patient.healthRecord || {},
-    visit: {}
+    visit: visit || {},
   });
 
   const [quantity, setQuantity] = useState(0);
@@ -57,10 +49,16 @@ const NewPrescriptionModalComponent = (props) => {
   }, []);
 
   const handleSubmitForm = (data) => {
+    if (prescriptionDrugsList.length <= 0) {
+      setError('drugs', {});
+      return false;
+    } else {
+      clearErrors('drugs');
+    }
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
-        text: `Se dará de alta al paciente ${data.firstName} ${data.lastName}.`,
+        text: `Se generará la prescripción para el paciente ${patient.fullName}.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -69,7 +67,7 @@ const NewPrescriptionModalComponent = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          props.newPrescriptionModalToggle();
+          props.handleSavePrescription && props.handleSavePrescription({ ...data, drugs: prescriptionDrugsList});
         }
       });
     } else {
@@ -91,10 +89,10 @@ const NewPrescriptionModalComponent = (props) => {
       clearErrors('quantity');
     }
     if (!indications) {
-      setError('indications', {});
+      setError('drugsIndications', {});
       return false;
     } else {
-      clearErrors('indications');
+      clearErrors('drugsIndications');
     }
     return true;
   };
@@ -104,6 +102,7 @@ const NewPrescriptionModalComponent = (props) => {
     setQuantity(0);
     setIndications('');
     setcurrentIndex(-1);
+    clearErrors('drugs');
   };
 
   const addDrugToPrescription = (e) => {
@@ -142,30 +141,14 @@ const NewPrescriptionModalComponent = (props) => {
 
   const handleDrugsChange = (selected) => {
     setprescriptionDrugs(selected);
-    if (selected.length <= 0) {
-      setError('drug', {});
-    } else {
-      clearErrors('drug');
-    }
   };
 
   const handleQuantityChange = (quantity) => {
     setQuantity(quantity);
-    if (!quantity || quantity <= 0) {
-      setError('quantity', {});
-      return;
-    } else {
-      clearErrors('quantity');
-    }
   };
 
   const handleIndicationsChange = (indications) => {
     setIndications(indications);
-    if (!indications) {
-      setError('indications', {});
-    } else {
-      clearErrors('indications');
-    }
   };
 
   const handleRowClick = (pDrug, index) => {
@@ -219,10 +202,10 @@ const NewPrescriptionModalComponent = (props) => {
               <div className="col-md-4">
                 <div className="row">
                   <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                    {'Número de H.C.'}
+                    Doc. Tipo: {patient.nationalIdType}
                   </p>
                   <p className="col-md-12 ">
-                    <b>{patient.healthRecord?.healthRecordNumber}</b>
+                    <b>{patient.nationalId}</b>
                   </p>
                 </div>
               </div>
@@ -236,7 +219,8 @@ const NewPrescriptionModalComponent = (props) => {
                   <p className="col-md-12">
                     <b>
                       {patient.healthInsurances?.length > 0
-                        ? patient.healthInsurances[0].healthInsuranceCompany?.description
+                        ? patient.healthInsurances[0].healthInsuranceCompany
+                            ?.description
                         : ''}
                     </b>
                   </p>
@@ -287,11 +271,16 @@ const NewPrescriptionModalComponent = (props) => {
                     name="diagnosis"
                     id="diagnosis"
                     type="text"
-                    onChange={(e) => setprescription({...prescription, diagnosis: e.target.value})}
+                    onChange={(e) =>
+                      setprescription({
+                        ...prescription,
+                        diagnosis: e.target.value,
+                      })
+                    }
                     ref={register({ required: true })}
                   />
                   <span style={{ color: 'red' }}>
-                    {errors.firstName && 'Ingrese un valor.'}
+                    {errors.diagnosis && 'Ingrese un valor.'}
                   </span>
                 </div>
               </div>
@@ -301,10 +290,15 @@ const NewPrescriptionModalComponent = (props) => {
                 <div className="col-md-12">
                   <textarea
                     className="form-control"
-                    name="generalIndications"
-                    id="generalIndications"
+                    name="indications"
+                    id="indications"
                     rows="3"
-                    onChange={(e) => setprescription({...prescription, indications: e.target.value})}
+                    onChange={(e) =>
+                      setprescription({
+                        ...prescription,
+                        indications: e.target.value,
+                      })
+                    }
                     ref={register({ required: false })}
                   />
                 </div>
@@ -405,15 +399,15 @@ const NewPrescriptionModalComponent = (props) => {
                 <div className="col-md-12">
                   <textarea
                     className="form-control"
-                    name="indications"
-                    id="indications"
+                    name="drugsIndications"
+                    id="drugsIndications"
                     rows="3"
                     value={indications}
                     onChange={(e) => handleIndicationsChange(e.target.value)}
-                    ref={register({ required: true })}
+                    ref={register({ required: false })}
                   />
                   <span style={{ color: 'red' }}>
-                    {errors.indications && 'Ingrese un valor.'}
+                    {errors.drugsIndications && 'Ingrese un valor.'}
                   </span>
                 </div>
               </div>
@@ -482,6 +476,9 @@ const NewPrescriptionModalComponent = (props) => {
                       : null}
                   </tbody>
                 </table>
+                <span style={{ color: 'red' }}>
+                  {errors.drugs && 'Debe ingresar al menos un fármaco.'}
+                </span>
               </div>
             </div>
             <div className="card-footer text-center">
@@ -578,10 +575,10 @@ class PrescriptionPrintPreview extends Component {
                   <div className="col">
                     <div className="row">
                       <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Número de H.C.'}
+                        Doc. Tipo: {patient.nationalIdType}
                       </p>
                       <p className="col-md-12 ">
-                        <b>{patient.healthRecord?.healthRecordNumber}</b>
+                        <b>{patient.nationalId}</b>
                       </p>
                     </div>
                   </div>
@@ -665,7 +662,13 @@ class PrescriptionPrintPreview extends Component {
                           <th scope="row">
                             <i className="icofont icofont-pills"></i>
                           </th>
-                          <td>{pDrug.drug?.description + ' - ' + pDrug.drug?.composition + ', ' + pDrug.drug?.format}</td>
+                          <td>
+                            {pDrug.drug?.description +
+                              ' - ' +
+                              pDrug.drug?.composition +
+                              ', ' +
+                              pDrug.drug?.format}
+                          </td>
                           <td className="text-center">{pDrug.quantity}</td>
                           <td>{pDrug.indications}</td>
                         </tr>
@@ -676,7 +679,7 @@ class PrescriptionPrintPreview extends Component {
             </div>
           </div>
         </div>
-        <div className="row text-center m-r-2" style={{ marginTop: 300}}>
+        <div className="row text-center m-r-2" style={{ marginTop: 300 }}>
           <div className="col"></div>
           <div className="col">
             <hr className="" />

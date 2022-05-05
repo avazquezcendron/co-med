@@ -206,12 +206,12 @@ const PatientList = (props) => {
     //     <a href={`mailto:${row.email}`}>{row.email}</a>
     //   ),
     // },
-    {
-      name: 'Última Visita',
-      selector: 'lastVisit',
-      sortable: true,
-      left: true,
-    },
+    // {
+    //   name: 'Última Visita',
+    //   selector: 'lastVisit',
+    //   sortable: true,
+    //   left: true,
+    // },
     {
       name: 'Estado',
       selector: 'status',

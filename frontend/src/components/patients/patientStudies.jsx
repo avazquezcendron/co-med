@@ -71,7 +71,10 @@ const PatientStudies = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Estudios Complementarios'}</h5>
-                  <span>
+                  <span className="text-muted f-12 m-t-5"
+                    style={{
+                      letterSpacing: 1,
+                    }}>
                     {'Estudios, imágenes y archivos varios del paciente.'}
                   </span>
                 </div>
