@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const prescriptionSchema = mongoose.Schema(
   {
     diagnosis: { type: String, required: true },
-    indications: { type: String, required: true },
+    indications: { type: String, required: false },
     date: { type: Date, required: true, default: new Date() },
     requiresDuplicate: { type: Boolean, default: false },
     longTerm: { type: Boolean, default: false },

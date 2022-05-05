@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const studyOrderSchema = mongoose.Schema(
   {
-    indications: { type: String, required: true },
+    indications: { type: String, required: false },
     diagnosis: { type: String, required: true },
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,7 @@ const studyOrderSchema = mongoose.Schema(
 
 const laboratoryOrderSchema = mongoose.Schema(
   {
-    indications: { type: String, required: true },
+    indications: { type: String, required: false },
     diagnosis: { type: String, required: true },
     laboratories: [
       {

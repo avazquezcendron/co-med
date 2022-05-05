@@ -17,7 +17,8 @@ function useQuery() {
 }
 
 const PatientPrescriptions = (props) => {
-  const { patient, status } = useSelector((store) => store.Patient);
+  const { patient, status: patientStatus } = useSelector((store) => store.Patient);
+  const { status: visitStatus } = useSelector((store) => store.Visit);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
@@ -47,7 +48,7 @@ const PatientPrescriptions = (props) => {
   const columnsConfigPrescription = [
     {
       name: 'Fecha',
-      selector: (row) => row.date,
+      selector: (row) => row.createdAt,
       sortable: true,
       left: true,
     },
@@ -61,10 +62,10 @@ const PatientPrescriptions = (props) => {
 
   return (
     <Fragment>
-      {status === LOADED ||
-      status === SUCCEEDED ||
-      status === FAILED ||
-      (mode === 'new' && status !== LOADING) ? (
+      {patientStatus === LOADED || visitStatus === LOADED || 
+      patientStatus === SUCCEEDED || visitStatus === SUCCEEDED ||
+      patientStatus === FAILED || visitStatus === FAILED ||
+      (mode === 'new' && patientStatus !== LOADING) ? (
         <Fragment>
           <div className="card">
             <div className="card-header">

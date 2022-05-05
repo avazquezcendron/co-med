@@ -24,6 +24,10 @@ import {
   patientGetVisitsRequest,
   patientGetVisitsSuccess,
   patientGetVisitsFailure,
+  PATIENT_SAVE_VISIT_WATCHER,
+  patientSaveVisitsRequest,
+  patientSaveVisitSuccess,
+  patientSaveVisitFailure,
 } from './actions';
 
 function* savePatientAsync({ payload }) {
@@ -121,6 +125,25 @@ function* fetchVisitsAsync({ payload }) {
   }
 }
 
+function* saveVisitAsync({ payload }) {
+  try {
+    yield put(patientSaveVisitsRequest());
+    const loggedUser = yield select(getLoggedUser);
+    let data;
+    if (payload.visitData.id && payload.visitData.id !== '0') {
+      data = yield call(patientService.updateVisit, payload.patient, payload.visitData, loggedUser);
+      yield put(patientSaveVisitSuccess(data));
+    } else {
+      data = yield call(patientService.saveVisit, payload.patient, payload.visitData, loggedUser);
+      yield put(patientSaveVisitSuccess(data));
+    }
+  } catch (err) {
+    const errMsg =
+      err.response && err.response.data ? err.response.data : err.message;
+    yield put(patientSaveVisitFailure(errMsg));
+  }
+}
+
 export function* WatcherPatients() {
   yield takeLatest(PATIENT_SAVE_WATCHER, savePatientAsync);
   yield takeLatest(PATIENT_GET_ALL_WATCHER, fetchPatientsAsync);
@@ -128,4 +151,5 @@ export function* WatcherPatients() {
   yield takeLatest(PATIENT_CHANGE_STATUS_WATCHER, changeStatusPatientAsync);
   yield takeLatest(PATIENT_UPDATE_HR_WATCHER, updateHRAsync);
   yield takeLatest(PATIENT_GET_VISITS_WATCHER, fetchVisitsAsync);
+  yield takeLatest(PATIENT_SAVE_VISIT_WATCHER, saveVisitAsync);
 }

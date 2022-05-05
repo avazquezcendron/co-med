@@ -157,6 +157,7 @@ const StudyOrderModalComponent = (props) => {
                     name="diagnosis"
                     id="diagnosis"
                     type="text"
+                    defaultValue={visit.diagnosis}
                     onChange={(e) =>
                       setstudyOrder({
                         ...studyOrder,

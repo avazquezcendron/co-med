@@ -7,7 +7,10 @@ export const getAll = async (loggedUser) => {
       Authorization: `Bearer ${loggedUser?.token}`,
     },
   };
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/patient`, config);
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient`,
+    config
+  );
   return data;
 };
 
@@ -25,9 +28,7 @@ export const getById = async (id, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del paciente. Detalle: ${errorMsg}`,
       {
@@ -44,16 +45,18 @@ export const save = async (patientData, loggedUser) => {
         Authorization: `Bearer ${loggedUser?.token}`,
       },
     };
-    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/patient`, patientData, config);
+    const { data } = await axios.post(
+      `${process.env.PUBLIC_URL}/api/patient`,
+      patientData,
+      config
+    );
     toast.success('Paciente dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al dar de alta al Paciente. Detalle: ${errorMsg}`,
       {
@@ -82,9 +85,7 @@ export const update = async (patientData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
       {
@@ -95,7 +96,11 @@ export const update = async (patientData, loggedUser) => {
   }
 };
 
-export const updateHealthRecord = async (patient, healthRecordData, loggedUser) => {
+export const updateHealthRecord = async (
+  patient,
+  healthRecordData,
+  loggedUser
+) => {
   try {
     const config = {
       headers: {
@@ -113,9 +118,7 @@ export const updateHealthRecord = async (patient, healthRecordData, loggedUser) 
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
       {
@@ -134,16 +137,17 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
       },
     };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/patient/${id}/${actionStatus}`, config);
+    const { data } = await axios.get(
+      `${process.env.PUBLIC_URL}/api/patient/${id}/${actionStatus}`,
+      config
+    );
     toast.success('El estado del paciente se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al actualizar al paciente. Detalle: ${errorMsg}`,
       {
@@ -168,9 +172,7 @@ export const getPatientsByFilter = async (filter, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
       {
@@ -186,6 +188,67 @@ export const getVisits = async (patientId, loggedUser) => {
       Authorization: `Bearer ${loggedUser?.token}`,
     },
   };
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/patient/${patientId}/visit`, config);
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/visit`,
+    config
+  );
   return data;
+};
+
+export const saveVisit = async (patient, visitData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.post(
+      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/visit`,
+      { ...visitData, patientVersion: patient.__v },
+      config
+    );
+    toast.success('Consulta dada de alta con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data ? err.response.data : err.message;
+    toast.error(
+      `Ocurrió un error al dar de alta la consulta. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
+};
+
+export const updateVisit = async (patient, visitData, loggedUser) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${loggedUser?.token}`,
+      },
+    };
+    const { data } = await axios.put(
+      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/visit`,
+      { ...visitData, patientVersion: patient.__v },
+      config
+    );
+    toast.success('Consulta actualizada con éxito.', {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+    return data;
+  } catch (err) {
+    const errorMsg =
+      err.response && err.response.data ? err.response.data : err.message;
+    toast.error(
+      `Ocurrió un error al actualizar la consulta. Detalle: ${errorMsg}`,
+      {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      }
+    );
+    throw err;
+  }
 };

@@ -9,7 +9,11 @@ import { TabContent, TabPane, Collapse } from 'reactstrap';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
-import { patientResetVisitForm } from '../../redux/patients/actions';
+import {
+  patientResetVisitForm,
+  patientSaveVisitWatcher,
+  patientInitializeVisitForm,
+} from '../../redux/patients/actions';
 import * as entityService from '../../services/entity.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
@@ -55,9 +59,9 @@ const PatientVisitForm = (props) => {
 
   const handleSubmitForm = (data) => {
     if (data !== '') {
-      const title = patient.id
-        ? `Se actualizarán los datos del paciente ${patient.fullName}.`
-        : `Se dará de alta al paciente ${data.firstName} ${data.lastName}.`;
+      const title = !visit.id
+        ? `Se dará de alta una consulta para el paciente ${patient.fullName}.`
+        : `Se actualizará la consulta del paciente ${patient.fullName}.`;
       SweetAlert.fire({
         title: 'Atención',
         text: title,
@@ -69,15 +73,35 @@ const PatientVisitForm = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          //   const patientData = { ...patient, ...data, dateOfBirth, tags: tags.map(x => x.id) };
-          //   if (patientData.healthInsurances?.length > 0) {
-          //     if (!patientData.healthInsurances[0].healthInsuranceCompany) {
-          //       patientData.healthInsurances = [];
-          //     } else {
-          //       patientData.healthInsurances[0].admissionDate = osFecIngresoDate;
-          //     }
-          //   }
-          //   dispatch(patientSavetWatcher(patientData));
+          const visitData = {
+            ...visit,
+            ...data,
+            studyOrders: visit.studyOrders.map((studyOrder) => {
+              return { ...studyOrder, studyType: studyOrder.studyType.id };
+            }),
+            laboratoryOrders: visit.laboratoryOrders.map((laboratoryOrder) => {
+              return {
+                ...laboratoryOrder,
+                laboratories: laboratoryOrder.laboratories.map((x) => x.id),
+              };
+            }),
+            prescriptions: visit.prescriptions.map((prescription) => {
+              return {
+                ...prescription,
+                drugs: prescription.drugs.map((drugOrder) => {
+                  return { ...drugOrder, drug: drugOrder.drug.id };
+                }),
+              };
+            }),
+            doctor: visit.doctor?.id || loggedUser.user.doctor?.id,
+            healthRecord: visit.healthRecord?.id || patient.healthRecord.id,
+          };
+          dispatch(
+            patientSaveVisitWatcher({
+              patient: patient,
+              visitData: visitData,
+            })
+          );
         }
       });
     } else {
@@ -123,7 +147,7 @@ const PatientVisitForm = (props) => {
       visitStatus === FAILED ||
       (mode === 'new' && visitStatus !== LOADING) ? (
         <Fragment>
-          <div className="col-md-8 offset-md-1">
+          <div className="col-md-8 offset-md-2">
             <div className="row text-muted bg-light b-r-10 p-50 b-primary">
               <div className="col-md-3 mb-2">
                 <div className="row">
@@ -166,19 +190,12 @@ const PatientVisitForm = (props) => {
               </div>
             </div>
           </div>
-          <div className="col-md-3">
-            <div className="text-right">
-              <button onClick={closeVisit} className="btn btn-primary">
-                {'Volver al Historial'}
-              </button>
-            </div>
-          </div>
           <div className="col-md-12 m-t-20">
             <form
               className="theme-form mega-form"
               onSubmit={handleSubmit(handleSubmitForm)}
             >
-              <fieldset disabled={mode === 'browse'}>
+              <fieldset disabled={visit.id}>
                 <hr className="mt-4 mb-4" />
                 <h6>{'Motivo'}</h6>
                 <div className="form-group row">
@@ -195,6 +212,14 @@ const PatientVisitForm = (props) => {
                       type="text"
                       name="reason"
                       defaultValue={visit.reason}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            reason: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: true })}
                     />
                     <span style={{ color: 'red' }}>
@@ -215,6 +240,14 @@ const PatientVisitForm = (props) => {
                       spellCheck="false"
                       name="symptom"
                       defaultValue={visit.symptom}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            symptom: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: true })}
                     />
                     <span style={{ color: 'red' }}>
@@ -239,6 +272,14 @@ const PatientVisitForm = (props) => {
                       spellCheck="false"
                       name="diagnosis"
                       defaultValue={visit.diagnosis}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            diagnosis: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: true })}
                     />
                     <span style={{ color: 'red' }}>
@@ -263,6 +304,14 @@ const PatientVisitForm = (props) => {
                       spellCheck="false"
                       name="evaluation"
                       defaultValue={visit.evaluation}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            evaluation: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: false })}
                     />
                     <span style={{ color: 'red' }}>
@@ -284,6 +333,14 @@ const PatientVisitForm = (props) => {
                       spellCheck="false"
                       name="notes"
                       defaultValue={visit.notes}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            notes: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: false })}
                     />
                     <span style={{ color: 'red' }}>
@@ -291,23 +348,6 @@ const PatientVisitForm = (props) => {
                     </span>
                   </div>
                 </div>
-                {mode !== 'browse' && (
-                  <div className="card-footer m-b-40">
-                    <span className="pull-right">
-                      {mode === 'new' && (
-                        <button
-                          className="btn btn-outline-danger"
-                          onClick={closeVisit}
-                        >
-                          {'Cancelar'}
-                        </button>
-                      )}
-                      <button className="btn btn-primary ml-1" type="submit">
-                        {'Guardar'}
-                      </button>
-                    </span>
-                  </div>
-                )}
                 <hr className="mt-4 mb-4" />
                 <h6>{'Indicaciones'}</h6>
                 <p className="text-muted">
@@ -329,6 +369,14 @@ const PatientVisitForm = (props) => {
                       spellCheck="false"
                       name="notindicationses"
                       defaultValue={visit.indications}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            indications: e.target.value,
+                          })
+                        )
+                      }
                       ref={register({ required: false })}
                     />
                     <span style={{ color: 'red' }}>
@@ -391,28 +439,30 @@ const PatientVisitForm = (props) => {
                     </div>
                     <div className="col-md-6">
                       <div className="text-right">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            prescriptionModalToggle();
-                          }}
-                          className="btn btn-primary"
-                        >
-                          <i className="icofont icofont-plus mr-1"></i>
-                          {'Agregar'}
-                        </button>
+                        {!visit.id && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              prescriptionModalToggle();
+                            }}
+                            className="btn btn-primary"
+                          >
+                            <i className="icofont icofont-plus mr-1"></i>
+                            {'Agregar'}
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-12 mt-5">
                       <div className="table-responsive">
-                        {visit.prescriptions.length > 0 ? (
+                        {visit.prescriptions?.length > 0 ? (
                           <table className="table table-hover table-sm">
                             <thead>
                               <tr>
                                 <th scope="col"></th>
+                                <th scope="col">{'Fármacos'}</th>
                                 <th scope="col">{'Diagnóstico'}</th>
                                 <th scope="col">{'Indicaciones Generales'}</th>
-                                <th scope="col">{'Fármacos'}</th>
                                 <th></th>
                               </tr>
                             </thead>
@@ -423,26 +473,28 @@ const PatientVisitForm = (props) => {
                                     <th scope="row" style={{ width: '26px' }}>
                                       <i className="icofont icofont-pills text-muted"></i>
                                     </th>
-                                    <td>{prescription.diagnosis}</td>
-                                    <td>{prescription.indications}</td>
                                     <td>
                                       {prescription.drugs?.map(
                                         (x) =>
                                           ` * ${x.drug.description} (${x.indications})`
                                       )}
                                     </td>
+                                    <td>{prescription.diagnosis}</td>
+                                    <td>{prescription.indications}</td>
                                     <td className="text-center">
-                                      <a
-                                        href="#javascript"
-                                        onClick={(e) =>
-                                          handleDeletePrescrptions(index)
-                                        }
-                                      >
-                                        <i
-                                          className="fa fa-trash text-danger ml-4"
-                                          title="Borrar"
-                                        ></i>
-                                      </a>
+                                      {!visit.id && (
+                                        <a
+                                          href="#javascript"
+                                          onClick={(e) =>
+                                            handleDeletePrescrptions(index)
+                                          }
+                                        >
+                                          <i
+                                            className="fa fa-trash text-danger ml-4"
+                                            title="Borrar"
+                                          ></i>
+                                        </a>
+                                      )}
                                     </td>
                                   </tr>
                                 )
@@ -481,30 +533,32 @@ const PatientVisitForm = (props) => {
                     </div>
                     <div className="col-md-6">
                       <div className="text-right">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            laboratoryOrderModalToggle();
-                          }}
-                          className="btn btn-primary"
-                        >
-                          <i className="icofont icofont-plus mr-1"></i>
-                          {'Agregar'}
-                        </button>
+                        {!visit.id && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              laboratoryOrderModalToggle();
+                            }}
+                            className="btn btn-primary"
+                          >
+                            <i className="icofont icofont-plus mr-1"></i>
+                            {'Agregar'}
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-12 mt-5">
                       <div className="table-responsive">
-                        {visit.laboratoryOrders.length > 0 ? (
+                        {visit.laboratoryOrders?.length > 0 ? (
                           <table className="table table-hover table-sm">
                             <thead>
                               <tr>
                                 <th scope="col"></th>
-                                <th scope="col">{'Diagnóstico'}</th>
-                                <th scope="col">{'Indicaciones'}</th>
                                 <th scope="col">
                                   {'Laboratorios (variables)'}
                                 </th>
+                                <th scope="col">{'Diagnóstico'}</th>
+                                <th scope="col">{'Indicaciones'}</th>
                                 <th></th>
                               </tr>
                             </thead>
@@ -514,25 +568,27 @@ const PatientVisitForm = (props) => {
                                   <th scope="row" style={{ width: '26px' }}>
                                     <i className="icofont icofont-laboratory text-muted"></i>
                                   </th>
-                                  <td>{labOrder.diagnosis}</td>
-                                  <td>{labOrder.indications}</td>
                                   <td>
                                     {labOrder.laboratories?.map(
                                       (x) => ` * ${x.description}`
                                     )}
                                   </td>
+                                  <td>{labOrder.diagnosis}</td>
+                                  <td>{labOrder.indications}</td>
                                   <td className="text-center">
-                                    <a
-                                      href="#javascript"
-                                      onClick={(e) =>
-                                        handleDeleteLaboratoryOrder(index)
-                                      }
-                                    >
-                                      <i
-                                        className="fa fa-trash text-danger ml-4"
-                                        title="Borrar"
-                                      ></i>
-                                    </a>
+                                    {!visit.id && (
+                                      <a
+                                        href="#javascript"
+                                        onClick={(e) =>
+                                          handleDeleteLaboratoryOrder(index)
+                                        }
+                                      >
+                                        <i
+                                          className="fa fa-trash text-danger ml-4"
+                                          title="Borrar"
+                                        ></i>
+                                      </a>
+                                    )}
                                   </td>
                                 </tr>
                               ))}
@@ -572,28 +628,30 @@ const PatientVisitForm = (props) => {
                     </div>
                     <div className="col-md-6">
                       <div className="text-right">
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            studyOrderModalToggle();
-                          }}
-                          className="btn btn-primary"
-                        >
-                          <i className="icofont icofont-plus mr-1"></i>
-                          {'Agregar'}
-                        </button>
+                        {!visit.id && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              studyOrderModalToggle();
+                            }}
+                            className="btn btn-primary"
+                          >
+                            <i className="icofont icofont-plus mr-1"></i>
+                            {'Agregar'}
+                          </button>
+                        )}
                       </div>
                     </div>
                     <div className="col-md-12 mt-5">
                       <div className="table-responsive">
-                        {visit.studyOrders.length > 0 ? (
+                        {visit.studyOrders?.length > 0 ? (
                           <table className="table table-hover table-sm">
                             <thead>
                               <tr>
                                 <th scope="col"></th>
+                                <th scope="col">{'Tipo de Studio'}</th>
                                 <th scope="col">{'Diagnóstico'}</th>
                                 <th scope="col">{'Indicaciones'}</th>
-                                <th scope="col">{'Tipo de Studio'}</th>
                                 <th></th>
                               </tr>
                             </thead>
@@ -603,21 +661,23 @@ const PatientVisitForm = (props) => {
                                   <th scope="row" style={{ width: '26px' }}>
                                     <i className="icofont icofont-heartbeat text-muted"></i>
                                   </th>
+                                  <td>{studyOrder.studyType.description}</td>
                                   <td>{studyOrder.diagnosis}</td>
                                   <td>{studyOrder.indications}</td>
-                                  <td>{studyOrder.studyType.description}</td>
                                   <td className="text-center">
-                                    <a
-                                      href="#javascript"
-                                      onClick={(e) =>
-                                        handleDeleteStudyOrder(index)
-                                      }
-                                    >
-                                      <i
-                                        className="fa fa-trash text-danger ml-4"
-                                        title="Borrar"
-                                      ></i>
-                                    </a>
+                                    {!visit.id && (
+                                      <a
+                                        href="#javascript"
+                                        onClick={(e) =>
+                                          handleDeleteStudyOrder(index)
+                                        }
+                                      >
+                                        <i
+                                          className="fa fa-trash text-danger ml-4"
+                                          title="Borrar"
+                                        ></i>
+                                      </a>
+                                    )}
                                   </td>
                                 </tr>
                               ))}
@@ -641,6 +701,20 @@ const PatientVisitForm = (props) => {
                   </div>
                 </TabPane>
               </TabContent>
+              <div className="card-footer pull-right m-t-40">
+                <button
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={closeVisit}
+                >
+                  {visit.id ? 'Cerrar' : 'Cancelar'}
+                </button>
+                {!visit.id && (
+                  <button className="btn btn-primary ml-2" type="submit">
+                    Finalizar Consulta
+                  </button>
+                )}
+              </div>
             </form>
           </div>
           {prescriptionModal && (

@@ -14,7 +14,10 @@ import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 
 import notFoundImg from '../../assets/images/search-not-found.png';
-import { patientGetVisitsWatcher, patientInitializeVisitForm } from '../../redux/patients/actions';
+import {
+  patientGetVisitsWatcher,
+  patientInitializeVisitForm,
+} from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import PatientVisitForm from './patientVisitForm';
@@ -43,10 +46,19 @@ const PatientVisitHistory = (props) => {
   const [endDate, setendDate] = useState(null);
 
   useEffect(() => {
-    if (patient.id) {
+    if (
+      (patient.id && visitsStatus !== LOADED) ||
+      (patient.id && visitStatus === SUCCEEDED)
+    ) {
       dispatch(patientGetVisitsWatcher(patient.id));
     }
-  }, [patient]);
+  }, [patient, visitStatus]);
+
+  // useEffect(() => {
+  //   if (patient.id) {
+  //     dispatch(patientGetVisitsWatcher(patient.id));
+  //   }
+  // }, [patient]);
 
   const handleChange = (dates) => {
     const [start, end] = dates;
@@ -59,26 +71,43 @@ const PatientVisitHistory = (props) => {
     setendDate(date);
   };
 
-  const handleVisitClick = (e, visit) => {
+  const handleVisitClick = (e, visitData) => {
     e.preventDefault();
-    dispatch(patientInitializeVisitForm(visit));
-  }
+    if (!visitData.id) {
+      visitData.doctor = loggedUser.user.doctor;
+      visitData.createdAt = new Date();
+      visitData.healthRecord = patient.healthRecord;
+      visitData.studyOrders = []; 
+      visitData.laboratoryOrders = [];
+      visitData.prescriptions = [];
+    }
+    dispatch(patientInitializeVisitForm(visitData));
+  };
   return (
     <Fragment>
       {visitsStatus === LOADED ||
+      visitStatus === LOADED ||
       visitsStatus === SUCCEEDED ||
+      visitStatus === SUCCEEDED ||
       visitsStatus === FAILED ||
+      visitStatus === FAILED ||
       (mode === 'new' && visitsStatus !== LOADING) ? (
         <div className="card">
           <div className="card-header">
             <div className="row mb-2 ">
               <div className="col-md-9">
-                <h4 className="card-title mb-0">{visitStatus === LOADED ? `Detalle de consulta realizada el día ${new Date(visit.createdAt).toLocaleDateString('es-AR', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}` : 'Historial de Consultas'}</h4>
+                <h4 className="card-title mb-0">
+                  {visitStatus === LOADED
+                    ? `Detalle de consulta realizada el día ${new Date(
+                        visit.createdAt
+                      ).toLocaleDateString('es-AR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}`
+                    : 'Historial de Consultas'}
+                </h4>
               </div>
               <div className="col-md-3">
                 <button
@@ -130,125 +159,148 @@ const PatientVisitHistory = (props) => {
                   </div>
                 </div>
                 <div className="col-md-9">
-                  <VerticalTimeline layout={'1-column'} className="m-b-30">
-                    {visits.length > 0 ? (
-                      visits.map((visit, index) =>
-                        index < visits.length - 1 ? (
-                          <VerticalTimelineElement
-                            key={visit.id}
-                            className="vertical-timeline-element--work"
-                            animate={true}
-                            // date="25/01/2021 14:00 PM"
-                            icon={<Circle />}
-                          >
-                            <div className="blog-box blog-list row">
-                              <div className="col-md-8">
-                                <div className="blog-details">
-                                  <div className="blog-date digits">
-                                    <span>
-                                      {new Date(visit.createdAt).getDate()}
-                                    </span>{' '}
-                                    {new Date(
-                                      visit.createdAt
-                                    ).toLocaleDateString('es-AR', {
-                                      year: 'numeric',
-                                      month: 'long',
-                                    })}
-                                  </div>
-                                  <h6>{visit.reason} </h6>
-                                  <div className="blog-bottom-content">
-                                    <ul className="blog-social">
-                                      <li className="p-r-0">
-                                        {`Atendido por: ${visit.doctor.fullName}`}
-                                      </li>
-                                      <li>
-                                        {`${visit.doctor.specialities.join(
-                                          ', '
-                                        )}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-4">
-                                <button
-                                  className="btn btn-primary "
-                                  onClick={(e) => handleVisitClick(e, visit)}
-                                >
-                                  <i className="fa fa-eye m-r-5"></i>
-                                  {'Ver Consulta Completa'}
-                                </button>
-                              </div>
-                            </div>
-                          </VerticalTimelineElement>
-                        ) : (
-                          <VerticalTimelineElement
-                            key={visit.id}
-                            iconStyle={{
-                              background: 'rgb(16, 204, 82)',
-                              color: '#fff',
-                            }}
-                            icon={<Star />}
-                            animate={true}
-                          >
-                            <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
-                              <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
-                                <i
-                                  className="icon-signal"
-                                  title={'Primera Consulta'}
-                                ></i>
-                              </div>
-                              <div className="col-md-8 ">
-                                <div className="blog-details">
-                                  <div className="blog-date digits">
-                                    <span>
-                                      {new Date(visit.createdAt).getDate()}
-                                    </span>{' '}
-                                    {new Date(
-                                      visit.createdAt
-                                    ).toLocaleDateString('es-AR', {
-                                      year: 'numeric',
-                                      month: 'long',
-                                    })}
-                                  </div>
-                                  <h6>{visit.reason} </h6>
-                                  <div className="blog-bottom-content">
-                                    <ul className="blog-social">
-                                      <li>
-                                        {`Atendido por: ${visit.doctor.fullName}`}
-                                      </li>
-                                      <li>
-                                        {`${visit.doctor.specialities.join(
-                                          ', '
-                                        )}`}
-                                      </li>
-                                    </ul>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-md-4">
-                                <button
-                                      className="btn btn-primary "
-                                      onClick={(e) => handleVisitClick(e, visit)}
-                                >
-                                  <i className="fa fa-eye m-r-5"></i>
-                                  {'Ver Consulta Completa'}
-                                </button>
-                              </div>
-                            </div>
-                          </VerticalTimelineElement>
-                        )
-                      )
-                    ) : (
-                      <div className="col-md-12 text-center m-50">
-                        <img className="img-fluid" src={notFoundImg} alt="" />
-                        <br />
-                        <span className="txt-info">
-                          El paciente aún no tiene consultas cargadas...
-                        </span>
+                  <div className="row">
+                    {loggedUser.user.isDoctor && (
+                      <div className="col-md-12">
+                        <button
+                          className="btn btn-primary pull-right m-4"
+                          onClick={(e) => handleVisitClick(e, {})}
+                        >
+                          {'Nueva Consulta'}
+                        </button>
                       </div>
                     )}
-                  </VerticalTimeline>
+                    <div className="col-md-12">
+                      <VerticalTimeline layout={'1-column'} className="m-b-30">
+                        {visits.length > 0 ? (
+                          visits.map((visit, index) =>
+                            index < visits.length - 1 ? (
+                              <VerticalTimelineElement
+                                key={visit.id}
+                                className="vertical-timeline-element--work"
+                                animate={true}
+                                // date="25/01/2021 14:00 PM"
+                                icon={<Circle />}
+                              >
+                                <div className="blog-box blog-list row">
+                                  <div className="col-md-8">
+                                    <div className="blog-details">
+                                      <div className="blog-date digits">
+                                        <span>
+                                          {new Date(visit.createdAt).getDate()}
+                                        </span>{' '}
+                                        {new Date(
+                                          visit.createdAt
+                                        ).toLocaleDateString('es-AR', {
+                                          year: 'numeric',
+                                          month: 'long',
+                                        })}
+                                      </div>
+                                      <h6>{visit.reason} </h6>
+                                      <div className="blog-bottom-content">
+                                        <ul className="blog-social">
+                                          <li className="p-r-0">
+                                            {`Atendido por: ${visit.doctor.fullName}`}
+                                          </li>
+                                          <li>
+                                            {`${visit.doctor.specialities.join(
+                                              ', '
+                                            )}`}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <button
+                                      className="btn btn-primary "
+                                      onClick={(e) =>
+                                        handleVisitClick(e, visit)
+                                      }
+                                    >
+                                      <i className="fa fa-eye m-r-5"></i>
+                                      {'Ver Consulta Completa'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </VerticalTimelineElement>
+                            ) : (
+                              <VerticalTimelineElement
+                                key={visit.id}
+                                iconStyle={{
+                                  background: 'rgb(16, 204, 82)',
+                                  color: '#fff',
+                                }}
+                                icon={<Star title="Primera Consulta" />}
+                                animate={true}
+                                title="Primera Consulta"
+                              >
+                                <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
+                                  <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
+                                    <i
+                                      className="icon-signal"
+                                      title={'Primera Consulta'}
+                                    ></i>
+                                  </div>
+                                  <div className="col-md-8 ">
+                                    <div className="blog-details">
+                                      <div className="blog-date digits">
+                                        <span>
+                                          {new Date(visit.createdAt).getDate()}
+                                        </span>{' '}
+                                        {new Date(
+                                          visit.createdAt
+                                        ).toLocaleDateString('es-AR', {
+                                          year: 'numeric',
+                                          month: 'long',
+                                        })}
+                                      </div>
+                                      <h6>{visit.reason} </h6>
+                                      <div className="blog-bottom-content">
+                                        <ul className="blog-social">
+                                          <li>
+                                            {`Atendido por: ${visit.doctor.fullName}`}
+                                          </li>
+                                          <li>
+                                            {`${visit.doctor.specialities.join(
+                                              ', '
+                                            )}`}
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <button
+                                      className="btn btn-primary "
+                                      onClick={(e) =>
+                                        handleVisitClick(e, visit)
+                                      }
+                                    >
+                                      <i className="fa fa-eye m-r-5"></i>
+                                      {'Ver Consulta Completa'}
+                                    </button>
+                                  </div>
+                                </div>
+                              </VerticalTimelineElement>
+                            )
+                          )
+                        ) : (
+                          <div className="col-md-12 text-center m-50">
+                            <img
+                              className="img-fluid"
+                              src={notFoundImg}
+                              alt=""
+                            />
+                            <br />
+                            <span className="txt-info">
+                              El paciente aún no tiene consultas cargadas...
+                            </span>
+                          </div>
+                        )}
+                      </VerticalTimeline>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

@@ -38,7 +38,7 @@ const PatientHealthRecord = (props) => {
 
   return (
     <Fragment>
-      {status === LOADED || status === SUCCEEDED || status === FAILED ? (
+      {/* {status === LOADED || status === SUCCEEDED || status === FAILED ? ( */}
         <div className="card">
           <div className="card-header">
             <div className="row m-b-2">
@@ -197,9 +197,9 @@ const PatientHealthRecord = (props) => {
             </div>
           </Collapse>
         </div>
-      ) : (
+      {/* ) : (
         <Loader show={true} />
-      )}
+      )} */}
     </Fragment>
   );
 };

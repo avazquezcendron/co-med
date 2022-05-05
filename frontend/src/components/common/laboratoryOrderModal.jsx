@@ -66,7 +66,7 @@ const LaboratoryOrderModalComponent = (props) => {
   return (
     <Modal isOpen={props.modal} toggle={props.modalToggle} size="lg">
       <ModalHeader toggle={props.modalToggle}>
-        Nueva Órden de Estudio
+        Nueva Órden de Laboratorio
       </ModalHeader>
       <ModalBody>
         <div className="card badge badge-light m-l-20 m-r-20">
@@ -164,6 +164,7 @@ const LaboratoryOrderModalComponent = (props) => {
                     name="diagnosis"
                     id="diagnosis"
                     type="text"
+                    defaultValue={visit.diagnosis}
                     onChange={(e) =>
                       setlaboratoryOrder({
                         ...laboratoryOrder,
@@ -242,7 +243,7 @@ const LaboratoryOrderModalComponent = (props) => {
                 {'Cancelar'}
               </button>
               <button className="btn btn-primary ml-2">Guardar</button>
-              <div style={{ display: '' }}>
+              <div style={{ display: 'none' }}>
                 <LaboratoryOrderPrintPreview
                   patient={patient}
                   doctor={visit.doctor}
@@ -399,11 +400,9 @@ class LaboratoryOrderPrintPreview extends Component {
             <h5>Indicaciones</h5>
             <p>{laboratoryOrderInfo.indications}</p>
             <h5>Laboratorios solicitados</h5>
-            <p>
               {laboratoryOrderInfo.laboratories.map(
-                (x) => <p className="m-0">(*) {x.description}</p>
+              (x, index) => <p key={index} className="m-0">(*) {x.description}</p>
               )}
-            </p>
           </div>
         </div>
         <div

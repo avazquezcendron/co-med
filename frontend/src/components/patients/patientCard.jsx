@@ -35,6 +35,7 @@ const PatientCard = (props) => {
                     <span className="badge badge-light text-info mt-2">
                       {patient.age} años
                     </span>
+                    <br />
                   </div>
                   <div className="col bg-light b-r-10 text-muted">
                     <h5 className="mb-1">{patient.fullName}</h5>

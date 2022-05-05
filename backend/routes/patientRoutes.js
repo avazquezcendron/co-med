@@ -24,7 +24,7 @@ router
   router
   .route('/:id/visit')
   .get(checkUserAuth, asyncHandler(patientController.getVisits))
-  .put(checkUserAuth, asyncHandler(patientController.updateVisit))
+  // .put(checkUserAuth, asyncHandler(patientController.updateVisit))//NO VISIT UPDATE FOR THE MOMENT
   .post(checkUserAuth, asyncHandler(patientController.createVisit))
 
 router

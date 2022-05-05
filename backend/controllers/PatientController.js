@@ -3,6 +3,7 @@ import Patient from '../models/patientModel.js';
 import HealthRecord from '../models/healthRecordModel.js';
 import Prescription from '../models/prescriptionModel.js';
 import Visit from '../models/visitModel.js';
+import Doctor from '../models/doctorModel.js';
 
 class PatientController extends BaseController {
   constructor() {
@@ -224,11 +225,15 @@ class PatientController extends BaseController {
     if (patient) {
       const visits = await Visit.find({
         healthRecord: patient.healthRecord?._id,
-      }).sort({ createdAt: 'desc' })
+      })
+        .sort({ createdAt: 'desc' })
         .populate({ path: 'doctor' })
-        .populate({ path: 'studyOrders.studyType' })
-        .populate({ path: 'laboratoryOrders', populate: { path: 'laboratoryType' } })
-        .populate({ path: 'prescriptions.drug' });
+        .populate({ path: 'studyOrders', populate: { path: 'studyType' } })
+        .populate({
+          path: 'laboratoryOrders',
+          populate: { path: 'laboratories' },
+        })        
+        .populate({ path: 'prescriptions', populate: { path: 'drugs', populate: { path: 'drug' } } });
       if (visits) {
         return res.status(200).json(visits);
       } else {
@@ -242,55 +247,66 @@ class PatientController extends BaseController {
   }
 
   async updateVisit(req, res, next) {
-    const patient = await this._model.findById(req.params.id);
-    if (patient) {
-      if (patient.__v !== req.body.patientVersion) {
-        return res
-          .status(409)
-          .json(
-            'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
-          );
-      }
-      const healthRecord = await HealthRecord.findById(req.body.id);
-      if (healthRecord.__v !== req.body.__v) {
-        return res
-          .status(409)
-          .json(
-            'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
-          );
-      }
-      for (const [key, value] of Object.entries(req.body)) {
-        healthRecord[key] = value;
-      }
-      await healthRecord.save();
-      return this.getById(req, res, next);
-    } else {
-      return res.status(404).json('Paciente inexistente.');
-    }
+
+    /*
+      NO VISIT UPDATE FOR THE MOMENT
+    */
+
+    // const patient = await this._model.findById(req.params.id);
+    // if (patient) {
+    //   if (patient.__v !== req.body.patientVersion) {
+    //     return res
+    //       .status(409)
+    //       .json(
+    //         'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+    //       );
+    //   }
+    //   const visit = await Visit.findById(req.body.id);
+    //   if (visit.__v !== req.body.__v) {
+    //     return res
+    //       .status(409)
+    //       .json(
+    //         'La Consulta del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
+    //       );
+    //   }
+    //   for (const [key, value] of Object.entries(req.body)) {
+    //     visit[key] = value;
+    //   }
+    //   await visit.save();
+    //   return this.getById(req, res, next);
+    // } else {
+    //   return res.status(404).json('Paciente inexistente.');
+    // }
   }
 
   async createVisit(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      if (patient.__v !== req.body.patientVersion) {
-        return res
-          .status(409)
-          .json(
-            'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
-          );
+      const healthRecord = await HealthRecord.findById(
+        patient.healthRecord._id
+      );
+      const doctor = await Doctor.findById(req.body.doctor);
+      const visit = new Visit(req.body);
+      visit.prescriptions = [];
+      if (req.body.prescriptions && req.body.prescriptions.length > 0) {
+        req.body.prescriptions.forEach((x) => {
+          const prescription = new Prescription(x);
+          prescription.healthRecord = healthRecord._id;
+          prescription.doctor = doctor._id;
+          prescription.visit = visit._id;
+          prescription.save();
+          visit.prescriptions.push(prescription);
+          healthRecord.prescriptions.push(prescription);
+        });
       }
-      const healthRecord = await HealthRecord.findById(req.body.id);
-      if (healthRecord.__v !== req.body.__v) {
-        return res
-          .status(409)
-          .json(
-            'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
-          );
-      }
-      for (const [key, value] of Object.entries(req.body)) {
-        healthRecord[key] = value;
-      }
+      await visit.save();
+      healthRecord.visits.push(visit);
       await healthRecord.save();
+      doctor.visits.push(visit);
+      if (!doctor.patients.includes(patient.id)) {
+        doctor.patients.push(patient);
+      }
+      await doctor.save();
       return this.getById(req, res, next);
     } else {
       return res.status(404).json('Paciente inexistente.');

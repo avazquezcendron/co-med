@@ -271,6 +271,7 @@ const NewPrescriptionModalComponent = (props) => {
                     name="diagnosis"
                     id="diagnosis"
                     type="text"
+                    defaultValue={visit.diagnosis}
                     onChange={(e) =>
                       setprescription({
                         ...prescription,
