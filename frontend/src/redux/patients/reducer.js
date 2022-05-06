@@ -23,7 +23,8 @@ import {
   PATIENT_SAVE_VISIT_SUCCESS,
   PATIENT_SAVE_VISIT_FAILURE,
   PATIENT_INITIALIZE_VISIT_FORM,
-  PATIENT_RESET_VISIT_FORM
+  PATIENT_RESET_VISIT_FORM,
+  PATIENT_VISITS_RESET
 } from './actions';
 import * as statusTypes from '../statusTypes';
 
@@ -161,6 +162,9 @@ export const VisitsReducer = (state = INITIAL_STATE_VISITS, action) => {
         error: action.payload,
         visits: [],
       };
+
+    case PATIENT_VISITS_RESET:
+      return INITIAL_STATE_VISITS;
 
     default:
       return state;

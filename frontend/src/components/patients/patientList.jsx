@@ -24,6 +24,7 @@ import Loader from '../common/loader';
 const PatientList = (props) => {
   const { patients, status } = useSelector((store) => store.Patients);
   const { status: patientStoreStatus } = useSelector((store) => store.Patient);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -232,38 +233,42 @@ const PatientList = (props) => {
       ignoreRowClick: true,
       cell: (row, index, column, id) => (
         <div>
-          <span onClick={() => handleUserChangeStatusClick(row)}>
-            <i
-              className={`fa fa-${
-                row.status === 'active' ? 'minus-circle' : 'plus-circle'
-              }`}
-              style={{
-                width: 35,
-                fontSize: 16,
-                padding: 11,
-                color: `${
-                  row.status === 'active' ? '#e4566e' : 'rgb(40, 167, 69)'
-                }`,
-              }}
-              title={`${
-                row.status === 'active'
-                  ? 'Desactivar Paciente'
-                  : 'Activar Paciente'
-              }`}
-            ></i>
-          </span>
-          <span onClick={() => handleEditPatientClick(row)}>
-            <i
-              className="fa fa-pencil"
-              style={{
-                width: 35,
-                fontSize: 16,
-                padding: 11,
-                color: 'rgb(40, 167, 69)',
-              }}
-              title="Editar Paciente"
-            ></i>
-          </span>
+          {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
+            <Fragment>
+              <span onClick={() => handleUserChangeStatusClick(row)}>
+                <i
+                  className={`fa fa-${
+                    row.status === 'active' ? 'minus-circle' : 'plus-circle'
+                  }`}
+                  style={{
+                    width: 35,
+                    fontSize: 16,
+                    padding: 11,
+                    color: `${
+                      row.status === 'active' ? '#e4566e' : 'rgb(40, 167, 69)'
+                    }`,
+                  }}
+                  title={`${
+                    row.status === 'active'
+                      ? 'Desactivar Paciente'
+                      : 'Activar Paciente'
+                  }`}
+                ></i>
+              </span>
+              <span onClick={() => handleEditPatientClick(row)}>
+                <i
+                  className="fa fa-pencil"
+                  style={{
+                    width: 35,
+                    fontSize: 16,
+                    padding: 11,
+                    color: 'rgb(40, 167, 69)',
+                  }}
+                  title="Editar Paciente"
+                ></i>
+              </span>
+            </Fragment>
+          )}
           <CustomMaterialMenu
             size="small"
             row={row}
@@ -294,17 +299,20 @@ const PatientList = (props) => {
                       <h5>{props.t('PatientList')}</h5>
                     </Col>
                     <Col md="6">
-                      <div className="text-right">
-                        <Link
-                          className="btn btn-primary"
-                          to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
-                          onClick={() => dispatch(patientInitialize())}
-                        >
-                          {' '}
-                          <PlusCircle />
-                          {props.t('New')}
-                        </Link>
-                      </div>
+                      {(loggedUser.user.isAdmin ||
+                        loggedUser.user.isReceptionist) && (
+                        <div className="text-right">
+                          <Link
+                            className="btn btn-primary"
+                            to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
+                            onClick={() => dispatch(patientInitialize())}
+                          >
+                            {' '}
+                            <PlusCircle />
+                            {props.t('New')}
+                          </Link>
+                        </div>
+                      )}
                     </Col>
                   </Row>
                 </div>

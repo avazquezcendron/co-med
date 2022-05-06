@@ -28,8 +28,8 @@ export const MENUITEMS = [
     },
     {
         title: 'Reportes', icon: FileText, type: 'sub', active: false, children: [
-            { path: '/dashboard/project', type: 'link', title: 'General' },
-            { path: '/widgets/chart', type: 'link', title: 'Varios' }
+            { path: '/pages/maintenance', type: 'link', title: 'General' },
+            { path: '/pages/maintenance', type: 'link', title: 'Varios' }
         ]
     },
     {

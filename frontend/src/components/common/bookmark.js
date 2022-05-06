@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Star, UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { MENUITEMS } from '../../components/common/sidebar-component/menu';
@@ -8,9 +8,9 @@ import { patientInitialize } from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
 
-
 const Bookmark = () => {
   const dispatch = useDispatch();
+  const { loggedUser } = useSelector((store) => store.UserLogin);
 
   const mainmenu = MENUITEMS;
   const tooltipOpen = false;
@@ -162,9 +162,11 @@ const Bookmark = () => {
   };
 
   const handleNewAppointment = () => {
-    dispatch(setDataAppointmentForm({
-      new: true,
-    }));
+    dispatch(
+      setDataAppointmentForm({
+        new: true,
+      })
+    );
     appointmentModalToggle();
   };
 
@@ -179,16 +181,18 @@ const Bookmark = () => {
         />
         <div className="bookmark pull-right">
           <ul>
-            <li>
-              <Link
-                to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
-                className="realname"
-                onClick={handleNewPatientClick}
-                title="Nuevo Paciente"
-              >
-                <UserPlus />
-              </Link>
-            </li>
+            {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
+              <li>
+                <Link
+                  to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
+                  className="realname"
+                  onClick={handleNewPatientClick}
+                  title="Nuevo Paciente"
+                >
+                  <UserPlus />
+                </Link>
+              </li>
+            )}
             <li>
               <a
                 href="#javascript"
@@ -199,16 +203,18 @@ const Bookmark = () => {
                 <Clipboard />
               </a>
             </li>
-            <li>
-              <a
-                href="#javascript"
-                className="realname"
-                // onClick={handleNewAppointment}
-                title="Nueva Consulta"
-              >
-                <PlusCircle />
-              </a>
-            </li>
+            {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+              <li>
+                <a
+                  href="#javascript"
+                  className="realname"
+                  // onClick={handleNewAppointment}
+                  title="Nueva Consulta"
+                >
+                  <PlusCircle />
+                </a>
+              </li>
+            )}
             <li>
               <a
                 href="#javascript"

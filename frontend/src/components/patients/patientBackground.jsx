@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useParams } from 'react-router-dom';
 import { Collapse, UncontrolledTooltip } from 'reactstrap';
 import { Typeahead, Highlighter, Token } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -25,6 +25,7 @@ const PatientBackground = (props) => {
 
   const query = useQuery();
   const mode = query.get('mode');
+  const { id } = useParams();
 
   const [alergias, setAlergias] = useState([]);
   const [medicamentosActivos, setmedicamentosActivos] = useState([]);
@@ -107,14 +108,16 @@ const PatientBackground = (props) => {
   );
 
   useEffect(() => {
-    if (patient.healthRecord?.allergiesInfo) {
-      setAlergias(patient.healthRecord.allergiesInfo.allergies);
-    }
+    if (patient && patient.id === id) {
+      if (patient.healthRecord?.allergiesInfo) {
+        setAlergias(patient.healthRecord.allergiesInfo.allergies);
+      }
 
-    if (patient.healthRecord?.drugsInfo) {
-      setmedicamentosActivos(patient.healthRecord.drugsInfo.drugs);
+      if (patient.healthRecord?.drugsInfo) {
+        setmedicamentosActivos(patient.healthRecord.drugsInfo.drugs);
+      }
     }
-  }, [patient]);
+  }, [id, patient]);
 
   useEffect(() => {
     entityService.getAll('drug', loggedUser).then((data) => setDrugs(data));

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useParams } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
 import { useSelector, useDispatch } from 'react-redux';
@@ -23,6 +23,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
 
   const query = useQuery();
   const mode = query.get('mode');
+  const { id } = useParams();
 
   const { patient, status } = useSelector((store) => store.Patient);
   const { loggedUser } = useSelector((store) => store.UserLogin);
@@ -52,25 +53,27 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const [dateOfBirth, setdobDate] = useState(null);
   const [osFecIngresoDate, setosFecIngresoDate] = useState(null);
   useEffect(() => {
-    if (patient.healthInsurances?.length > 0) {
-      setHealthInsuranceCompany(
-        patient.healthInsurances[0].healthInsuranceCompany.id
-      );
-      setHealthInsurancePlans(
-        patient.healthInsurances[0].healthInsuranceCompany.plans
-      );
-      setosFecIngresoDate(
-        patient.healthInsurances[0].admissionDate
-          ? new Date(patient.healthInsurances[0].admissionDate)
-          : null
-      );
-    }
-    if (patient.dateOfBirth) {
-      setdobDate(new Date(patient.dateOfBirth));
-    }
-
-    setTags(patient.tags);
-  }, [patient]);
+    if (patient && patient.id === id) {
+      if (patient.healthInsurances?.length > 0) {
+        setHealthInsuranceCompany(
+          patient.healthInsurances[0].healthInsuranceCompany.id
+        );
+        setHealthInsurancePlans(
+          patient.healthInsurances[0].healthInsuranceCompany.plans
+        );
+        setosFecIngresoDate(
+          patient.healthInsurances[0].admissionDate
+            ? new Date(patient.healthInsurances[0].admissionDate)
+            : null
+        );
+      }
+      if (patient.dateOfBirth) {
+        setdobDate(new Date(patient.dateOfBirth));
+      }
+  
+      setTags(patient.tags);
+    }    
+  }, [id, patient]);
 
   const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
   useEffect(() => {
@@ -150,7 +153,12 @@ const PatientPersonalData = ({ history, showAvatar }) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          const patientData = { ...patient, ...data, dateOfBirth, tags: tags.map(x => x.id) };
+          const patientData = {
+            ...patient,
+            ...data,
+            dateOfBirth,
+            tags: tags.map((x) => x.id),
+          };
           if (patientData.healthInsurances?.length > 0) {
             if (!patientData.healthInsurances[0].healthInsuranceCompany) {
               patientData.healthInsurances = [];
@@ -733,7 +741,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       id="tags"
                       multiple
                       labelKey="name"
-                      filterBy={["name"]}
+                      filterBy={['name']}
                       options={tagsCatalogue}
                       selected={tags}
                       disabled={mode === 'browse'}
@@ -775,7 +783,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
               </fieldset>
             </form>
           </div>
-          {mode === 'browse' && (
+          {mode === 'browse' && (loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
             <div className="card-footer m-b-40">
               <span className="pull-right">
                 <Link

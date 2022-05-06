@@ -17,6 +17,8 @@ export const PATIENT_GET_VISITS_WATCHER = 'patient/patientGetVisitsWatcher';
 export const PATIENT_GET_VISITS_REQUEST = 'patient/patientGetVisitsRequest';
 export const PATIENT_GET_VISITS_SUCCESS = 'patient/patientGetVisitsSuccess';
 export const PATIENT_GET_VISITS_FAILURE = 'patient/patientGetVisitsFailure';
+export const PATIENT_VISITS_RESET = 'patient/patientVisitsReset';
+
 
 export const PATIENT_SAVE_VISIT_WATCHER = 'patient/patientSaveVisitWatcher';
 export const PATIENT_SAVE_VISIT_REQUEST = 'patient/patientSaveVisitsRequest';
@@ -114,10 +116,16 @@ export const patientUpdateHRWatcher = (payload) => {
   };
 };
 
-export const patientGetVisitsWatcher = (patientId) => {
+export const patientVisitsReset = (patientId) => {
+  return {
+    type: PATIENT_VISITS_RESET
+  };
+};
+
+export const patientGetVisitsWatcher = (patientId, startDate, endDate) => {
   return {
     type: PATIENT_GET_VISITS_WATCHER,
-    payload: patientId,
+    payload: { patientId, startDate, endDate },
   };
 };
 

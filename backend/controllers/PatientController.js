@@ -75,10 +75,9 @@ class PatientController extends BaseController {
     let patientsDTO = patients;
     if (!req.user.isAdmin) {
       if (req.user.isDoctor) {
+        const dr = await Doctor.findById(req.user.doctor._id);
         patientsDTO = patients.filter((x) =>
-          x.healthRecord?.visits.includes((x) =>
-            x.doctor._id.equals(req.user.doctor?._id)
-          )
+          dr.patients?.includes(x.id)
         ); // TODO: pasar al query
       } else {
         // TODO: analizar si hace "TANTA falta" el filtro de privacidad en el getAll
@@ -223,17 +222,33 @@ class PatientController extends BaseController {
   async getVisits(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      const visits = await Visit.find({
-        healthRecord: patient.healthRecord?._id,
-      })
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
+
+      let filterDates = {};
+      if (startDate && endDate) {
+        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+      }
+
+      let filterDr = {};
+      if (!req.user.isAdmin && req.user.isDoctor) {
+        filterDr = { doctor:  req.user.doctor?._id };
+      }
+
+      const finalFilter = { ...filterDates, ...filterDr, healthRecord: patient.healthRecord?._id };
+
+      const visits = await Visit.find(finalFilter)
         .sort({ createdAt: 'desc' })
         .populate({ path: 'doctor' })
         .populate({ path: 'studyOrders', populate: { path: 'studyType' } })
         .populate({
           path: 'laboratoryOrders',
           populate: { path: 'laboratories' },
-        })        
-        .populate({ path: 'prescriptions', populate: { path: 'drugs', populate: { path: 'drug' } } });
+        })
+        .populate({
+          path: 'prescriptions',
+          populate: { path: 'drugs', populate: { path: 'drug' } },
+        });
       if (visits) {
         return res.status(200).json(visits);
       } else {
@@ -247,11 +262,9 @@ class PatientController extends BaseController {
   }
 
   async updateVisit(req, res, next) {
-
     /*
       NO VISIT UPDATE FOR THE MOMENT
     */
-
     // const patient = await this._model.findById(req.params.id);
     // if (patient) {
     //   if (patient.__v !== req.body.patientVersion) {
@@ -289,23 +302,24 @@ class PatientController extends BaseController {
       const visit = new Visit(req.body);
       visit.prescriptions = [];
       if (req.body.prescriptions && req.body.prescriptions.length > 0) {
-        req.body.prescriptions.forEach((x) => {
+        for (const x of req.body.prescriptions) {
           const prescription = new Prescription(x);
           prescription.healthRecord = healthRecord._id;
           prescription.doctor = doctor._id;
           prescription.visit = visit._id;
-          prescription.save();
+          await prescription.save();
           visit.prescriptions.push(prescription);
           healthRecord.prescriptions.push(prescription);
-        });
+        }
+      }      
+      if (!doctor.patients.includes(patient.id)) {
+        doctor.patients.push(patient);
+        visit.firstVisit = true;
       }
       await visit.save();
       healthRecord.visits.push(visit);
       await healthRecord.save();
       doctor.visits.push(visit);
-      if (!doctor.patients.includes(patient.id)) {
-        doctor.patients.push(patient);
-      }
       await doctor.save();
       return this.getById(req, res, next);
     } else {

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { Collapse } from 'reactstrap';
 import {
@@ -8,15 +8,15 @@ import {
 } from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
 import es from 'date-fns/locale/es';
-import { Star, Search, Circle } from 'react-feather';
+import { Star, Circle } from 'react-feather';
 import { useSelector, useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import SweetAlert from 'sweetalert2';
+import moment from 'moment';
 
 import notFoundImg from '../../assets/images/search-not-found.png';
 import {
   patientGetVisitsWatcher,
   patientInitializeVisitForm,
+  patientVisitsReset,
 } from '../../redux/patients/actions';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -31,7 +31,7 @@ const PatientVisitHistory = (props) => {
 
   const query = useQuery();
   const mode = query.get('mode');
-
+  const { id } = useParams();
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const { patient, status: patientStatus } = useSelector(
     (store) => store.Patient
@@ -42,23 +42,25 @@ const PatientVisitHistory = (props) => {
 
   const [isVisitHistory, setisVisitHistory] = useState(true);
 
-  const [startDate, setstartDate] = useState(new Date());
+  const [startDate, setstartDate] = useState(null);
   const [endDate, setendDate] = useState(null);
+  const [startDateApplied, setstartDateApplied] = useState(null);
+  const [endDateApplied, setendDateApplied] = useState(null);
 
   useEffect(() => {
     if (
-      (patient.id && visitsStatus !== LOADED) ||
-      (patient.id && visitStatus === SUCCEEDED)
+      (id !== 0 && visitsStatus !== LOADED) ||
+      (id !== 0 && visitStatus === SUCCEEDED)
     ) {
-      dispatch(patientGetVisitsWatcher(patient.id));
+      dispatch(patientGetVisitsWatcher(id));
     }
-  }, [patient, visitStatus]);
+  }, [id, visitStatus]);
 
-  // useEffect(() => {
-  //   if (patient.id) {
-  //     dispatch(patientGetVisitsWatcher(patient.id));
-  //   }
-  // }, [patient]);
+  useEffect(() => {
+    return () => {
+      dispatch(patientVisitsReset());
+    };
+  }, []);
 
   const handleChange = (dates) => {
     const [start, end] = dates;
@@ -77,12 +79,23 @@ const PatientVisitHistory = (props) => {
       visitData.doctor = loggedUser.user.doctor;
       visitData.createdAt = new Date();
       visitData.healthRecord = patient.healthRecord;
-      visitData.studyOrders = []; 
+      visitData.studyOrders = [];
       visitData.laboratoryOrders = [];
       visitData.prescriptions = [];
     }
     dispatch(patientInitializeVisitForm(visitData));
   };
+
+  const handleApplyFilter = (e) => {
+    e.preventDefault();
+    let endDateAux = endDate || startDate;
+    setstartDateApplied(startDate);
+    setendDateApplied(endDateAux);
+    dispatch(
+      patientGetVisitsWatcher(id, startDate, moment(endDateAux).add(1, 'd'))
+    );
+  };
+
   return (
     <Fragment>
       {visitsStatus === LOADED ||
@@ -98,14 +111,24 @@ const PatientVisitHistory = (props) => {
               <div className="col-md-9">
                 <h4 className="card-title mb-0">
                   {visitStatus === LOADED
-                    ? `Detalle de consulta realizada el día ${new Date(
-                        visit.createdAt
-                      ).toLocaleDateString('es-AR', {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}`
+                    ? `${
+                        visit.id
+                          ? 'Detalle de consulta realizada el día'
+                          : 'Nueva consulta'
+                      } ${new Date(visit.createdAt).toLocaleDateString(
+                        'es-AR',
+                        {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        }
+                      )}  
+                      ${new Date(visit.createdAt).toLocaleTimeString('es', {
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: false,
+                      })} hs`
                     : 'Historial de Consultas'}
                 </h4>
               </div>
@@ -129,7 +152,28 @@ const PatientVisitHistory = (props) => {
                 <div className="col-md-3">
                   <div className=" xs-mt-search">
                     <div className=" faq-header">
-                      <h5>{'Filtrar por fecha y/o especialidad'}</h5>
+                      <h5>{'Filtrar consultas por fecha'}</h5>
+                      <span
+                        className="text-muted f-12 m-t-5"
+                        style={{
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {
+                          'Por defecto, sólo se mostrarán las consultas de los últimos 3 meses.'
+                        }
+                      </span>
+                      <br />
+                      <span
+                        className="text-muted f-12 m-t-5"
+                        style={{
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {
+                          'Seleccione un día determinado o un rango de fechas para filtrar las consultas.'
+                        }
+                      </span>
                     </div>
                     <div className=" faq-body">
                       <div
@@ -147,14 +191,35 @@ const PatientVisitHistory = (props) => {
                           endDate={endDate}
                         />
                       </div>
-                      <div className="faq-form">
+                      {/* <div className="faq-form">
                         <input
                           className="form-control"
                           type="text"
-                          placeholder="Ingresar especialidad.."
+                          placeholder="Buscar por doctor/a.."
                         />
                         <Search className="search-icon" />
-                      </div>
+                      </div> */}
+                      <button
+                        className="btn btn-primary ml-5"
+                        onClick={handleApplyFilter}
+                      >
+                        {'Aplicar filtro'}
+                      </button>
+                      <br />
+                      {startDateApplied && endDateApplied && (
+                        <p className="m-4">
+                          <mark>
+                            <i className="fa fa-info-circle mr-1"></i>
+                            Filtro aplicado: "
+                            <b>
+                              {startDateApplied.toLocaleDateString('es') +
+                                ' - ' +
+                                endDateApplied.toLocaleDateString('es')}
+                            </b>
+                            "
+                          </mark>
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -174,7 +239,7 @@ const PatientVisitHistory = (props) => {
                       <VerticalTimeline layout={'1-column'} className="m-b-30">
                         {visits.length > 0 ? (
                           visits.map((visit, index) =>
-                            index < visits.length - 1 ? (
+                            !visit.firstVisit ? (
                               <VerticalTimelineElement
                                 key={visit.id}
                                 className="vertical-timeline-element--work"
@@ -195,6 +260,14 @@ const PatientVisitHistory = (props) => {
                                           year: 'numeric',
                                           month: 'long',
                                         })}
+                                        ,{' '}
+                                        {new Date(
+                                          visit.createdAt
+                                        ).toLocaleTimeString('es', {
+                                          hour: 'numeric',
+                                          minute: 'numeric',
+                                          hour12: false,
+                                        }) + 'hs'}
                                       </div>
                                       <h6>{visit.reason} </h6>
                                       <div className="blog-bottom-content">
@@ -231,15 +304,20 @@ const PatientVisitHistory = (props) => {
                                   background: 'rgb(16, 204, 82)',
                                   color: '#fff',
                                 }}
-                                icon={<Star title="Primera Consulta" />}
+                                icon={
+                                  <span
+                                    title={`Primera Consulta con ${visit.doctor.fullName}`}
+                                  >
+                                    <Star />
+                                  </span>
+                                }
                                 animate={true}
-                                title="Primera Consulta"
                               >
                                 <div className="blog-box blog-list row ribbon-vertical-right-wrapper ">
                                   <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
                                     <i
                                       className="icon-signal"
-                                      title={'Primera Consulta'}
+                                      title={`Primera Consulta con ${visit.doctor.fullName}`}
                                     ></i>
                                   </div>
                                   <div className="col-md-8 ">
@@ -254,6 +332,14 @@ const PatientVisitHistory = (props) => {
                                           year: 'numeric',
                                           month: 'long',
                                         })}
+                                        ,{' '}
+                                        {new Date(
+                                          visit.createdAt
+                                        ).toLocaleTimeString('es', {
+                                          hour: 'numeric',
+                                          minute: 'numeric',
+                                          hour12: false,
+                                        }) + 'hs'}
                                       </div>
                                       <h6>{visit.reason} </h6>
                                       <div className="blog-bottom-content">

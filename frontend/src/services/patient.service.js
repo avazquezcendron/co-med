@@ -182,14 +182,18 @@ export const getPatientsByFilter = async (filter, loggedUser) => {
   }
 };
 
-export const getVisits = async (patientId, loggedUser) => {
+export const getVisits = async ({ patientId, startDate, endDate }, loggedUser) => {
   const config = {
     headers: {
       Authorization: `Bearer ${loggedUser?.token}`,
     },
   };
+  let filterDates = '';
+  if (startDate && endDate) {
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+  }
   const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/visit`,
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/visit${filterDates}`,
     config
   );
   return data;

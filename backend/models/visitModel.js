@@ -41,6 +41,7 @@ const visitSchema = mongoose.Schema(
     symptom: { type: String, required: true },
     evaluation: { type: String, required: false },
     indications: { type: String, required: false },
+    firstVisit: { type: Boolean, default: false },
     studyOrders: [studyOrderSchema],
     laboratoryOrders: [laboratoryOrderSchema],
     healthRecord: {
