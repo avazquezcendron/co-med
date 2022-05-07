@@ -51,7 +51,7 @@ const Appointments = (props) => {
             </TabList>            
             <div className="tab-content-cls">              
               <TabPanel>
-                <Calender />
+                <Calender history={props.history}/>
               </TabPanel>
               <TabPanel>
                 <PatientsAgenda history={props.history} />

@@ -385,6 +385,7 @@ const PatientsAgenda = (props) => {
         <div className="tab-content" id="tab-3">
           <div className="row">
             <AppointmentModalComponent
+              history={props.history}
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
               setAppointmentModal={setAppointmentModal}

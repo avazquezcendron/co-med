@@ -24,7 +24,7 @@ import AppointmentModalComponent from '../common/appointments/appointmentModalCo
 import Loader from '../common/loader';
 import { LOADED, SUCCEEDED, FAILED } from '../../redux/statusTypes';
 
-const Calender = () => {
+const Calender = ({ history }) => {
   function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
@@ -266,6 +266,7 @@ const Calender = () => {
         <div className="container-fluid product-wrapper">
           <div className="row product-grid">
             <AppointmentModalComponent
+              history={history}
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
               // appointmentData={appointmentData}

@@ -8,11 +8,13 @@ import {
   setDataAppointmentForm,
   saveAppointmentWatcher,
 } from '../../../redux/appointments/actions';
+import { patientInitializeVisitForm } from '../../../redux/patients/actions';
 import NewAppointmentWizardComponent from './newAppointmentWizardComponent';
 import AppointmentResumeComponent from './appointmentResumeComponent';
 
 const AppointmentModalComponent = (props) => {
   const appointment = useSelector((store) => store.AppointmentForm);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const handleEditAppointmentClick = () => {
@@ -22,7 +24,9 @@ const AppointmentModalComponent = (props) => {
   const handleChangeStatusAppointment = (newStatus) => {
     SweetAlert.fire({
       title: 'Atención',
-      text: appointment.isActive ? 'El turno será cancelado. Desea continuar?' : 'El turno pasará a estar activo nuevamente. Desea continuar?',
+      text: appointment.isActive
+        ? 'El turno será cancelado. Desea continuar?'
+        : 'El turno pasará a estar activo nuevamente. Desea continuar?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -33,7 +37,37 @@ const AppointmentModalComponent = (props) => {
       if (result.value) {
         dispatch(saveAppointmentWatcher({ ...appointment, status: newStatus }));
         props.appointmentModalToggle();
-      } 
+      }
+    });
+  };
+
+  const startVisit = () => {
+    SweetAlert.fire({
+      title: 'Atención',
+      text: 'El turno será marcado como finalizado y se comenzará la consulta con el paciente. Desea continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#ff0000',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.value) {
+        dispatch(saveAppointmentWatcher({ ...appointment, status: 'done' }));
+        const visitData = {
+          doctor: appointment.doctor,
+          createdAt: new Date(),
+          healthRecord: appointment.patient.healthRecord,
+          studyOrders: [],
+          laboratoryOrders: [],
+          prescriptions: [],
+        };
+        dispatch(patientInitializeVisitForm(visitData));
+        props.history.push(
+          `${process.env.PUBLIC_URL}/patient/${appointment.patient.id}?mode=edit`
+        );
+        props.appointmentModalToggle();
+      }
     });
   };
 
@@ -44,7 +78,14 @@ const AppointmentModalComponent = (props) => {
       size="lg"
       onClosed={() => dispatch(clearAppointmentForm())}
     >
-      <ModalHeader toggle={props.appointmentModalToggle} className={`border-3 ${appointment.isCancelled ? 'b-l-danger' : ''} ${appointment.isDone ? 'b-l-success' : ''} ${appointment.isExpired ? 'b-l-dark' : ''} ${appointment.isActive ? 'b-l-primary' : ''} `}>
+      <ModalHeader
+        toggle={props.appointmentModalToggle}
+        className={`border-3 ${appointment.isCancelled ? 'b-l-danger' : ''} ${
+          appointment.isDone ? 'b-l-success' : ''
+        } ${appointment.isExpired ? 'b-l-dark' : ''} ${
+          appointment.isActive ? 'b-l-primary' : ''
+        } `}
+      >
         {appointment.new ? (
           'Nuevo Turno'
         ) : (
@@ -79,6 +120,17 @@ const AppointmentModalComponent = (props) => {
                   <i className="fa fa-pencil mr-2"></i>
                   {'Editar'}
                 </button>
+                {loggedUser.user.isDoctor &&
+                  loggedUser.user.doctor.id === appointment.doctor.id && (
+                    <button
+                      type="button"
+                      className="btn btn-success ml-1 pull-right"
+                      onClick={() => startVisit()}
+                    >
+                      <i className="fa fa-sign-in  mr-2"></i>
+                      {'Iniciar Consulta'}
+                    </button>
+                  )}
               </div>
             )}
             {appointment.isCancelled && (

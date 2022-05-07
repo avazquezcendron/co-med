@@ -50,9 +50,8 @@ const DoctorProfile = (props) => {
       setdobDate(new Date(doctor.dateOfBirth));
     }
     if (doctor.specialities) {
-      setSpecialities(doctor.specialities);  
+      setSpecialities(doctor.specialities);
     }
-    
   }, [doctor]);
 
   useEffect(() => {
@@ -95,9 +94,16 @@ const DoctorProfile = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          const licenses = data.licenses.filter(x => x.licenseType !== '');
-          const doctorData = { ...doctor, ...data, dateOfBirth, licenses: licenses, specialities: specialities, user: data.user || null };
-          
+          const licenses = data.licenses.filter((x) => x.licenseType !== '');
+          const doctorData = {
+            ...doctor,
+            ...data,
+            dateOfBirth,
+            licenses: licenses,
+            specialities: specialities,
+            user: data.user || null,
+          };
+
           dispatch(doctorSavetWatcher(doctorData));
         }
       });
@@ -642,20 +648,22 @@ const DoctorProfile = (props) => {
                             </label>
                             <div className="col-md-3">
                               <input
-                                  className="form-control"
-                                  id="inputLecense1"
-                                  name="licenses.0.licenseId"
-                                  defaultValue={doctor?.licenses &&
-                                    doctor?.licenses.length > 0
-                                      ? doctor?.licenses[0].licenseId
-                                      : undefined}
-                                  type="number"
-                                  ref={register({ required: true })}
-                                />
-                                <span style={{ color: 'red' }}>
-                                  {errors.licenses &&
-                                    'Ingrese al menos una matrícula.'}
-                                </span>
+                                className="form-control"
+                                id="inputLecense1"
+                                name="licenses.0.licenseId"
+                                defaultValue={
+                                  doctor?.licenses &&
+                                  doctor?.licenses.length > 0
+                                    ? doctor?.licenses[0].licenseId
+                                    : undefined
+                                }
+                                type="number"
+                                ref={register({ required: true })}
+                              />
+                              <span style={{ color: 'red' }}>
+                                {errors.licenses &&
+                                  'Ingrese al menos una matrícula.'}
+                              </span>
                             </div>
                           </div>
                           <div className="form-group row">
@@ -691,16 +699,18 @@ const DoctorProfile = (props) => {
                             </label>
                             <div className="col-md-3">
                               <input
-                                  className="form-control"
-                                  id="inputLecense2"
-                                  name="licenses.1.licenseId"
-                                  defaultValue={doctor?.licenses &&
-                                    doctor?.licenses.length > 1
-                                      ? doctor?.licenses[1].licenseId
-                                      : undefined}
-                                  type="number"
-                                  ref={register({ required: false })}
-                                />
+                                className="form-control"
+                                id="inputLecense2"
+                                name="licenses.1.licenseId"
+                                defaultValue={
+                                  doctor?.licenses &&
+                                  doctor?.licenses.length > 1
+                                    ? doctor?.licenses[1].licenseId
+                                    : undefined
+                                }
+                                type="number"
+                                ref={register({ required: false })}
+                              />
                             </div>
                           </div>
                           <div className="form-group row">
@@ -726,6 +736,22 @@ const DoctorProfile = (props) => {
                                     </option>
                                   ))}
                               </select>
+                            </div>
+                            <label
+                              className="col-md-2 col-form-label"
+                              htmlFor="room"
+                            >
+                              {'Consultorio'}
+                            </label>
+                            <div className="col-md-3">
+                              <input
+                                className="form-control"
+                                id="room"
+                                name="room"
+                                defaultValue={doctor.room}
+                                type="text"
+                                ref={register({ required: false })}
+                              />
                             </div>
                           </div>
                         </div>

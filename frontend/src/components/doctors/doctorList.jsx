@@ -172,7 +172,8 @@ const DoctorList = (props) => {
                             x.licenseId
                         )}
                       </h6>
-                      <h6>{doctor.age} años</h6>
+                      <h6 className="mb-0">{doctor.age} años</h6>
+                      <h6>Consultorio: {doctor.room || '-'}</h6>
                     </div>
                     <div className="faq-image product-img">
                       <CardFooter className="row">

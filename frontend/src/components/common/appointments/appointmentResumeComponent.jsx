@@ -98,6 +98,32 @@ const AppointmentResumeComponent = (props) => {
         </div>
         <div className="col"></div>
         <div className="col"></div>
+      </div>    
+      <div className="row m-2 ml-5">
+        <div className="col col-md-3 m-t-20">
+          <i className="icofont icofont-bed-patient"></i>{' '}
+          <span className="f-w-600">Consutlrio</span>
+        </div>
+        <div className="col col-md-9 m-t-20">
+          <p>
+          {appointment.doctor
+              ? appointment.doctor.room 
+              : ''}
+          </p>
+        </div>
+        <div className="col"></div>
+        <div className="col"></div>
+      </div> 
+      <div className="row m-2 ml-5">
+        <div className=" col col-md-3 m-t-20">
+          <i className="icofont icofont-crutches"></i>{' '}
+          <span className="f-w-600">Paciente</span>
+        </div>
+        <div className="col col-md-9 m-t-20">
+          <p>{appointment.patient ? appointment.patient.fullName : ''}</p>
+        </div>
+        <div className="col"></div>
+        <div className="col"></div>
       </div>
       <div className="row m-2 ml-5">
         <div className=" col col-md-3 m-t-20">
@@ -107,9 +133,7 @@ const AppointmentResumeComponent = (props) => {
         <div className="col col-md-9 m-t-20">
           <p>
             {appointment.doctor
-              ? appointment.doctor.fullName +
-                ' | ' +
-                appointment.doctor.specialities.join(', ')
+              ? appointment.doctor.fullName 
               : ''}
           </p>
         </div>
@@ -118,11 +142,15 @@ const AppointmentResumeComponent = (props) => {
       </div>
       <div className="row m-2 ml-5">
         <div className=" col col-md-3 m-t-20">
-          <i className="icofont icofont-crutches"></i>{' '}
-          <span className="f-w-600">Paciente</span>
+          <i className="icofont icofont-stethoscope-alt"></i>{' '}
+          <span className="f-w-600">Especialidad</span>
         </div>
         <div className="col col-md-9 m-t-20">
-          <p>{appointment.patient ? appointment.patient.fullName : ''}</p>
+          <p>
+            {appointment.doctor
+              ? appointment.doctor.specialities.join(', ')
+              : ''}
+          </p>
         </div>
         <div className="col"></div>
         <div className="col"></div>
@@ -137,7 +165,7 @@ const AppointmentResumeComponent = (props) => {
             {appointment.patient &&
             appointment.patient.healthInsurances?.length > 0
               ? appointment.patient.healthInsurances[0].healthInsuranceCompany
-                  .description +
+                  .description + ' (' + appointment.patient.healthInsurances[0].plan.code + ')' +
                 ' | Nro. de Credencial ' +
                 appointment.patient.healthInsurances[0].cardNumber
               : ' - '}

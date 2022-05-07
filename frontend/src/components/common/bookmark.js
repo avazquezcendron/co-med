@@ -8,7 +8,7 @@ import { patientInitialize } from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
 
-const Bookmark = () => {
+const Bookmark = ({ history }) => {
   const dispatch = useDispatch();
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
@@ -174,6 +174,7 @@ const Bookmark = () => {
     <div>
       <div className="col">
         <AppointmentModalComponent
+          history={history}
           appointmentModal={appointmentModal}
           appointmentModalToggle={appointmentModalToggle}
           // appointmentData={appointmentData}
