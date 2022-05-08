@@ -13,6 +13,7 @@ import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import moment from 'moment';
 
+import notFoundImg from '../../assets/images/search-not-found.png';
 import { BasicCalendars } from '../../constant';
 import {
   getAppointmentsWatcher,
@@ -407,7 +408,7 @@ const Calender = ({ history }) => {
                         left: 'prev,next today',
                         center: 'title',
                         right:
-                          'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
+                        'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
                       }}
                       views={{
                         listDay: { buttonText: 'Agenda del día' },
@@ -429,6 +430,16 @@ const Calender = ({ history }) => {
                       droppable={true}
                       dayMaxEvents={true}
                       dayMaxEventRows={2}
+                      noEventsContent={
+                        <div className="text-center">
+                          <img className="img-fluid" src={notFoundImg} alt="" />
+                          <br />
+                          <span className="txt-info">
+                            No hay turnos para el filtro
+                            seleccionado...
+                          </span>
+                        </div>
+                      }
                       eventOverlap={handleEventOverlap}
                       eventDrop={handleEventDrop}
                       eventResize={handleEventDrop}

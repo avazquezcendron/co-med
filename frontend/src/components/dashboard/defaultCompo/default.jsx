@@ -54,6 +54,7 @@ const Default = (props) => {
   const { appointments, status: appointmentsStatus } = useSelector(
     (store) => store.Appointments
   );
+  const { loggedUser } = useSelector((store) => store.UserLogin);
 
   const dispatch = useDispatch();
 
@@ -74,7 +75,7 @@ const Default = (props) => {
 
   useEffect(() => {
     dispatch(patientGetAllWatcher());
-    dispatch(getAppointmentsWatcher());
+    dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
     return () => {
       dispatch(patientsInitialize());
       dispatch(appointmentsInitialize());
@@ -128,7 +129,7 @@ const Default = (props) => {
   }, []);
 
   useEffect(() => {
-    if (appointmentsStatus === SUCCEEDED) dispatch(getAppointmentsWatcher());
+    if (appointmentsStatus === SUCCEEDED) dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
   }, [appointmentsStatus]);
 
   useEffect(() => {
