@@ -7,13 +7,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
-import { getAppointmentsWatcher, setDataAppointmentForm, saveAppointmentWatcher } from '../../redux/appointments/actions';
+import {
+  getAppointmentsWatcher,
+  setDataAppointmentForm,
+  saveAppointmentWatcher,
+} from '../../redux/appointments/actions';
+import { patientInitializeVisitForm } from '../../redux/patients/actions';
 import { LOADED, SUCCEEDED, FAILED } from '../../redux/statusTypes';
 import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 import Loader from '../common/loader';
 
 const PatientsAgenda = (props) => {
   const { appointments, status } = useSelector((store) => store.Appointments);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const [dateNow, setDateNow] = useState(new Date());
@@ -30,7 +36,7 @@ const PatientsAgenda = (props) => {
   };
 
   useEffect(() => {
-    dispatch(getAppointmentsWatcher());
+    dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
   }, [dispatch]);
 
   useEffect(() => {
@@ -176,7 +182,9 @@ const PatientsAgenda = (props) => {
   const handleChangeStatusAppointment = (appointment) => {
     SweetAlert.fire({
       title: 'Atención',
-      text: appointment.isActive ? 'El turno será cancelado. Desea continuar?' : 'El turno pasará a estar activo nuevamente. Desea continuar?',
+      text: appointment.isActive
+        ? 'El turno será cancelado. Desea continuar?'
+        : 'El turno pasará a estar activo nuevamente. Desea continuar?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Aceptar',
@@ -185,8 +193,42 @@ const PatientsAgenda = (props) => {
       reverseButtons: true,
     }).then((result) => {
       if (result.value) {
-        dispatch(saveAppointmentWatcher({ ...appointment, status: appointment.isCancelled ? 'active' : 'cancelled' }));
-      } 
+        dispatch(
+          saveAppointmentWatcher({
+            ...appointment,
+            status: appointment.isCancelled ? 'active' : 'cancelled',
+          })
+        );
+      }
+    });
+  };
+
+  const startVisit = (appointment) => {
+    SweetAlert.fire({
+      title: 'Atención',
+      text: 'El turno será marcado como finalizado y se comenzará la consulta con el paciente. Desea continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Aceptar',
+      cancelButtonText: 'Cancelar',
+      cancelButtonColor: '#ff0000',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.value) {
+        dispatch(saveAppointmentWatcher({ ...appointment, status: 'done' }));
+        const visitData = {
+          doctor: appointment.doctor,
+          createdAt: new Date(),
+          healthRecord: appointment.patient.healthRecord,
+          studyOrders: [],
+          laboratoryOrders: [],
+          prescriptions: [],
+        };
+        dispatch(patientInitializeVisitForm(visitData));
+        props.history.push(
+          `${process.env.PUBLIC_URL}/patient/${appointment.patient.id}?mode=edit`
+        );
+      }
     });
   };
 
@@ -204,7 +246,7 @@ const PatientsAgenda = (props) => {
         backgroundColor: '#cbf3cb',
         // color: 'white',
       },
-    }
+    },
   ];
 
   const olumnsConfig = [
@@ -216,7 +258,9 @@ const PatientsAgenda = (props) => {
       width: '550px',
       cell: (row, index, column, id) => (
         <div
-          className={`card-body recent-notification  ${row.isCancelled ? 'b-l-danger border-3' : ''} ${row.isDone ? 'b-l-success border-3' : ''} `}
+          className={`card-body recent-notification  ${
+            row.isCancelled ? 'b-l-danger border-3' : ''
+          } ${row.isDone ? 'b-l-success border-3' : ''} `}
           onClick={() => handleRowClick(row)}
         >
           <div className="media">
@@ -338,33 +382,44 @@ const PatientsAgenda = (props) => {
       allowOverflow: true,
       ignoreRowClick: true,
       right: true,
-      width: '100px',
+      width: '120px',
       cell: (row, index, column, id) => (
         <div>
-          <span
-            onClick={() => handleChangeStatusAppointment(row)}
-            title={row.isCancelled ? 'Activar Turno' : 'Cancelar Turno'}
-          >
-            <i
-              className={row.isCancelled ? 'fa fa-plus' : 'fa fa-times'}
-              style={{ width: 35, fontSize: 16, padding: 11, color: row.isCancelled ? 'green' : '#e4566e' }}
-            ></i>
-          </span>
-          {/* <span
-            onClick={() => handleEditPatientClick(row)}
-            title="Editar Turno"
-          >
-            <i
-              className="fa fa-pencil"
-              style={{
-                width: 35,
-                fontSize: 16,
-                padding: 11,
-                color: 'rgb(40, 167, 69)',
-              }}
-            ></i>
-          </span> */}
-          <CustomMaterialMenu
+          {!row.isDone && (
+            <Fragment>
+              <span
+                onClick={() => handleChangeStatusAppointment(row)}
+                title={row.isCancelled ? 'Activar Turno' : 'Cancelar Turno'}
+              >
+                <i
+                  className={row.isCancelled ? 'fa fa-plus' : 'fa fa-times'}
+                  style={{
+                    width: 35,
+                    fontSize: 16,
+                    padding: 11,
+                    color: row.isCancelled ? 'green' : '#e4566e',
+                  }}
+                ></i>
+              </span>
+              {loggedUser.user.isDoctor &&
+                loggedUser.user.doctor.id === row.doctor.id &&
+                row.isActive && (
+                  <span
+                    onClick={() => startVisit(row)}
+                    title="Iniciar Consulta"
+                  >
+                    <i
+                      className="fa fa-sign-in"
+                      style={{
+                        width: 35,
+                        fontSize: 16,
+                        padding: 11,
+                        color: 'rgb(40, 167, 69)',
+                      }}
+                    ></i>
+                  </span>
+                )}
+              {/* <CustomMaterialMenu
             size="small"
             row={row}
             menuItems={[
@@ -374,7 +429,9 @@ const PatientsAgenda = (props) => {
               },
               { actionName: 'Próx. Turnos', actionIcon: 'fa fa-calendar' },
             ]}
-          />
+          /> */}
+            </Fragment>
+          )}
         </div>
       ),
     },

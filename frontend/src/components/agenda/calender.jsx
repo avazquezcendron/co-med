@@ -54,7 +54,7 @@ const Calender = ({ history }) => {
         'appointmentsConfigSelected'
       );
       let appointmentsConfigDefault = {};
-      if (appointmentsConfigSelected) {
+      if (appointmentsConfigSelected.id) {
         appointmentsConfigDefault = JSON.parse(appointmentsConfigSelected);
       } else {
         if (loggedUser.user.isDoctor) {
@@ -75,9 +75,9 @@ const Calender = ({ history }) => {
     });
   }, []);
 
-  useEffect(() => {
-    dispatch(getAppointmentsWatcher());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getAppointmentsWatcher());
+  // }, [dispatch]);
 
   useEffect(() => {
     if (appointmentConfig.id) {
