@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Star, UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { MENUITEMS } from '../../components/common/sidebar-component/menu';
-import { patientInitialize } from '../../redux/patients/actions';
+import { patientInitialize, patientInitializeVisitForm, patientGetByIdWatcher } from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
+import SelectPatientModalComponent from './selectPatientModalComponent';
+import { NewPrescriptionModalComponent } from './newPrescriptionModal';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
 
-const Bookmark = ({ history }) => {
+const Bookmark = () => {
   const dispatch = useDispatch();
   const { loggedUser } = useSelector((store) => store.UserLogin);
-
+  const history = useHistory();
   const mainmenu = MENUITEMS;
   const tooltipOpen = false;
   const [openSearch, setOpenSearch] = useState(false);
@@ -21,9 +23,33 @@ const Bookmark = ({ history }) => {
   // eslint-disable-next-line
   const [targetName, setTargetName] = useState('');
 
+  const [prescriptionModal, setprescriptionModal] = useState(false);
+  const prescriptionModalToggle = () => {
+    setprescriptionModal(!prescriptionModal);
+  };
+
+  const [isNewVisit, setIsNewVisit] = useState(false);
+  const [isNewPrescription, setIsNewPrescription] = useState(false);
+
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
     setAppointmentModal(!appointmentModal);
+  };
+  const [selectPatientModal, setSelectPatientModal] = useState(false);
+  const selectPatientModalToggle = (patient) => {
+    if (patient?.id) {
+      if (isNewVisit) {
+        startVisit(patient);
+      }
+      if (isNewPrescription) {
+        newPrescription(patient);
+      }
+    }
+    if (selectPatientModal) {
+      setIsNewVisit(false);
+      setIsNewPrescription(false);
+    }
+    setSelectPatientModal(!selectPatientModal);
   };
 
   const toggle = (targetName) => {
@@ -170,6 +196,40 @@ const Bookmark = ({ history }) => {
     appointmentModalToggle();
   };
 
+  const startVisit = (patient) => {
+     const visitData = {
+      doctor: loggedUser.user.doctor,
+      createdAt: new Date(),
+      healthRecord: patient.healthRecord,
+      studyOrders: [],
+      laboratoryOrders: [],
+      prescriptions: [],
+    };
+    dispatch(patientInitializeVisitForm(visitData));
+    history.push(
+      `${process.env.PUBLIC_URL}/patient/${patient.id}?mode=edit`
+    );
+  }
+
+  const newPrescription = (patient) => {
+    dispatch(patientGetByIdWatcher(patient.id));
+    prescriptionModalToggle();
+  }
+
+  const handleSavePrescription = (prescription) => {
+    prescriptionModalToggle();
+  };
+
+  const handleNewPrescriptionClick = () => {
+    setIsNewPrescription(true);
+    selectPatientModalToggle();
+  };
+
+  const handleNewVisitClick = () => {
+    setIsNewVisit(true);
+    selectPatientModalToggle();
+  };
+
   return (
     <div>
       <div className="col">
@@ -178,8 +238,18 @@ const Bookmark = ({ history }) => {
           appointmentModal={appointmentModal}
           appointmentModalToggle={appointmentModalToggle}
           // appointmentData={appointmentData}
-          setAppointmentModal={setAppointmentModal}
         />
+        <SelectPatientModalComponent
+          modal={selectPatientModal}
+          modalToggle={selectPatientModalToggle}
+        />
+        {prescriptionModal && (
+            <NewPrescriptionModalComponent
+              prescriptionModal={prescriptionModal}
+              prescriptionModalToggle={prescriptionModalToggle}
+              handleSavePrescription={handleSavePrescription}
+            />
+          )}
         <div className="bookmark pull-right">
           <ul>
             {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
@@ -198,18 +268,18 @@ const Bookmark = ({ history }) => {
               <a
                 href="#javascript"
                 className="realname"
-                // onClick={handleNewAppointment}
+                onClick={handleNewPrescriptionClick}
                 title="Nueva Receta"
               >
                 <Clipboard />
               </a>
             </li>
-            {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+            {(loggedUser.user.isDoctor) && (
               <li>
                 <a
                   href="#javascript"
                   className="realname"
-                  // onClick={handleNewAppointment}
+                  onClick={handleNewVisitClick}
                   title="Nueva Consulta"
                 >
                   <PlusCircle />

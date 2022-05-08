@@ -50,6 +50,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
   const [healthInsuranceCompany, setHealthInsuranceCompany] =
     useState(undefined);
+  const [healthInsurancePlan, setHealthInsurancePlan] =
+    useState(undefined);
   const [dateOfBirth, setdobDate] = useState(null);
   const [osFecIngresoDate, setosFecIngresoDate] = useState(null);
   useEffect(() => {
@@ -61,6 +63,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
         setHealthInsurancePlans(
           patient.healthInsurances[0].healthInsuranceCompany.plans
         );
+        setHealthInsurancePlan(patient.healthInsurances[0].plan.code);
         setosFecIngresoDate(
           patient.healthInsurances[0].admissionDate
             ? new Date(patient.healthInsurances[0].admissionDate)
@@ -575,11 +578,9 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       className="form-control"
                       name="healthInsurances.0.plan.code"
                       id="healthInsurancePlan"
-                      defaultValue={
-                        patient.healthInsurances &&
-                        patient.healthInsurances.length > 0
-                          ? patient.healthInsurances[0].plan.code
-                          : undefined
+                      value={healthInsurancePlan}
+                      onChange={(e) =>
+                        setHealthInsurancePlan(e.target.value)
                       }
                       ref={register({ required: false })}
                     >

@@ -270,7 +270,6 @@ const Calender = ({ history }) => {
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
               // appointmentData={appointmentData}
-              setAppointmentModal={setAppointmentModal}
             />
             <div className="col-md-3">
               <div className={`product-sidebar ${filterSidebar ? '' : 'open'}`}>

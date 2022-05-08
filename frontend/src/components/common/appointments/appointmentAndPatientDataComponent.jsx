@@ -11,10 +11,6 @@ import {
   FormGroup,
   Input,
   Label,
-  Modal,
-  ModalBody,
-  ModalHeader,
-  Button,
   Popover,
   PopoverHeader,
   PopoverBody,
@@ -26,8 +22,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import * as patientService from '../../../services/patient.service';
 import PatientQuickAdd from '../patientQuickAdd';
 import { setDataAppointmentForm } from '../../../redux/appointments/actions';
-import { patientGetAllWatcher } from '../../../redux/patients/actions';
-import { LOADED } from '../../../redux/statusTypes';
 
 const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const { register, errors, setError, clearErrors } = useForm();
@@ -42,9 +36,6 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const [type, setType] = useState(appointment.appointmentType || 'turno');
   const [mode, setMode] = useState(appointment.mode || 'presencial');
   const [description, setDescription] = useState(appointment.description || '');
-
-  const [modal, setModal] = useState(false);
-  const toggle = () => setModal(!modal);
 
   const [popover, setPopover] = useState(false);
   const popoverNewPatientToggle = () => setPopover(!popover);
@@ -232,12 +223,6 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
           </FormGroup>
         </div>
       </Form>
-      {/* <Modal isOpen={modal} toggle={toggle} size="md">
-        <ModalHeader toggle={toggle}>{'Nuevo Paciente'}</ModalHeader>
-        <ModalBody>
-          <PatientQuickAdd />
-        </ModalBody>
-      </Modal> */}
       <Popover
         placement="right"
         isOpen={popover}

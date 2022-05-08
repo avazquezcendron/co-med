@@ -7,7 +7,7 @@ import PatientCard from './patientCard';
 import Breadcrumb from '../common/breadcrumb';
 import PatientHealthRecord from './patientHealthRecord';
 import PatientVisitHistory from './patientVisitHistory';
-import { patientGetByIdWatcher } from '../../redux/patients/actions';
+import { patientGetByIdWatcher, patientInitialize } from '../../redux/patients/actions';
 import PatientPersonalData from './patientPersonalData';
 
 function useQuery() {
@@ -22,6 +22,12 @@ const PatientProfile = (props) => {
 
   const query = useQuery();
   const mode = query.get('mode');
+
+  useEffect(() => {
+    return () => {
+      dispatch(patientInitialize());
+    };
+  }, []);
 
   useEffect(() => {
     if (id !== '0') dispatch(patientGetByIdWatcher(id));

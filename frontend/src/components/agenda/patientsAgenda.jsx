@@ -445,7 +445,6 @@ const PatientsAgenda = (props) => {
               history={props.history}
               appointmentModal={appointmentModal}
               appointmentModalToggle={appointmentModalToggle}
-              setAppointmentModal={setAppointmentModal}
             />
             <div className="col-sm-12">
               <div className="card">
