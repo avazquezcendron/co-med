@@ -256,3 +256,54 @@ export const updateVisit = async (patient, visitData, loggedUser) => {
     throw err;
   }
 };
+
+export const getPrescriptions = async ({ patientId, startDate, endDate }, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  let pagination = '';
+  if (pagination) {
+    pagination = `?pagination=${startDate}&endDate=${endDate}`
+  }
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/prescription`,
+    config
+  );
+  return data;
+};
+
+export const getStudies = async ({ patientId, startDate, endDate }, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  let filterDates = '';
+  if (startDate && endDate) {
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+  }
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/study`,
+    config
+  );
+  return data;
+};
+
+export const getLaboratories = async ({ patientId, startDate, endDate }, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  let filterDates = '';
+  if (startDate && endDate) {
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+  }
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/laboratory`,
+    config
+  );
+  return data;
+};

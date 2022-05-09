@@ -3,6 +3,8 @@ import Patient from '../models/patientModel.js';
 import HealthRecord from '../models/healthRecordModel.js';
 import Prescription from '../models/prescriptionModel.js';
 import Visit from '../models/visitModel.js';
+import StudyExam from '../models/studyExamModel.js';
+import LaboratoryExam from '../models/laboratoryExamModel.js';
 import Doctor from '../models/doctorModel.js';
 
 class PatientController extends BaseController {
@@ -16,6 +18,7 @@ class PatientController extends BaseController {
     this.getVisits = this.getVisits.bind(this);
     this.createVisit = this.createVisit.bind(this);
     this.updateVisit = this.updateVisit.bind(this);
+    this.getPrescriptions = this.getPrescriptions.bind(this);
   }
 
   /**
@@ -322,6 +325,35 @@ class PatientController extends BaseController {
       doctor.visits.push(visit);
       await doctor.save();
       return this.getById(req, res, next);
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async getPrescriptions(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
+
+      let filterDates = {};
+      if (startDate && endDate) {
+        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+      }
+
+      const finalFilter = { ...filterDates, healthRecord: patient.healthRecord?._id };
+
+      const prescriptions = await Prescription.find(finalFilter)
+        .sort({ createdAt: 'desc' })
+        .populate({ path: 'drugs', populate: { path: 'drug' } })
+        .populate({ path: 'doctor' });
+      if (prescriptions) {
+        return res.status(200).json(prescriptions);
+      } else {
+        return res
+          .status(404)
+          .json('El Paciente no tiene consultas registradas.');
+      }
     } else {
       return res.status(404).json('Paciente inexistente.');
     }

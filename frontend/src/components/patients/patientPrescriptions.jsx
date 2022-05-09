@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -9,7 +9,7 @@ import DataTable from 'react-data-table-component';
 import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
-import * as entityService from '../../services/entity.service';
+import * as patientService from '../../services/patient.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
 
 function useQuery() {
@@ -17,7 +17,9 @@ function useQuery() {
 }
 
 const PatientPrescriptions = (props) => {
-  const { patient, status: patientStatus } = useSelector((store) => store.Patient);
+  const { patient, status: patientStatus } = useSelector(
+    (store) => store.Patient
+  );
   const { status: visitStatus } = useSelector((store) => store.Visit);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
@@ -26,11 +28,22 @@ const PatientPrescriptions = (props) => {
 
   const query = useQuery();
   const mode = query.get('mode');
+  const { id } = useParams();
+
+  const [prescriptions, setPrescriptions] = useState([]);
 
   const [prescriptionModal, setprescriptionModal] = useState(false);
   const prescriptionModalToggle = () => {
     setprescriptionModal(!prescriptionModal);
   };
+
+  useEffect(() => {
+    if (patient && patient.id === id) {
+      patientService
+        .getPrescriptions({ patientId: patient.id }, loggedUser)
+        .then((data) => setPrescriptions(data));
+    }
+  }, [id, patient, visitStatus]);
 
   const addPrescription = () => {
     prescriptionModalToggle();
@@ -48,7 +61,8 @@ const PatientPrescriptions = (props) => {
   const columnsConfigPrescription = [
     {
       name: 'Fecha',
-      selector: (row) => row.createdAt,
+      width: '100px',
+      selector: (row) => new Date(row.createdAt).toLocaleDateString('es'),
       sortable: true,
       left: true,
     },
@@ -58,13 +72,39 @@ const PatientPrescriptions = (props) => {
       sortable: true,
       left: true,
     },
+    {
+      name: 'Fármacos',
+      // selector: (row) => row.drugs?.map((x) => ` * ${x.drug.description} (${x.indications})`),
+      sortable: false,
+      left: true,
+      cell: (row, index, column, id) => (
+        <span>
+          {row.drugs?.map((x) => ` * ${x.drug.description}`)}
+        </span>
+      ),
+    },
+    {
+      name: 'Indicaciones Generales',
+      selector: (row) => row.indications,
+      sortable: true,
+      left: true,
+    },
+    {
+      name: 'Indicado por',
+      selector: (row) => row.doctor?.fullName,
+      sortable: true,
+      left: true,
+    },
   ];
 
   return (
     <Fragment>
-      {patientStatus === LOADED || visitStatus === LOADED || 
-      patientStatus === SUCCEEDED || visitStatus === SUCCEEDED ||
-      patientStatus === FAILED || visitStatus === FAILED ||
+      {patientStatus === LOADED ||
+      visitStatus === LOADED ||
+      patientStatus === SUCCEEDED ||
+      visitStatus === SUCCEEDED ||
+      patientStatus === FAILED ||
+      visitStatus === FAILED ||
       (mode === 'new' && patientStatus !== LOADING) ? (
         <Fragment>
           <div className="card">
@@ -97,9 +137,7 @@ const PatientPrescriptions = (props) => {
               <div className="table-responsive support-table">
                 <DataTable
                   columns={columnsConfigPrescription}
-                  data={patient.healthRecord?.prescriptions}
-                  // striped={true}
-                  // center={true}
+                  data={prescriptions}
                   pagination
                   highlightOnHover
                   pointerOnHover

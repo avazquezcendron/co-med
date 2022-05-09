@@ -1,11 +1,10 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
-import DataTable from 'react-data-table-component';
-import { TabContent, TabPane, Collapse } from 'reactstrap';
+import { TabContent, TabPane } from 'reactstrap';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -14,7 +13,6 @@ import {
   patientSaveVisitWatcher,
   patientInitializeVisitForm,
 } from '../../redux/patients/actions';
-import * as entityService from '../../services/entity.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
 import { StudyOrderModalComponent } from '../common/studyOrderModal';
