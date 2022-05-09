@@ -3,18 +3,30 @@ import { Modal, ModalHeader, ModalBody, UncontrolledTooltip } from 'reactstrap';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
-import { Typeahead, Highlighter, Token } from 'react-bootstrap-typeahead';
+import {
+  AsyncTypeahead,
+  Typeahead,
+  Highlighter,
+  Token,
+} from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import ReactToPrint from 'react-to-print';
 
 import * as entityService from '../../services/entity.service';
-import logo from '../../assets/images/co-med-logo.jpg';
+import * as doctorService from '../../services/doctor.service';
+import logo from '../../assets/images/logo-principal-gris.png';
 
 const NewPrescriptionModalComponent = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const { patient } = useSelector((store) => store.Patient);
   const { visit } = useSelector((store) => store.Visit);
-  const { doctor } = useSelector((store) => store.Doctor);
+
+  const [doctor, setDoctor] = useState(loggedUser.user.doctor || {});
+  const [doctors, setDoctors] = useState(
+    loggedUser.user.doctor ? [loggedUser.user.doctor] : []
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const { register, handleSubmit, errors, setError, clearErrors } = useForm();
 
@@ -30,7 +42,7 @@ const NewPrescriptionModalComponent = (props) => {
     requiresDuplicate: false,
     longTerm: false,
     drugs: [],
-    doctor: doctor || loggedUser.doctor || {},
+    doctor: doctor,
     healthRecord: patient.healthRecord || {},
     visit: visit || {},
   });
@@ -47,6 +59,23 @@ const NewPrescriptionModalComponent = (props) => {
     entityService.getAll('drug', loggedUser).then((data) => setDrugs(data));
     return () => {};
   }, []);
+
+  const handleDoctorChange = (selected) => {
+    let doctor = selected.length > 0 ? selected[0] : {};
+    setDoctor(doctor);
+  };
+
+  const handleSearch = (filter) => {
+    setIsLoading(true);
+    doctorService.getDoctorsByFilter(filter, loggedUser).then((doctors) => {
+      setDoctors(doctors);
+      setIsLoading(false);
+    });
+  };
+
+  // Bypass client-side filtering by returning `true`. Results are already
+  // filtered by the search endpoint, so no need to do it again.
+  const filterBy = () => true;
 
   const handleSubmitForm = (data) => {
     if (prescriptionDrugsList.length <= 0) {
@@ -67,7 +96,11 @@ const NewPrescriptionModalComponent = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          props.handleSavePrescription && props.handleSavePrescription({ ...data, drugs: prescriptionDrugsList});
+          props.handleSavePrescription &&
+            props.handleSavePrescription({
+              ...data,
+              drugs: prescriptionDrugsList,
+            });
         }
       });
     } else {
@@ -263,6 +296,46 @@ const NewPrescriptionModalComponent = (props) => {
             onSubmit={handleSubmit(handleSubmitForm)}
           >
             <div className="card-body">
+              {!doctor && (
+                <Fragment>
+                  <h6>{'Doctor/a'}</h6>
+                  <div className="form-group row">
+                    <div className="col-md-12">
+                      <AsyncTypeahead
+                        id="doctor"
+                        name="doctor"
+                        isLoading={isLoading}
+                        options={doctors}
+                        labelKey={(option) => option.fullName}
+                        filterBy={filterBy}
+                        minLength={3}
+                        onSearch={handleSearch}
+                        clearButton
+                        onChange={(selected) => handleDoctorChange(selected)}
+                        selected={
+                          doctors.length > 0
+                            ? doctors.filter((x) => x.id === doctor.id)
+                            : null
+                        }
+                        disabled={isDisabled}
+                        innerRef={register('doctor', { required: true })}
+                        renderMenuItemChildren={(option, props) => (
+                          <Fragment>
+                            <Highlighter search={props.text}>
+                              {option.fullName}
+                            </Highlighter>
+                            <div className="mt-1">
+                              <small className="text-muted">
+                                {option.specialities.join(', ')}
+                              </small>
+                            </div>
+                          </Fragment>
+                        )}
+                      />
+                    </div>
+                  </div>
+                </Fragment>
+              )}
               <h6>{'Diagnóstico'}</h6>
               <div className="form-group row">
                 <div className="col-md-12">
@@ -522,32 +595,32 @@ class PrescriptionPrintPreview extends Component {
   render() {
     const { patient, prescriptionDrugsList, prescriptionInfo } = this.props;
     return (
-      <div>
+      <div className="p-l-50 p-r-50 m-l-50 m-r-50">
         <div className="row  m-2">
-          <div className="col">
-            <img
-              className="media-object pull-left b-r-8"
-              style={{ width: 100 }}
-              src={logo}
-              alt=""
-            />
-          </div>
+          <div className="col"></div>
           <div className="col">
             <div className="text-muted text-center">
-              <small>Doctor/a Tayhana Ortolá</small>
+              <small className="f-w-900 f-14">
+                {prescriptionInfo.doctor.biologicalSex === 'm'
+                  ? 'Dr.'
+                  : 'Dra.' + prescriptionInfo.doctor.fullName}
+              </small>
               <br />
-              <small>Méidca Clínica</small>
+              <small>
+                {prescriptionInfo.doctor.licenses.map(
+                  (x, index) =>
+                    (index !== 0 ? ' | ' : '') +
+                    (x.licenseType.includes('mp') ? 'M.P. ' : 'M.N.') +
+                    x.licenseId
+                )}
+              </small>
               <br />
-              <small>M.P: 124123</small>
-              <br />
-              <small>Puerto San Julián</small>
-              <br />
-              <small>{prescriptionInfo.date.toLocaleDateString('es')}</small>
+              <small>{prescriptionInfo.doctor.specialities.join(', ')}</small>
             </div>
           </div>
           <div className="col"></div>
         </div>
-        <hr className="m-4" />
+        <hr className="mb-4 mt-2 ml-4 mr-4" />
         <div className="row">
           <div className="col text-center">
             <div className="card badge badge-light">
@@ -595,7 +668,7 @@ class PrescriptionPrintPreview extends Component {
                           {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].healthInsuranceCompany
                                 .description
-                            : ''}
+                            : '-'}
                         </b>
                       </p>
                     </div>
@@ -609,7 +682,7 @@ class PrescriptionPrintPreview extends Component {
                         <b>
                           {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].plan.code
-                            : ''}
+                            : '-'}
                         </b>
                       </p>
                     </div>
@@ -623,7 +696,7 @@ class PrescriptionPrintPreview extends Component {
                         <b>
                           {patient.healthInsurances?.length > 0
                             ? patient.healthInsurances[0].cardNumber
-                            : ''}
+                            : '-'}
                         </b>
                       </p>
                     </div>
@@ -633,13 +706,21 @@ class PrescriptionPrintPreview extends Component {
             </div>
           </div>
         </div>
-        <hr className="m-4" />
+        <hr className="mr-4 ml-4" />
         <div className="row m-2">
           <div className="col text-left">
-            <h5>Diagnóstico</h5>
+            <h5>R/P</h5>
+            <br />
+          </div>
+        </div>
+        <div className="row m-2">
+          <div className="col text-left ml-2">
+            <p className="text-muted">Diagnóstico</p>
             <p>{prescriptionInfo.diagnosis}</p>
-            <h5>Indicaciones Generales</h5>
+            <br />
+            <p className="text-muted">Indicaciones Generales</p>
             <p>{prescriptionInfo.indications}</p>
+            <br />
           </div>
         </div>
         <div className="card m-b-50">
@@ -665,10 +746,11 @@ class PrescriptionPrintPreview extends Component {
                           </th>
                           <td>
                             {pDrug.drug?.description +
-                              ' - ' +
+                              ' (' +
                               pDrug.drug?.composition +
                               ', ' +
-                              pDrug.drug?.format}
+                              pDrug.drug?.format +
+                              ')'}
                           </td>
                           <td className="text-center">{pDrug.quantity}</td>
                           <td>{pDrug.indications}</td>
@@ -680,11 +762,43 @@ class PrescriptionPrintPreview extends Component {
             </div>
           </div>
         </div>
-        <div className="row text-center m-r-2" style={{ marginTop: 300 }}>
-          <div className="col"></div>
-          <div className="col">
-            <hr className="" />
+        <div className="row ml-4 mr-4" style={{ marginTop: 200 }}>
+          <div className="col text-left">
+            <span>{prescriptionInfo.date.toLocaleDateString('es')}</span>
+          </div>
+          <div className="col text-right m-r-50">
             <span>Firma</span>
+          </div>
+        </div>
+        <hr className="mr-4 ml-4 mt-0 mb-0" />
+        <div className="row ml-2 mr-2">
+          <div className="col">
+            <img
+              className="pull-left"
+              style={{ width: 200, height: 130 }}
+              src={logo}
+              alt=""
+            />
+          </div>
+          <div className="col text-right pt-3">
+            <small>
+              <i className="fa fa-home"></i> Moreno N° 850
+            </small>
+            <br />
+            <small>
+              <i className="icofont icofont-brand-whatsapp"></i>{' '}
+              <i className="fa fa-phone"></i> 2966-682961
+            </small>
+            <br />
+            <small>
+              <i className="fa fa-envelope"></i> consultoriossanjulian@gmail.com
+            </small>
+            <br />
+            <small>
+              <i className="fa fa-map-marker"></i> 9310 Puerto San Julián - Sta.
+              Cruz
+            </small>
+            <br />
           </div>
         </div>
       </div>
