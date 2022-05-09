@@ -7,6 +7,7 @@ const prescriptionSchema = mongoose.Schema(
     date: { type: Date, required: true, default: new Date() },
     requiresDuplicate: { type: Boolean, default: false },
     longTerm: { type: Boolean, default: false },
+    frequent: { type: Boolean, default: false },
     drugs: [{
       indications: { type: String, required: true },     
       quantity: { type: Number, required: true },

@@ -37,6 +37,8 @@ import StudyTypeList from './components/catalogues/studyTypeList';
 import TagList from './components/catalogues/tagList';
 import HealthInsuranceList from './components/catalogues/healthInsuranceList';
 
+import PrescriptionList from './components/prescriptions/prescriptionList';
+
 import UnlockUser from './pages/unlockUser';
 import ComingSoon from './pages/comingsoon';
 import ComingSoonImg from './pages/comingsoonImg';
@@ -126,6 +128,8 @@ const Root = () => {
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/tag`} component={TagList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/healthInsurance`} component={HealthInsuranceList} />
+                                            
+                                            <Route exact path={`${process.env.PUBLIC_URL}/prescription`} component={PrescriptionList} />
 
                                         </Fragment>
                                     :

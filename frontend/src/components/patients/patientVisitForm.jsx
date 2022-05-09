@@ -14,7 +14,7 @@ import {
   patientInitializeVisitForm,
 } from '../../redux/patients/actions';
 import notFoundImg from '../../assets/images/search-not-found.png';
-import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
+import NewPrescriptionModalComponent from '../common/newPrescriptionModal';
 import { StudyOrderModalComponent } from '../common/studyOrderModal';
 import { LaboratoryOrderModalComponent } from '../common/laboratoryOrderModal';
 

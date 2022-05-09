@@ -1,16 +1,17 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { useForm } from 'react-hook-form';
-import SweetAlert from 'sweetalert2';
+import { useSelector } from 'react-redux';
 import DataTable from 'react-data-table-component';
+import ReactToPrint from 'react-to-print';
 
-import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
+import NewPrescriptionModalComponent from '../common/newPrescriptionModal';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as patientService from '../../services/patient.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
+import PrescriptionPrintPreview from '../common/prescriptionPrintPreview';
+import ComponentToPrintWrapper from '../common/componentToPrintWrapper';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -22,9 +23,8 @@ const PatientPrescriptions = (props) => {
   );
   const { status: visitStatus } = useSelector((store) => store.Visit);
   const { loggedUser } = useSelector((store) => store.UserLogin);
-  const dispatch = useDispatch();
 
-  const { register, handleSubmit, setValue, errors } = useForm();
+  const componentRef = useRef();
 
   const query = useQuery();
   const mode = query.get('mode');
@@ -74,18 +74,15 @@ const PatientPrescriptions = (props) => {
     },
     {
       name: 'Fármacos',
-      // selector: (row) => row.drugs?.map((x) => ` * ${x.drug.description} (${x.indications})`),
       sortable: false,
       left: true,
       cell: (row, index, column, id) => (
-        <span>
-          {row.drugs?.map((x) => ` * ${x.drug.description}`)}
-        </span>
+        <span>{row.drugs?.map((x) => ` * ${x.drug.description}`)}</span>
       ),
     },
     {
       name: 'Indicaciones Generales',
-      selector: (row) => row.indications,
+      cell: (row) => row.indications,
       sortable: true,
       left: true,
     },
@@ -94,6 +91,33 @@ const PatientPrescriptions = (props) => {
       selector: (row) => row.doctor?.fullName,
       sortable: true,
       left: true,
+    },
+    {
+      name: 'Prescripción Frecuente',
+      sortable: true,
+      center: true,
+      cell: (row, index, column, id) =>
+        row.frequent ? (
+          <i className="fa fa-check text-muted f-w-700"></i>
+        ) : (
+          ''
+        ),
+    },
+    {
+      name: '',
+      sortable: false,
+      center: true,
+      cell: (row, index, column, id) => (
+        <span>
+            <ComponentToPrintWrapper>
+              <PrescriptionPrintPreview
+                patient={patient}
+                prescriptionDrugsList={row.drugs}
+                prescriptionInfo={row}                
+              />  
+            </ComponentToPrintWrapper>  
+        </span>
+      ),
     },
   ];
 

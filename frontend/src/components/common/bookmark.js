@@ -7,7 +7,7 @@ import { MENUITEMS } from '../../components/common/sidebar-component/menu';
 import { patientInitialize, patientInitializeVisitForm, patientGetByIdWatcher } from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
 import SelectPatientModalComponent from './selectPatientModalComponent';
-import { NewPrescriptionModalComponent } from './newPrescriptionModal';
+import NewPrescriptionModalComponent from './newPrescriptionModal';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
 
 const Bookmark = () => {

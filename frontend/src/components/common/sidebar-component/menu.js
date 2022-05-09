@@ -1,16 +1,8 @@
 import {
     Home,
-    PieChart,
-    Box,
-    DollarSign,
-    UserPlus,
+    Clipboard,
     Users,
-    TrendingUp,
-    Settings,
-    Airplay,
-    FolderPlus,
-    File,
-    Command, Cloud, Book, FileText, Server, Image, Sliders, Map, GitPullRequest, Calendar, Edit, Mail, MessageSquare, UserCheck, Layers, HelpCircle, Database, Headphones, Mic, ShoppingBag, Search, AlertOctagon, Lock, Briefcase, BarChart,Target, List, Package
+    Settings,FileText, Calendar, Briefcase
 } from 'react-feather';
 
 export const MENUITEMS = [
@@ -25,6 +17,9 @@ export const MENUITEMS = [
     },
     {
         title: 'Turnos', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
+    },
+    {
+        title: 'Prescripciones', path: '/prescription', icon: Clipboard, type: 'link', active: false, bookmark: false
     },
     {
         title: 'Reportes', icon: FileText, type: 'sub', active: false, children: [

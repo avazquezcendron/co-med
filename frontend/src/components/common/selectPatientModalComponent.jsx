@@ -55,7 +55,8 @@ const SelectPatientModalComponent = (props) => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!patient.id) {
       setError('patient', {});
     } else {

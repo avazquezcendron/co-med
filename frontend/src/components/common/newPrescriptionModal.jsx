@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef, Fragment, Component } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody, UncontrolledTooltip } from 'reactstrap';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   AsyncTypeahead,
   Typeahead,
@@ -14,17 +14,15 @@ import ReactToPrint from 'react-to-print';
 
 import * as entityService from '../../services/entity.service';
 import * as doctorService from '../../services/doctor.service';
-import logo from '../../assets/images/logo-principal-gris.png';
+import PrescriptionPrintPreview from './prescriptionPrintPreview';
 
 const NewPrescriptionModalComponent = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const { patient } = useSelector((store) => store.Patient);
   const { visit } = useSelector((store) => store.Visit);
 
-  const [doctor, setDoctor] = useState(loggedUser.user.doctor || {});
-  const [doctors, setDoctors] = useState(
-    loggedUser.user.doctor ? [loggedUser.user.doctor] : []
-  );
+  const [doctor, setDoctor] = useState({});
+  const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -36,15 +34,14 @@ const NewPrescriptionModalComponent = (props) => {
   const [prescriptionDrugs, setprescriptionDrugs] = useState([]);
 
   const [prescription, setprescription] = useState({
-    date: new Date(),
+    createdAt: new Date(),
     indications: '',
-    diagnosis: '',
+    diagnosis: visit.diagnosis || '',
     requiresDuplicate: false,
     longTerm: false,
     drugs: [],
     doctor: doctor,
-    healthRecord: patient.healthRecord || {},
-    visit: visit || {},
+    healthRecord: {},
   });
 
   const [quantity, setQuantity] = useState(0);
@@ -53,6 +50,15 @@ const NewPrescriptionModalComponent = (props) => {
 
   const [drugs, setDrugs] = useState([]);
   useEffect(() => {
+    if (props.prescription?.id) {
+      setprescription(props.prescription);
+      setDoctor(props.prescription.doctor);
+      setDoctors([props.prescription.doctor]);
+      setprescriptionDrugsList(props.prescription?.drugs);
+    } else {
+      setDoctor(loggedUser.user.doctor || {});
+      setDoctors(loggedUser.user.doctor ? [loggedUser.user.doctor] : []);
+    }
     setprescriptionDrugs([]);
     setQuantity(0);
     setIndications('');
@@ -60,9 +66,19 @@ const NewPrescriptionModalComponent = (props) => {
     return () => {};
   }, []);
 
+  useEffect(() => {
+    if (patient.id && !props.prescription?.id) {
+      setprescription({
+        ...prescription,
+        healthRecord: { ...patient.healthRecord, patient: patient },
+      });
+    }
+  }, [patient]);
+
   const handleDoctorChange = (selected) => {
     let doctor = selected.length > 0 ? selected[0] : {};
     setDoctor(doctor);
+    setprescription({...prescription, doctor: doctor});
   };
 
   const handleSearch = (filter) => {
@@ -87,7 +103,7 @@ const NewPrescriptionModalComponent = (props) => {
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
-        text: `Se generará la prescripción para el paciente ${patient.fullName}.`,
+        text: `Se generará una prescripción para el paciente ${patient.fullName}.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -98,6 +114,7 @@ const NewPrescriptionModalComponent = (props) => {
         if (result.value) {
           props.handleSavePrescription &&
             props.handleSavePrescription({
+              ...prescription,
               ...data,
               drugs: prescriptionDrugsList,
             });
@@ -218,7 +235,7 @@ const NewPrescriptionModalComponent = (props) => {
                     {'Paciente'}
                   </p>
                   <p className="col-md-12">
-                    <b>{patient.fullName}</b>
+                    <b>{prescription.healthRecord.patient?.fullName}</b>
                   </p>
                 </div>
               </div>
@@ -228,17 +245,18 @@ const NewPrescriptionModalComponent = (props) => {
                     {'Edad'}
                   </p>
                   <p className="col-md-12 ">
-                    <b>{patient.age}</b>
+                    <b>{prescription.healthRecord.patient?.age}</b>
                   </p>
                 </div>
               </div>
               <div className="col-md-4">
                 <div className="row">
                   <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                    Doc. Tipo: {patient.nationalIdType}
+                    Doc. Tipo:{' '}
+                    {prescription.healthRecord.patient?.nationalIdType}
                   </p>
                   <p className="col-md-12 ">
-                    <b>{patient.nationalId}</b>
+                    <b>{prescription.healthRecord.patient?.nationalId}</b>
                   </p>
                 </div>
               </div>
@@ -251,9 +269,10 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12">
                     <b>
-                      {patient.healthInsurances?.length > 0
-                        ? patient.healthInsurances[0].healthInsuranceCompany
-                            ?.description
+                      {prescription.healthRecord.patient?.healthInsurances
+                        ?.length > 0
+                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                            .healthInsuranceCompany?.description
                         : ''}
                     </b>
                   </p>
@@ -266,8 +285,10 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {patient.healthInsurances?.length > 0
-                        ? patient.healthInsurances[0].plan.code
+                      {prescription.healthRecord.patient?.healthInsurances
+                        ?.length > 0
+                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                            .plan.code
                         : ''}
                     </b>
                   </p>
@@ -280,8 +301,10 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {patient.healthInsurances?.length > 0
-                        ? patient.healthInsurances[0].cardNumber
+                      {prescription.healthRecord.patient?.healthInsurances
+                        ?.length > 0
+                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                            .cardNumber
                         : ''}
                     </b>
                   </p>
@@ -296,7 +319,7 @@ const NewPrescriptionModalComponent = (props) => {
             onSubmit={handleSubmit(handleSubmitForm)}
           >
             <div className="card-body">
-              {!doctor && (
+              {!loggedUser.user.isDoctor && (
                 <Fragment>
                   <h6>{'Doctor/a'}</h6>
                   <div className="form-group row">
@@ -317,8 +340,7 @@ const NewPrescriptionModalComponent = (props) => {
                             ? doctors.filter((x) => x.id === doctor.id)
                             : null
                         }
-                        disabled={isDisabled}
-                        innerRef={register('doctor', { required: true })}
+                        disabled={isDisabled || prescription.id}
                         renderMenuItemChildren={(option, props) => (
                           <Fragment>
                             <Highlighter search={props.text}>
@@ -344,7 +366,8 @@ const NewPrescriptionModalComponent = (props) => {
                     name="diagnosis"
                     id="diagnosis"
                     type="text"
-                    defaultValue={visit.diagnosis}
+                    defaultValue={prescription.diagnosis}
+                    disabled={prescription.id}
                     onChange={(e) =>
                       setprescription({
                         ...prescription,
@@ -367,6 +390,7 @@ const NewPrescriptionModalComponent = (props) => {
                     name="indications"
                     id="indications"
                     rows="3"
+                    disabled={prescription.id}
                     onChange={(e) =>
                       setprescription({
                         ...prescription,
@@ -375,6 +399,46 @@ const NewPrescriptionModalComponent = (props) => {
                     }
                     ref={register({ required: false })}
                   />
+                </div>
+              </div>
+              <div className="form-group row mt-4">
+                <div className="col-md-12">
+                  <input
+                    className="checkbox_animated"
+                    defaultChecked={prescription.longTerm}
+                    disabled={prescription.id}
+                    name="longTerm"
+                    id="longTerm"
+                    type="checkbox"
+                    ref={register({ required: false })}
+                  />
+                  <label className="mb-1 mr-4" htmlFor="longTerm">
+                    Tratamiento Prolongado
+                  </label>
+                  <input
+                    className="checkbox_animated"
+                    defaultChecked={prescription.requiresDuplicate}
+                    disabled={prescription.id}
+                    name="requiresDuplicate"
+                    id="requiresDuplicate"
+                    type="checkbox"
+                    ref={register({ required: false })}
+                  />
+                  <label className="mb-1 mr-4" htmlFor="requiresDuplicate">
+                    Requiere duplicado
+                  </label>
+                  <input
+                    className="checkbox_animated"
+                    defaultChecked={prescription.frequent}
+                    disabled={prescription.id}
+                    name="frequent"
+                    id="frequent"
+                    type="checkbox"
+                    ref={register({ required: false })}
+                  />
+                  <label className="mb-1 mr-4" htmlFor="frequent">
+                    Prescripción Frecuente
+                  </label>
                 </div>
               </div>
               <hr className="mt-4 mb-4" />
@@ -388,13 +452,12 @@ const NewPrescriptionModalComponent = (props) => {
                     <div className="col-md-12">
                       <Typeahead
                         id="drugs"
-                        // labelKey={(option) => `${option.description} (Composición: ${option.composition}, ${option.format})`}
                         labelKey="description"
                         multiple
                         emptyLabel="No se encontraron resultados..."
                         minLength={3}
                         options={drugs}
-                        // selected={drugs.length > 0 ? drugs.filter((x) => x.description === doctor.description) : null}
+                        disabled={prescription.id}
                         selected={prescriptionDrugs}
                         onChange={handleDrugsChange}
                         renderInput={(option, props, index) => (
@@ -452,6 +515,7 @@ const NewPrescriptionModalComponent = (props) => {
                         name="quantity"
                         id="quantity"
                         type="number"
+                        disabled={prescription.id}
                         value={quantity}
                         onChange={(e) => handleQuantityChange(e.target.value)}
                         ref={register({ required: true })}
@@ -476,6 +540,7 @@ const NewPrescriptionModalComponent = (props) => {
                     name="drugsIndications"
                     id="drugsIndications"
                     rows="3"
+                    disabled={prescription.id}
                     value={indications}
                     onChange={(e) => handleIndicationsChange(e.target.value)}
                     ref={register({ required: false })}
@@ -485,29 +550,31 @@ const NewPrescriptionModalComponent = (props) => {
                   </span>
                 </div>
               </div>
-              {currentIndex === -1 ? (
-                <button
-                  className="btn btn-primary pull-right m-b-10"
-                  onClick={addDrugToPrescription}
-                >
-                  Agregar
-                </button>
-              ) : (
-                <div className=" pull-right m-b-10">
+
+              {!prescription.id &&
+                (currentIndex === -1 ? (
                   <button
-                    className="btn btn-danger"
-                    onClick={() => clearForm()}
+                    className="btn btn-primary pull-right m-b-10"
+                    onClick={addDrugToPrescription}
                   >
-                    Cancelar
+                    Agregar
                   </button>
-                  <button
-                    className="btn btn-primary ml-2"
-                    onClick={updateDrugPrescription}
-                  >
-                    Actualizar
-                  </button>
-                </div>
-              )}
+                ) : (
+                  <div className=" pull-right m-b-10">
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => clearForm()}
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      className="btn btn-primary ml-2"
+                      onClick={updateDrugPrescription}
+                    >
+                      Actualizar
+                    </button>
+                  </div>
+                ))}
               <div className="table-responsive">
                 <table className="table table-hover table-sm">
                   <thead>
@@ -535,15 +602,17 @@ const NewPrescriptionModalComponent = (props) => {
                             <td className="text-center">{pDrug.quantity}</td>
                             <td>{pDrug.indications}</td>
                             <td>
-                              <a
-                                href="#javascript"
-                                onClick={(e) => handleDeleteRow(e, index)}
-                              >
-                                <i
-                                  className="fa fa-trash text-muted"
-                                  title="Borrar"
-                                ></i>
-                              </a>
+                              {!prescription.id && (
+                                <a
+                                  href="#javascript"
+                                  onClick={(e) => handleDeleteRow(e, index)}
+                                >
+                                  <i
+                                    className="fa fa-trash text-muted"
+                                    title="Borrar"
+                                  ></i>
+                                </a>
+                              )}
                             </td>
                           </tr>
                         ))
@@ -563,10 +632,12 @@ const NewPrescriptionModalComponent = (props) => {
               >
                 {'Cancelar'}
               </button>
-              <button className="btn btn-primary ml-2">Guardar</button>
+              {!prescription.id && (
+                <button className="btn btn-primary ml-2">Guardar</button>
+              )}
               <div style={{ display: 'none' }}>
                 <PrescriptionPrintPreview
-                  patient={patient}
+                  patient={prescription.healthRecord.patient || {}}
                   prescriptionDrugsList={prescriptionDrugsList}
                   prescriptionInfo={prescription}
                   ref={componentRef}
@@ -591,219 +662,4 @@ const NewPrescriptionModalComponent = (props) => {
   );
 };
 
-class PrescriptionPrintPreview extends Component {
-  render() {
-    const { patient, prescriptionDrugsList, prescriptionInfo } = this.props;
-    return (
-      <div className="p-l-50 p-r-50 m-l-50 m-r-50">
-        <div className="row  m-2">
-          <div className="col"></div>
-          <div className="col">
-            <div className="text-muted text-center">
-              <small className="f-w-900 f-14">
-                {prescriptionInfo.doctor.biologicalSex === 'm'
-                  ? 'Dr.'
-                  : 'Dra.' + prescriptionInfo.doctor.fullName}
-              </small>
-              <br />
-              <small>
-                {prescriptionInfo.doctor.licenses.map(
-                  (x, index) =>
-                    (index !== 0 ? ' | ' : '') +
-                    (x.licenseType.includes('mp') ? 'M.P. ' : 'M.N.') +
-                    x.licenseId
-                )}
-              </small>
-              <br />
-              <small>{prescriptionInfo.doctor.specialities.join(', ')}</small>
-            </div>
-          </div>
-          <div className="col"></div>
-        </div>
-        <hr className="mb-4 mt-2 ml-4 mr-4" />
-        <div className="row">
-          <div className="col text-center">
-            <div className="card badge badge-light">
-              <div className="card-body text-muted ">
-                <div className="row ">
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Paciente'}
-                      </p>
-                      <p className="col-sm-12">
-                        <b>{patient.fullName}</b>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Edad'}
-                      </p>
-                      <p className="col-md-12 ">
-                        <b>{patient.age}</b>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        Doc. Tipo: {patient.nationalIdType}
-                      </p>
-                      <p className="col-md-12 ">
-                        <b>{patient.nationalId}</b>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="row mt-4">
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Obra Social'}
-                      </p>
-                      <p className="col-md-12">
-                        <b>
-                          {patient.healthInsurances?.length > 0
-                            ? patient.healthInsurances[0].healthInsuranceCompany
-                                .description
-                            : '-'}
-                        </b>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Plan'}
-                      </p>
-                      <p className="col-md-12 ">
-                        <b>
-                          {patient.healthInsurances?.length > 0
-                            ? patient.healthInsurances[0].plan.code
-                            : '-'}
-                        </b>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="col">
-                    <div className="row">
-                      <p className="col-md-12 col-form-label f-w-100 f-14 ">
-                        {'Número de Credencial'}
-                      </p>
-                      <p className="col-md-12 ">
-                        <b>
-                          {patient.healthInsurances?.length > 0
-                            ? patient.healthInsurances[0].cardNumber
-                            : '-'}
-                        </b>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr className="mr-4 ml-4" />
-        <div className="row m-2">
-          <div className="col text-left">
-            <h5>R/P</h5>
-            <br />
-          </div>
-        </div>
-        <div className="row m-2">
-          <div className="col text-left ml-2">
-            <p className="text-muted">Diagnóstico</p>
-            <p>{prescriptionInfo.diagnosis}</p>
-            <br />
-            <p className="text-muted">Indicaciones Generales</p>
-            <p>{prescriptionInfo.indications}</p>
-            <br />
-          </div>
-        </div>
-        <div className="card m-b-50">
-          <div className="card-body">
-            <div className="table-responsive">
-              <table className="table table-sm">
-                <thead>
-                  <tr>
-                    <th scope="col"></th>
-                    <th scope="col">{'Fármaco'}</th>
-                    <th scope="col" className="text-center">
-                      {'Cantidad'}
-                    </th>
-                    <th scope="col">{'Indicaciones'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {prescriptionDrugsList.length > 0
-                    ? prescriptionDrugsList.map((pDrug, index) => (
-                        <tr key={index}>
-                          <th scope="row">
-                            <i className="icofont icofont-pills"></i>
-                          </th>
-                          <td>
-                            {pDrug.drug?.description +
-                              ' (' +
-                              pDrug.drug?.composition +
-                              ', ' +
-                              pDrug.drug?.format +
-                              ')'}
-                          </td>
-                          <td className="text-center">{pDrug.quantity}</td>
-                          <td>{pDrug.indications}</td>
-                        </tr>
-                      ))
-                    : null}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div className="row ml-4 mr-4" style={{ marginTop: 200 }}>
-          <div className="col text-left">
-            <span>{prescriptionInfo.date.toLocaleDateString('es')}</span>
-          </div>
-          <div className="col text-right m-r-50">
-            <span>Firma</span>
-          </div>
-        </div>
-        <hr className="mr-4 ml-4 mt-0 mb-0" />
-        <div className="row ml-2 mr-2">
-          <div className="col">
-            <img
-              className="pull-left"
-              style={{ width: 200, height: 130 }}
-              src={logo}
-              alt=""
-            />
-          </div>
-          <div className="col text-right pt-3">
-            <small>
-              <i className="fa fa-home"></i> Moreno N° 850
-            </small>
-            <br />
-            <small>
-              <i className="icofont icofont-brand-whatsapp"></i>{' '}
-              <i className="fa fa-phone"></i> 2966-682961
-            </small>
-            <br />
-            <small>
-              <i className="fa fa-envelope"></i> consultoriossanjulian@gmail.com
-            </small>
-            <br />
-            <small>
-              <i className="fa fa-map-marker"></i> 9310 Puerto San Julián - Sta.
-              Cruz
-            </small>
-            <br />
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-export { NewPrescriptionModalComponent, PrescriptionPrintPreview };
+export default NewPrescriptionModalComponent;

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import DataTable from 'react-data-table-component';
 
-import { NewPrescriptionModalComponent } from '../common/newPrescriptionModal';
+import NewPrescriptionModalComponent from '../common/newPrescriptionModal';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as entityService from '../../services/entity.service';
