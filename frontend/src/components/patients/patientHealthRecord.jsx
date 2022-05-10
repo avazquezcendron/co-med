@@ -39,164 +39,171 @@ const PatientHealthRecord = (props) => {
   return (
     <Fragment>
       {/* {status === LOADED || status === SUCCEEDED || status === FAILED ? ( */}
-        <div className="card">
-          <div className="card-header">
-            <div className="row m-b-2">
-              <div className="col-md-9">
-                <h4 className="card-title mb-0">
-                  {'Historia Clínica Nro. ' +
-                    patient.healthRecord?.healthRecordNumber}
-                </h4>
-              </div>
-              <div className="col-md-3">
-                <button
-                  className="btn btn-link pl-0"
-                  onClick={() => setisHealthRecord(!isHealthRecord)}
-                  data-toggle="collapse"
-                  data-target="#collapseicon2"
-                  aria-expanded={isHealthRecord}
-                  aria-controls="collapseicon2"
+      <div className="card">
+        <div className="card-header">
+          <div className="row m-b-2">
+            <div className="col-md-9">
+              <h4 className="card-title mb-0">
+                <span className="icofont icofont-medical"></span>
+                {'Historia Clínica Nro. ' +
+                  patient.healthRecord?.healthRecordNumber}
+                <a
+                  href="#javascript"
+                  className="icofont icofont-maximize ml-2"
+                  title="Expandir"
+                  onClick={() => props.handleHrExpanded()}
                 >
                   {''}
-                </button>
-              </div>
+                </a>
+              </h4>
+            </div>
+            <div className="col-md-3">
+              <button
+                className="btn btn-link pl-0"
+                onClick={() => setisHealthRecord(!isHealthRecord)}
+                data-toggle="collapse"
+                data-target="#collapseicon2"
+                aria-expanded={isHealthRecord}
+                aria-controls="collapseicon2"
+              >
+                {''}
+              </button>
             </div>
           </div>
-          <Collapse isOpen={isHealthRecord}>
-            <div className="card-body">
-              <ul className="nav nav-tabs nav-secondary m-b-30">
-                <li className="nav-item">
-                  <a
-                    href="#javascript"
-                    className={`nav-link ${
-                      dataTab === 'datos' ? 'active' : ''
-                    }`}
-                    onClick={() => setdataTab('datos')}
-                  >
-                    <i className="icofont icofont-id"></i>Datos
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a
-                    href="#javascript"
-                    className={`nav-link ${
-                      dataTab === 'prescripciones' ? 'active' : ''
-                    }`}
-                    onClick={() => setdataTab('prescripciones')}
-                  >
-                    <i className="icofont icofont-pills"></i>
-                    Prescripciones
-                  </a>
-                </li>
-                {(loggedUser.user.isAdmin || loggedUser.user.isDoctor ) && (
-                  <Fragment>
-                    <li className="nav-item">
-                      <a
-                        href="#javascript"
-                        className={`nav-link ${
-                          dataTab === 'antecedentes' ? 'active' : ''
-                        }`}
-                        onClick={() => setdataTab('antecedentes')}
-                      >
-                        <i className="icofont icofont-medical"></i>
-                        Antecendentes
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        href="#javascript"
-                        className={`nav-link ${
-                          dataTab === 'laboratorios' ? 'active' : ''
-                        }`}
-                        onClick={() => setdataTab('laboratorios')}
-                      >
-                        <i className="icofont icofont-laboratory"></i>
-                        Laboratorios
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        href="#javascript"
-                        className={`nav-link ${
-                          dataTab === 'estudioscompl' ? 'active' : ''
-                        }`}
-                        onClick={() => setdataTab('estudioscompl')}
-                      >
-                        <i className="icofont icofont-heartbeat"></i>
-                        Estudios Compl.
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        href="#javascript"
-                        className={`nav-link ${
-                          dataTab === 'metricas' ? 'active' : ''
-                        }`}
-                        onClick={() => setdataTab('metricas')}
-                      >
-                        <i className="icofont icofont-pulse"></i>
-                        Métricas y Signos Vitales
-                      </a>
-                    </li>
-                    <li className="nav-item">
-                      <a
-                        href="#javascript"
-                        className={`nav-link ${
-                          dataTab === 'evolucion' ? 'active' : ''
-                        }`}
-                        onClick={() => setdataTab('evolucion')}
-                      >
-                        <i className="icofont icofont-chart-histogram"></i>
-                        Evolución
-                      </a>
-                    </li>
-                  </Fragment>
-                )}
-              </ul>
-              <TabContent activeTab={dataTab}>
-                <TabPane className="fade show" tabId="datos">
-                  <div className="col-md-12">
-                    <PatientPersonalData />
-                  </div>
-                </TabPane>
-                <TabPane tabId="prescripciones" className="fade show">
-                  <div className="col-md-12">
-                    <PatientPrescriptions />
-                  </div>
-                </TabPane>
-                {(loggedUser.user.isAdmin || loggedUser.user.isDoctor ) && (
-                  <Fragment>
-                    <TabPane tabId="antecedentes" className="fade show">
-                      <div className="col-md-12">
-                        <PatientBackground />
-                      </div>
-                    </TabPane>
-                    <TabPane tabId="laboratorios" className="fade show">
-                      <div className="col-md-12">
-                        <PatientLaboratories />
-                      </div>
-                    </TabPane>
-                    <TabPane tabId="estudioscompl" className="fade show">
-                      <div className="col-md-12">
-                        <PatientStudies />
-                      </div>
-                    </TabPane>
-                    <TabPane tabId="metricas" className="fade show">
-                      <div className="col-md-12">
-                        <PatientVitalsAndMetrics />
-                      </div>
-                    </TabPane>
-                    <TabPane tabId="evolucion" className="fade show">
-                      <div className="col-md-12">
-                        <PatientEvolution />
-                      </div>
-                    </TabPane>
-                  </Fragment>
-                )}
-              </TabContent>
-            </div>
-          </Collapse>
         </div>
+        <Collapse isOpen={isHealthRecord}>
+          <div className="card-body">
+            <ul className="nav nav-tabs nav-secondary m-b-30">
+              <li className="nav-item">
+                <a
+                  href="#javascript"
+                  className={`nav-link ${dataTab === 'datos' ? 'active' : ''}`}
+                  onClick={() => setdataTab('datos')}
+                >
+                  <i className="icofont icofont-id"></i>Datos
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="#javascript"
+                  className={`nav-link ${
+                    dataTab === 'prescripciones' ? 'active' : ''
+                  }`}
+                  onClick={() => setdataTab('prescripciones')}
+                >
+                  <i className="icofont icofont-pills"></i>
+                  Prescripciones
+                </a>
+              </li>
+              {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                <Fragment>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'antecedentes' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('antecedentes')}
+                    >
+                      <i className="icofont icofont-medical"></i>
+                      Antecendentes
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'laboratorios' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('laboratorios')}
+                    >
+                      <i className="icofont icofont-laboratory"></i>
+                      Laboratorios
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'estudioscompl' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('estudioscompl')}
+                    >
+                      <i className="icofont icofont-heartbeat"></i>
+                      Estudios Compl.
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'metricas' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('metricas')}
+                    >
+                      <i className="icofont icofont-pulse"></i>
+                      Métricas y Signos Vitales
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'evolucion' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('evolucion')}
+                    >
+                      <i className="icofont icofont-chart-histogram"></i>
+                      Evolución
+                    </a>
+                  </li>
+                </Fragment>
+              )}
+            </ul>
+            <TabContent activeTab={dataTab}>
+              <TabPane className="fade show" tabId="datos">
+                <div className="col-md-12">
+                  <PatientPersonalData />
+                </div>
+              </TabPane>
+              <TabPane tabId="prescripciones" className="fade show">
+                <div className="col-md-12">
+                  <PatientPrescriptions />
+                </div>
+              </TabPane>
+              {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                <Fragment>
+                  <TabPane tabId="antecedentes" className="fade show">
+                    <div className="col-md-12">
+                      <PatientBackground />
+                    </div>
+                  </TabPane>
+                  <TabPane tabId="laboratorios" className="fade show">
+                    <div className="col-md-12">
+                      <PatientLaboratories />
+                    </div>
+                  </TabPane>
+                  <TabPane tabId="estudioscompl" className="fade show">
+                    <div className="col-md-12">
+                      <PatientStudies />
+                    </div>
+                  </TabPane>
+                  <TabPane tabId="metricas" className="fade show">
+                    <div className="col-md-12">
+                      <PatientVitalsAndMetrics />
+                    </div>
+                  </TabPane>
+                  <TabPane tabId="evolucion" className="fade show">
+                    <div className="col-md-12">
+                      <PatientEvolution />
+                    </div>
+                  </TabPane>
+                </Fragment>
+              )}
+            </TabContent>
+          </div>
+        </Collapse>
+      </div>
       {/* ) : (
         <Loader show={true} />
       )} */}
