@@ -96,6 +96,14 @@ const PatientVisitHistory = (props) => {
     );
   };
 
+  const handleClearFilter = () => {
+    setstartDateApplied(null);
+    setendDateApplied(null);
+    dispatch(
+      patientGetVisitsWatcher(id, null, null)
+    );
+  };
+
   return (
     <Fragment>
       {visitsStatus === LOADED ||
@@ -218,6 +226,14 @@ const PatientVisitHistory = (props) => {
                             </b>
                             "
                           </mark>
+                      <a
+                        href="#javascript"
+                        className="ml-2"
+                        title="Limpiar Filtro"
+                        onClick={handleClearFilter}
+                      >
+                        <i className="fa fa-times ml-1"></i>
+                      </a>
                         </p>
                       )}
                     </div>

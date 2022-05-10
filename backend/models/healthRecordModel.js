@@ -5,18 +5,6 @@ const healthRecordSchema = mongoose.Schema(
     healthRecordNumber: { type: Number, required: true, unique: true },    
     bloodType: String,
     rhFactor: String,
-    vitalsAndMetrics: [{
-      date: Date,
-      systolicBloodPressure: Number,
-      diastolicBloodPressure: Number,
-      breathingRate: Number,
-      heartRate: Number,
-      temperature: Number,
-      bodyFat: Number,
-      bodyWeight: Number,
-      weight: Number,
-      height: Number,
-    }],
     pathologicalBackground: {
       heartDisease: Boolean,
       heartDiseaseText: String,
@@ -102,6 +90,18 @@ const healthRecordSchema = mongoose.Schema(
       ],
       extraComments: String,
     },
+    vitalsAndMetrics: [{
+      date: Date,
+      systolicBloodPressure: Number,
+      diastolicBloodPressure: Number,
+      breathingRate: Number,
+      heartRate: Number,
+      temperature: Number,
+      bodyFat: Number,
+      bodyWeight: Number,
+      weight: Number,
+      height: Number,
+    }],
     prescriptions: [
       {
         type: mongoose.Schema.Types.ObjectId,
