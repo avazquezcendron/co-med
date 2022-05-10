@@ -9,6 +9,7 @@ import AppointmentModalComponent from './appointments/appointmentModalComponent'
 import SelectPatientModalComponent from './selectPatientModalComponent';
 import NewPrescriptionModalComponent from './newPrescriptionModal';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
+import * as prescriptionService from '../../services/prescription.service';
 
 const Bookmark = () => {
   const dispatch = useDispatch();
@@ -217,7 +218,11 @@ const Bookmark = () => {
   }
 
   const handleSavePrescription = (prescription) => {
-    prescriptionModalToggle();
+    if (prescription) {
+      prescriptionService.save(prescription, loggedUser).then((data) => {
+        prescriptionModalToggle();
+      });
+    }
   };
 
   const handleNewPrescriptionClick = () => {

@@ -9,6 +9,7 @@ import NewPrescriptionModalComponent from '../common/newPrescriptionModal';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as patientService from '../../services/patient.service';
+import * as prescriptionService from '../../services/prescription.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
 import PrescriptionPrintPreview from '../common/prescriptionPrintPreview';
 import ComponentToPrintWrapper from '../common/componentToPrintWrapper';
@@ -24,16 +25,19 @@ const PatientPrescriptions = (props) => {
   const { status: visitStatus } = useSelector((store) => store.Visit);
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
-  const componentRef = useRef();
-
   const query = useQuery();
   const mode = query.get('mode');
   const { id } = useParams();
 
   const [prescriptions, setPrescriptions] = useState([]);
+  const [currentprescription, setCurrentprescription] = useState({});
+  const [statusUpdate, setStatusUpdate] = useState(false);
 
   const [prescriptionModal, setprescriptionModal] = useState(false);
   const prescriptionModalToggle = () => {
+    if (prescriptionModal) {
+      setCurrentprescription({});
+    }
     setprescriptionModal(!prescriptionModal);
   };
 
@@ -43,7 +47,7 @@ const PatientPrescriptions = (props) => {
         .getPrescriptions({ patientId: patient.id }, loggedUser)
         .then((data) => setPrescriptions(data));
     }
-  }, [id, patient, visitStatus]);
+  }, [id, patient, visitStatus, statusUpdate]);
 
   const addPrescription = () => {
     prescriptionModalToggle();
@@ -55,8 +59,6 @@ const PatientPrescriptions = (props) => {
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Todos',
   };
-
-  const handleRowClickPrescriptions = (row, event) => {};
 
   const columnsConfigPrescription = [
     {
@@ -97,11 +99,7 @@ const PatientPrescriptions = (props) => {
       sortable: true,
       center: true,
       cell: (row, index, column, id) =>
-        row.frequent ? (
-          <i className="fa fa-check text-muted f-w-700"></i>
-        ) : (
-          ''
-        ),
+        row.frequent ? <i className="fa fa-check text-muted f-w-700"></i> : '',
     },
     {
       name: '',
@@ -109,17 +107,31 @@ const PatientPrescriptions = (props) => {
       center: true,
       cell: (row, index, column, id) => (
         <span>
-            <ComponentToPrintWrapper>
-              <PrescriptionPrintPreview
-                patient={patient}
-                prescriptionDrugsList={row.drugs}
-                prescriptionInfo={row}                
-              />  
-            </ComponentToPrintWrapper>  
+          <ComponentToPrintWrapper>
+            <PrescriptionPrintPreview
+              patient={patient}
+              prescriptionDrugsList={row.drugs}
+              prescriptionInfo={row}
+            />
+          </ComponentToPrintWrapper>
         </span>
       ),
     },
   ];
+
+  const handleRowClick = (row, event) => {
+    setCurrentprescription({ ...row, healthRecord: { ...patient.healthRecord, patient: patient } });
+    prescriptionModalToggle();
+  };
+
+  const handleSavePrescription = (prescription) => {
+    if (prescription) {
+      prescriptionService.save(prescription, loggedUser).then((data) => {
+        setStatusUpdate(!statusUpdate);
+        prescriptionModalToggle();
+      });
+    }
+  };
 
   return (
     <Fragment>
@@ -170,7 +182,7 @@ const PatientPrescriptions = (props) => {
                   subHeaderAlign={'left'}
                   paginationPerPage={20}
                   paginationComponentOptions={paginationComponentOptions}
-                  onRowClicked={handleRowClickPrescriptions}
+                  onRowClicked={handleRowClick}
                   noDataComponent={
                     <div className="col-md-12 text-center m-50">
                       <img className="img-fluid" src={notFoundImg} alt="" />
@@ -187,7 +199,9 @@ const PatientPrescriptions = (props) => {
           {prescriptionModal && (
             <NewPrescriptionModalComponent
               prescriptionModal={prescriptionModal}
+              prescription={currentprescription}
               prescriptionModalToggle={prescriptionModalToggle}
+              handleSavePrescription={handleSavePrescription}
             />
           )}
         </Fragment>
