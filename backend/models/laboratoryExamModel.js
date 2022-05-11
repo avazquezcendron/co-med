@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 
 const laboratoryExamSchema = mongoose.Schema(
   {
-    fileUrl: { type: String },
+    filesUrls: [String],
     laboratories: [
       {
         value: { type: String, required: true },
-        laboratorType: {
+        laboratoryType: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
           ref: 'LaboratoryType',

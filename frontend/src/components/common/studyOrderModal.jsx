@@ -38,7 +38,7 @@ const StudyOrderModalComponent = (props) => {
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
-        text: `Se generará la órden de estudio para el paciente ${patient.fullName}.`,
+        text: `Se generará la orden de estudio para el paciente ${patient.fullName}.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -59,7 +59,7 @@ const StudyOrderModalComponent = (props) => {
   return (
     <Modal isOpen={props.modal} toggle={props.modalToggle} size="lg">
       <ModalHeader toggle={props.modalToggle}>
-        Nueva Órden de Estudio
+        Nueva Orden de Estudio
       </ModalHeader>
       <ModalBody>
         <div className="card badge badge-light m-l-20 m-r-20">

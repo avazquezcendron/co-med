@@ -44,7 +44,7 @@ const PatientHealthRecord = (props) => {
           <div className="row m-b-2">
             <div className="col-md-9">
               <h4 className="card-title mb-0">
-                <span className="icofont icofont-medical"></span>
+                <span className="icofont icofont-medical text-muted"></span>
                 {'Historia Clínica Nro. ' +
                   patient.healthRecord?.healthRecordNumber}
                 <a

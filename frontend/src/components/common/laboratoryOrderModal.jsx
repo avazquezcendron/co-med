@@ -37,7 +37,7 @@ const LaboratoryOrderModalComponent = (props) => {
     if (data !== '') {
       SweetAlert.fire({
         title: 'Atención',
-        text: `Se generará la órden de estudio para el paciente ${patient.fullName}.`,
+        text: `Se generará la orden de laboratorio para el paciente ${patient.fullName}.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Aceptar',
@@ -66,7 +66,7 @@ const LaboratoryOrderModalComponent = (props) => {
   return (
     <Modal isOpen={props.modal} toggle={props.modalToggle} size="lg">
       <ModalHeader toggle={props.modalToggle}>
-        Nueva Órden de Laboratorio
+        Nueva Orden de Laboratorio
       </ModalHeader>
       <ModalBody>
         <div className="card badge badge-light m-l-20 m-r-20">

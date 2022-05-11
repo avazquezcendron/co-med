@@ -274,7 +274,7 @@ export const getPrescriptions = async ({ patientId, startDate, endDate }, logged
   return data;
 };
 
-export const getStudies = async ({ patientId, startDate, endDate }, loggedUser) => {
+export const getStudyExams = async ({ patientId, startDate, endDate }, loggedUser) => {
   const config = {
     headers: {
       Authorization: `Bearer ${loggedUser?.token}`,
@@ -291,7 +291,7 @@ export const getStudies = async ({ patientId, startDate, endDate }, loggedUser) 
   return data;
 };
 
-export const getLaboratories = async ({ patientId, startDate, endDate }, loggedUser) => {
+export const getLaboratoryExams = async ({ patientId, startDate, endDate }, loggedUser) => {
   const config = {
     headers: {
       Authorization: `Bearer ${loggedUser?.token}`,
@@ -302,8 +302,25 @@ export const getLaboratories = async ({ patientId, startDate, endDate }, loggedU
     filterDates = `?startDate=${startDate}&endDate=${endDate}`
   }
   const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/laboratory`,
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/laboratoryExam`,
     config
   );
+  return data;
+};
+
+export const saveLaboratoryExam = async (patient, laboratoryExamData, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { data } = await axios.post(
+    `${process.env.PUBLIC_URL}/api/patient/${patient.id}/laboratoryExam`,
+    { ...laboratoryExamData, patientVersion: patient.__v },
+    config
+  );
+  toast.success('Examen de laboratorio dado de alta con éxito.', {
+    position: toast.POSITION.BOTTOM_RIGHT,
+  });
   return data;
 };

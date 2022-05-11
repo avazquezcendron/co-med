@@ -19,6 +19,8 @@ class PatientController extends BaseController {
     this.createVisit = this.createVisit.bind(this);
     this.updateVisit = this.updateVisit.bind(this);
     this.getPrescriptions = this.getPrescriptions.bind(this);
+    this.getLaboratoryExams = this.getLaboratoryExams.bind(this);
+    this.createLaboratoryExam = this.createLaboratoryExam.bind(this);
   }
 
   /**
@@ -352,8 +354,53 @@ class PatientController extends BaseController {
       } else {
         return res
           .status(404)
-          .json('El Paciente no tiene consultas registradas.');
+          .json('El Paciente no tiene prescripciones registradas.');
       }
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async getLaboratoryExams(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
+
+      let filterDates = {};
+      if (startDate && endDate) {
+        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+      }
+
+      const finalFilter = { ...filterDates, healthRecord: patient.healthRecord?._id };
+
+      const laboratoryExams = await LaboratoryExam.find(finalFilter)
+        .sort({ createdAt: 'desc' })
+        .populate({ path: 'laboratories', populate: { path: 'laboratoryType' } });
+      if (laboratoryExams) {
+        return res.status(200).json(laboratoryExams);
+      } else {
+        return res
+          .status(404)
+          .json('El Paciente no tiene exámenes de laboratorio registrados.');
+      }
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async createLaboratoryExam(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const healthRecord = await HealthRecord.findById(
+        patient.healthRecord._id
+      );
+      const laboratoryExam = new LaboratoryExam(req.body);
+      laboratoryExam.healthRecord = healthRecord;
+      await laboratoryExam.save();
+      healthRecord.laboratoryExams.push(laboratoryExam);
+      await healthRecord.save();
+      return this.getById(req, res, next);
     } else {
       return res.status(404).json('Paciente inexistente.');
     }

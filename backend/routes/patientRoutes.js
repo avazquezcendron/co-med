@@ -33,6 +33,11 @@ router
   // .post(checkUserAuth, asyncHandler(patientController.createVisit))
 
 router
+  .route('/:id/laboratoryExam')
+  .get(checkUserAuth, asyncHandler(patientController.getLaboratoryExams))
+  .post(checkUserAuth, asyncHandler(patientController.createLaboratoryExam))
+
+router
   .route('/:id/inactivate')
   .get(checkUserAuth, asyncHandler(patientController.inactivate))
 
