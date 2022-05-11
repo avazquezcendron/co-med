@@ -19,6 +19,7 @@ function useQuery() {
 
 const PatientProfile = (props) => {
   const { patient } = useSelector((store) => store.Patient);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const [hrExpanded, setHrExpanded] = useState(false);
@@ -77,7 +78,9 @@ const PatientProfile = (props) => {
                   />
                 </div>
                 <div className="col-xl-12 col-lg-12  style-1 default-according faq-accordion">
-                  <PatientVisitHistory />
+                  {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                    <PatientVisitHistory />
+                  )}
                 </div>
               </Fragment>
             )}
