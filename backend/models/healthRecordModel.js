@@ -102,34 +102,34 @@ const healthRecordSchema = mongoose.Schema(
       weight: Number,
       height: Number,
     }],
-    prescriptions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'Prescription',
-      },
-    ],
-    laboratoryExams: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'LaboratoryExam',
-      },
-    ],
-    studyExams: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'StudyExam',
-      },
-    ],
-    visits: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'Visit',
-      },
-    ],
+    // prescriptions: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: false,
+    //     ref: 'Prescription',
+    //   },
+    // ],
+    // laboratoryExams: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: false,
+    //     ref: 'LaboratoryExam',
+    //   },
+    // ],
+    // studyExams: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: false,
+    //     ref: 'StudyExam',
+    //   },
+    // ],
+    // visits: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: false,
+    //     ref: 'Visit',
+    //   },
+    // ],
     patient: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
@@ -144,6 +144,22 @@ const healthRecordSchema = mongoose.Schema(
 
 healthRecordSchema.set('toJSON', {
   virtuals: true,
+});
+
+healthRecordSchema.set('toObject', {
+  virtuals: true,
+});
+
+// healthRecordSchema.virtual('prescriptions', {
+//   ref: 'Prescription',
+//   localField: '_id',
+//   foreignField: 'healthRecord'
+// });
+
+healthRecordSchema.virtual('visits', {
+  ref: 'Visit',
+  localField: '_id',
+  foreignField: 'healthRecord'
 });
 
 const HealthRecord = mongoose.model('HealthRecord', healthRecordSchema);

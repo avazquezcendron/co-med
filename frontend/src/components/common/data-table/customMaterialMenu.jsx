@@ -8,7 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 
-const CustomMaterialMenu = ({ row, onDeleteRow, size, menuItems }) => {
+const CustomMaterialMenu = ({ row, size, menuItems }) => {
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const handleClick = event => {
@@ -18,9 +18,9 @@ const CustomMaterialMenu = ({ row, onDeleteRow, size, menuItems }) => {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const deleteRow = () => {
-		if (onDeleteRow) {
-			onDeleteRow(row);
+	const handleActionClick = (mi) => {
+		if (mi.actionClick) {
+			mi.actionClick(row);
 		}
 	};
 
@@ -47,7 +47,7 @@ const CustomMaterialMenu = ({ row, onDeleteRow, size, menuItems }) => {
             >
                 {menuItems.map((mi, index) =>
                     <div key={index}>
-                        <MenuItem onClick={deleteRow} >
+                        <MenuItem onClick={() => handleActionClick(mi)} >
                             <span><i className={mi.actionIcon}></i> {mi.actionName}</span>
                         </MenuItem> 
 

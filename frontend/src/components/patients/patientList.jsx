@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useMemo } from 'react';
-import { Container, Row, Col } from 'reactstrap';
+import { Container, Row, Col, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import DataTable from 'react-data-table-component';
 import { translate } from 'react-switch-lang';
@@ -14,18 +14,28 @@ import Breadcrumb from '../common/breadcrumb';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
 import {
   patientGetAllWatcher,
+  patientGetByIdWatcher,
   patientInitialize,
   patientsInitialize,
   patientChangeStatustWatcher,
 } from '../../redux/patients/actions';
 import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
+import PatientCard from './patientCard';
 
 const PatientList = (props) => {
   const { patients, status } = useSelector((store) => store.Patients);
-  const { status: patientStoreStatus } = useSelector((store) => store.Patient);
+  const { patient, status: patientStoreStatus } = useSelector(
+    (store) => store.Patient
+  );
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
+
+  const [modalData, setModalData] = useState('');
+  const [modal, setModal] = useState(false);
+  const modalToggle = () => {
+    setModal(!modal);
+  };
 
   useEffect(() => {
     dispatch(patientGetAllWatcher());
@@ -132,6 +142,18 @@ const PatientList = (props) => {
         dispatch(patientChangeStatustWatcher(patient));
       }
     });
+  };
+
+  const handleViewCardClick = async (patientRow) => {
+    await dispatch(patientGetByIdWatcher(patientRow.id));
+    setModalData('patientCard');
+    modalToggle();
+  };
+
+  const handleViewNextAppointmentsClick = async (patientRow) => {
+    await dispatch(patientGetByIdWatcher(patientRow.id));
+    setModalData('patientNexAppointments');
+    modalToggle();
   };
 
   const columnsConfig = [
@@ -273,11 +295,20 @@ const PatientList = (props) => {
             size="small"
             row={row}
             menuItems={[
+              // {
+              //   actionName: 'Ver Historia Clínica',
+              //   actionIcon: 'fa fa-medkit',
+              // },
               {
-                actionName: 'Ver Historia Clínica',
-                actionIcon: 'fa fa-medkit',
+                actionName: 'Ver Tarjeta',
+                actionIcon: 'icofont icofont-id-card',
+                actionClick: handleViewCardClick,
               },
-              { actionName: 'Próx. Turnos', actionIcon: 'fa fa-calendar' },
+              {
+                actionName: 'Próx. Turnos',
+                actionIcon: 'fa fa-calendar',
+                actionClick: handleViewNextAppointmentsClick,
+              },
             ]}
           />
         </div>
@@ -349,6 +380,73 @@ const PatientList = (props) => {
               </div>
             </Col>
           </Row>
+          <Modal isOpen={modal} toggle={modalToggle} size="lg" centered>
+            {modalData === 'patientNexAppointments' && (
+              <ModalHeader toggle={modalToggle}>
+                <i className="fa fa-calendar"></i> Próximos turnos de{' '}
+                {patient.fullName}
+              </ModalHeader>
+            )}
+            <ModalBody className="p-1">
+              {modalData === 'patientCard' ? (
+                <div className="row mr-0 ml-0">
+                  <div className="col-md-12 style-1 default-according faq-accordion mb-0 p-0">
+                    <PatientCard collapsed={true} />
+                  </div>
+                </div>
+              ) : (
+                <div className="row mr-0 ml-0">
+                  <div className="col-md-12">
+                    <div className="m-4">
+                      {patient.nextAppointments?.length === 0 ? (
+                        <div className="text-center m-b-40">
+                          <img className="img-fluid" src={notFoundImg} alt="" />
+                          <br />
+                          <span className="txt-info">
+                            El paciente no tiene turnos pendientes...
+                          </span>
+                        </div>
+                      ) : (
+                        patient.nextAppointments?.map((appointment, index) => (
+                          <Fragment key={appointment.id}>
+                            <div key={index} className="row text-muted mb-3">
+                              <h6 className="col-md-5 f-w-900">
+                                <i className="icofont icofont-clock-time text-primary"></i>{' '}
+                                {new Date(appointment.start).toLocaleString(
+                                  'es',
+                                  {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false,
+                                  }
+                                )}{' '}
+                                hs
+                              </h6>
+                              <div className="col-md-7">
+                                <p className="f-14 mb-0">
+                                  <i className="icofont icofont-doctor-alt"></i>{' '}
+                                  {appointment.doctor.fullName} |{' '}
+                                  {appointment.doctor.specialities.join(', ')}
+                                </p>
+                                <small>
+                                  <i className="icofont icofont-bed-patient"></i>{' '}
+                                  {appointment.mode} | Consultorio{' '}
+                                  {appointment.doctor.room}
+                                </small>
+                              </div>
+                            </div>
+                          </Fragment>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </ModalBody>
+          </Modal>
         </Container>
       ) : (
         <Loader show={true} />

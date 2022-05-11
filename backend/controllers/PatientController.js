@@ -81,9 +81,7 @@ class PatientController extends BaseController {
     if (!req.user.isAdmin) {
       if (req.user.isDoctor) {
         const dr = await Doctor.findById(req.user.doctor._id);
-        patientsDTO = patients.filter((x) =>
-          dr.patients?.includes(x.id)
-        ); // TODO: pasar al query
+        patientsDTO = patients.filter((x) => dr.patients?.includes(x.id)); // TODO: pasar al query
       } else {
         // TODO: analizar si hace "TANTA falta" el filtro de privacidad en el getAll
         patientsDTO = patients.map((x) =>
@@ -111,6 +109,11 @@ class PatientController extends BaseController {
         path: 'tags',
       })
       .populate({
+        path: 'nextAppointments',
+        options: { sort: { createdAt: -1 } },
+        populate: { path: 'doctor' },
+      })
+      .populate({
         path: 'healthInsurances.healthInsuranceCompany',
       })
       .populate({
@@ -120,10 +123,19 @@ class PatientController extends BaseController {
       .populate({
         path: 'healthRecord',
         populate: {
-          path: 'prescriptions.drugs',
-          populate: { path: 'drugs.drug' },
+          path: 'visits',
+          select: 'createdAt',
+          options: { limit: 1, sort: { createdAt: -1 } },
         },
       });
+    // .populate({
+    //   path: 'healthRecord',
+    //   populate: { path: 'prescriptions' },
+    // })
+    // .populate({
+    //   path: 'healthRecord.prescriptions',
+    //   populate: { path: 'drugs', populate: { path: 'drugs.drug' } },
+    // });
     if (model) {
       return res
         .status(200)
@@ -237,10 +249,14 @@ class PatientController extends BaseController {
 
       let filterDr = {};
       if (!req.user.isAdmin && req.user.isDoctor) {
-        filterDr = { doctor:  req.user.doctor?._id };
+        filterDr = { doctor: req.user.doctor?._id };
       }
 
-      const finalFilter = { ...filterDates, ...filterDr, healthRecord: patient.healthRecord?._id };
+      const finalFilter = {
+        ...filterDates,
+        ...filterDr,
+        healthRecord: patient.healthRecord?._id,
+      };
 
       const visits = await Visit.find(finalFilter)
         .sort({ createdAt: 'desc' })
@@ -300,30 +316,30 @@ class PatientController extends BaseController {
   async createVisit(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      const healthRecord = await HealthRecord.findById(
-        patient.healthRecord._id
-      );
+      // const healthRecord = await HealthRecord.findById(
+      //   patient.healthRecord._id
+      // );
       const doctor = await Doctor.findById(req.body.doctor);
       const visit = new Visit(req.body);
       visit.prescriptions = [];
       if (req.body.prescriptions && req.body.prescriptions.length > 0) {
         for (const x of req.body.prescriptions) {
           const prescription = new Prescription(x);
-          prescription.healthRecord = healthRecord._id;
+          prescription.healthRecord = patient.healthRecord._id;
           prescription.doctor = doctor._id;
           prescription.visit = visit._id;
           await prescription.save();
           visit.prescriptions.push(prescription);
-          healthRecord.prescriptions.push(prescription);
+          // healthRecord.prescriptions.push(prescription);
         }
-      }      
+      }
       if (!doctor.patients.includes(patient.id)) {
         doctor.patients.push(patient);
         visit.firstVisit = true;
       }
       await visit.save();
-      healthRecord.visits.push(visit);
-      await healthRecord.save();
+      // healthRecord.visits.push(visit);
+      // await healthRecord.save();
       doctor.visits.push(visit);
       await doctor.save();
       return this.getById(req, res, next);
@@ -343,7 +359,10 @@ class PatientController extends BaseController {
         filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
       }
 
-      const finalFilter = { ...filterDates, healthRecord: patient.healthRecord?._id };
+      const finalFilter = {
+        ...filterDates,
+        healthRecord: patient.healthRecord?._id,
+      };
 
       const prescriptions = await Prescription.find(finalFilter)
         .sort({ createdAt: 'desc' })
@@ -372,11 +391,17 @@ class PatientController extends BaseController {
         filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
       }
 
-      const finalFilter = { ...filterDates, healthRecord: patient.healthRecord?._id };
+      const finalFilter = {
+        ...filterDates,
+        healthRecord: patient.healthRecord?._id,
+      };
 
       const laboratoryExams = await LaboratoryExam.find(finalFilter)
         .sort({ createdAt: 'desc' })
-        .populate({ path: 'laboratories', populate: { path: 'laboratoryType' } });
+        .populate({
+          path: 'laboratories',
+          populate: { path: 'laboratoryType' },
+        });
       if (laboratoryExams) {
         return res.status(200).json(laboratoryExams);
       } else {
@@ -392,14 +417,14 @@ class PatientController extends BaseController {
   async createLaboratoryExam(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      const healthRecord = await HealthRecord.findById(
-        patient.healthRecord._id
-      );
+      // const healthRecord = await HealthRecord.findById(
+      //   patient.healthRecord._id
+      // );
       const laboratoryExam = new LaboratoryExam(req.body);
-      laboratoryExam.healthRecord = healthRecord;
+      laboratoryExam.healthRecord = patient.healthRecord._id;
       await laboratoryExam.save();
-      healthRecord.laboratoryExams.push(laboratoryExam);
-      await healthRecord.save();
+      // healthRecord.laboratoryExams.push(laboratoryExam);
+      // await healthRecord.save();
       return this.getById(req, res, next);
     } else {
       return res.status(404).json('Paciente inexistente.');

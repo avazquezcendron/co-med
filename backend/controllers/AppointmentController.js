@@ -96,9 +96,9 @@ class AppointmentController extends BaseController {
     const appointment = new this._model(req.body);
     const patient = await Patient.findById(appointment.patient._id);
     const savedappointment = await appointment.save();
-    patient.appointments.push(savedappointment._id);
+    // patient.appointments.push(savedappointment._id);
+    // await patient.save();
     doctor.appointments.push(savedappointment._id);
-    await patient.save();
     await doctor.save();
     req.params = {
       ...req.params,

@@ -11,10 +11,12 @@ const PatientCard = (props) => {
   const { status: visitStatus } = useSelector((store) => store.Visit);
   const { visits } = useSelector((store) => store.Visits);
 
-  const [isProfile, setisProfile] = useState(true);
+  const [isProfile, setisProfile] = useState(!props.collapsed);
 
   useEffect(() => {
-    setisProfile(visitStatus !== LOADED);
+    if(typeof props.collapsed === 'undefined'){
+      setisProfile(visitStatus !== LOADED);
+    }
   }, [visitStatus]);
 
   return (
@@ -38,7 +40,7 @@ const PatientCard = (props) => {
                     <br />
                   </div>
                   <div className="col bg-light b-r-10 text-muted">
-                    <h5 className="mb-1">{patient.fullName}</h5>
+                    <h5 className="mb-1 mt-2">{patient.fullName}</h5>
                     <hr className="mt-1 mb-1" />
                     {/* {patient.status === 'active' ? (
                       <span className="badge badge-success pull-right">
@@ -54,9 +56,9 @@ const PatientCard = (props) => {
                       </span>
                     )} */}
                     <div className="row p-1">
-                      <div className="col-md-4 mb-2">
+                      <div className="col-md-3 mb-2">
                         <div className="row">
-                          <small className="col-md-12 text-muted f-w-700">
+                          <small className="col-md-12 pr-0 text-muted f-w-700">
                             Obra Social
                           </small>
                           <span className="col-md-12 f-w-500 f-12">
@@ -67,7 +69,7 @@ const PatientCard = (props) => {
                           </span>
                         </div>
                       </div>
-                      <div className="col-md-3 mb-2">
+                      <div className="col-md-4 mb-2">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Plan
@@ -91,17 +93,27 @@ const PatientCard = (props) => {
                           </span>
                         </div>
                       </div>
-                      <div className="col-md-4 ">
+                      <div className="col-md-3">
+                        <div className="row">
+                          <small className="col-md-12 pr-0 text-muted f-w-700">
+                            Tipo de Doc.
+                          </small>
+                          <span className="col-md-12 f-w-500 f-12">
+                            {patient.nationalIdType}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="col-md-4">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
-                            Doc. Tipo: {patient.nationalIdType}
+                            Nro. de Doc.
                           </small>
                           <span className="col-md-12 f-w-500 f-12">
                             {patient.nationalId}
                           </span>
                         </div>
                       </div>
-                      <div className="col-md-6 ">
+                      <div className="col-md-5">
                         <div className="row">
                           <small className="col-md-12 text-muted f-w-700">
                             Nro. de H.C.
@@ -113,9 +125,9 @@ const PatientCard = (props) => {
                       </div>
                     </div>
 
-                    {visits?.length > 0 && (
-                      <p className="f-s-italic text-muted">{`Su última visita fue el ${new Date(
-                        visits[0].createdAt
+                    {patient.healthRecord?.visits?.length > 0 && (
+                      <p className="f-s-italic text-muted">{`Su última consulta fue el ${new Date(
+                        patient.healthRecord?.visits[0].createdAt
                       ).toLocaleDateString('es')}`}</p>
                     )}
                   </div>

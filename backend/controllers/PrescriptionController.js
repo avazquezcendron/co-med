@@ -27,8 +27,8 @@ class PrescriptionController extends BaseController {
     const healthRecord = await HealthRecord.findById(
       req.body.healthRecord._id
     );
-    healthRecord.prescriptions.push(savedModel);
-    await healthRecord.save();
+    // healthRecord.prescriptions.push(savedModel);
+    // await healthRecord.save();
 
     req.params = {
       ...req.params,

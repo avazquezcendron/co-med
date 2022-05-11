@@ -69,13 +69,13 @@ const PatientSchema = mongoose.Schema(
         },
       },
     ],
-    appointments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'Appointment',
-      },
-    ],
+    // appointments: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required: false,
+    //     ref: 'Appointment',
+    //   },
+    // ],
     status: { type: String, default: 'active' },
   },
   {
@@ -85,6 +85,10 @@ const PatientSchema = mongoose.Schema(
 );
 
 PatientSchema.set('toJSON', {
+  virtuals: true,
+});
+
+PatientSchema.set('toObject', {
   virtuals: true,
 });
 
@@ -102,13 +106,13 @@ PatientSchema.virtual('age').get(function () {
   }
 });
 
-PatientSchema.virtual('lastVisit').get(function () {
-  if (this.appointments?.length > 0) {
-    return this.appointments.sort((x) => x.start)[0].start;
-  } else {
-    return '';
-  }
+PatientSchema.virtual('nextAppointments', {
+  ref: 'Appointment',
+  localField: '_id',
+  foreignField: 'patient',
+  match: { start: { $gt: new Date() }  }
 });
+
 
 const Patient = mongoose.model('Patient', PatientSchema);
 
