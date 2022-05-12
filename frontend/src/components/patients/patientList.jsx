@@ -312,7 +312,7 @@ const PatientList = (props) => {
                 actionClick: handleViewCardClick,
               },
               {
-                actionName: 'Signos Vitales',
+                actionName: 'Examen físico',
                 actionIcon: 'icofont icofont-pulse',
                 actionClick: handleViewVitalsClick,
               },

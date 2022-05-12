@@ -101,6 +101,10 @@ const healthRecordSchema = mongoose.Schema(
       bodyWeight: Number,
       weight: Number,
       height: Number,
+      abdominalCircumference: Number,
+      feetExam: String,
+      backEyeExam: String,
+      others: String,
     }],
     // prescriptions: [
     //   {

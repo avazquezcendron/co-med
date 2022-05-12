@@ -288,7 +288,7 @@ const PatientLaboratories = (props) => {
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">
-                    <button onClick={modalToggle} className="btn btn-primary">
+                      <button onClick={() => { setModalEdit(true); modalToggle();}} className="btn btn-primary">
                       {'Agregar'}
                     </button>
                   </div>

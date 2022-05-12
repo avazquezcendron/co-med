@@ -9,7 +9,7 @@ import PatientBackground from './patientBackground';
 import PatientPrescriptions from './patientPrescriptions';
 import PatientLaboratories from './patientLaboratories';
 import PatientStudies from './patientStudies';
-import PatientVitalsAndMetrics from './patientVitalsAndMetrics';
+import PatientFiles from './patientFiles';
 import PatientEvolution from './patientEvolution';
 import { SUCCEEDED, LOADED, FAILED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -137,12 +137,12 @@ const PatientHealthRecord = (props) => {
                     <a
                       href="#javascript"
                       className={`nav-link ${
-                        dataTab === 'metricas' ? 'active' : ''
+                        dataTab === 'files' ? 'active' : ''
                       }`}
-                      onClick={() => setdataTab('metricas')}
+                      onClick={() => setdataTab('files')}
                     >
-                      <i className="icofont icofont-pulse"></i>
-                      Métricas y Signos Vitales
+                      <i className="icofont icofont-files"></i>
+                      Otros Archivos
                     </a>
                   </li>
                   <li className="nav-item">
@@ -188,9 +188,9 @@ const PatientHealthRecord = (props) => {
                       <PatientStudies />
                     </div>
                   </TabPane>
-                  <TabPane tabId="metricas" className="fade show">
+                  <TabPane tabId="files" className="fade show">
                     <div className="col-md-12">
-                      <PatientVitalsAndMetrics />
+                      <PatientFiles />
                     </div>
                   </TabPane>
                   <TabPane tabId="evolucion" className="fade show">

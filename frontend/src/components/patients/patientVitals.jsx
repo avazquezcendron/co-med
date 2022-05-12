@@ -16,10 +16,12 @@ const PatientVitals = (props) => {
 
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, reset, setValue, getValues, errors } = useForm();
+  const { register, handleSubmit, reset, setValue, getValues, errors } =
+    useForm();
 
   const [isVitals, setIsVitals] = useState(!props.collapsed);
   const [isEditing, setIsEditing] = useState(false);
+  const [viewMore, setViewMore] = useState(false);
 
   useEffect(() => {
     if (typeof props.collapsed === 'undefined') {
@@ -44,7 +46,11 @@ const PatientVitals = (props) => {
             ...patient.healthRecord,
             vitalsAndMetrics: [
               ...patient.healthRecord.vitalsAndMetrics,
-              { ...data, date: new Date(), bodyWeight: getValues('bodyWeight') },
+              {
+                ...data,
+                date: new Date(),
+                bodyWeight: getValues('bodyWeight'),
+              },
             ],
           };
           dispatch(
@@ -68,10 +74,11 @@ const PatientVitals = (props) => {
   };
 
   const handleHeightWeightChange = (e) => {
-    const bodyWeightCalc = getValues('weight') / (Math.pow(getValues('height') / 100, 2));
+    const bodyWeightCalc =
+      getValues('weight') / Math.pow(getValues('height') / 100, 2);
     const bodyWeightRounded = Math.round(bodyWeightCalc * 100) / 100;
     setValue('bodyWeight', bodyWeightRounded);
-  }
+  };
 
   return (
     <Fragment>
@@ -82,7 +89,7 @@ const PatientVitals = (props) => {
               <div className="col-md-9">
                 <h4 className="card-title mb-0">
                   <span className="icofont icofont-stethoscope-alt text-muted mr-2"></span>
-                  Signos Vitales
+                  Examen físico
                 </h4>
               </div>
               <div className="col-md-3">
@@ -110,7 +117,8 @@ const PatientVitals = (props) => {
                     <div className="row">
                       <div className="col-md-12 mb-4">
                         <span className="ml-2">
-                          Estado actual de los signos vitales del paciente.
+                          Estado físico actual y valores de los signos vitales
+                          del paciente.
                         </span>
                         <br />
                         <small className="ml-2">
@@ -160,8 +168,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.height &&
-                          'Ingrese un valor.'}
+                        {errors.height && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -192,8 +199,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.weight &&
-                          'Ingrese un valor.'}
+                        {errors.weight && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -212,7 +218,7 @@ const PatientVitals = (props) => {
                         defaultValue={
                           patient.healthRecord?.currentVitals?.bodyWeight || 0
                         }
-                        type="number"                        
+                        type="number"
                         step="any"
                         disabled={true}
                         ref={register({ required: true })}
@@ -224,8 +230,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.bodyWeight &&
-                          'Ingrese un valor.'}
+                        {errors.bodyWeight && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -255,8 +260,38 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.bodyFat &&
-                          'Ingrese un valor.'}
+                        {errors.bodyFat && 'Ingrese un valor.'}
+                      </span>
+                    </div>
+                    <div className="form-group">
+                      <label
+                        htmlFor="abdominalCircumference"
+                        className="f-w-600 col-md-8"
+                        style={{ justifyContent: 'left' }}
+                      >
+                        <i className="icofont icofont-circle-ruler-alt mr-1 text-primary f-18"></i>{' '}
+                        Circunferencia Abdominal
+                      </label>
+                      <input
+                        className="form-control col-md-2 pr-1"
+                        id="abdominalCircumference"
+                        name="abdominalCircumference"
+                        defaultValue={
+                          patient.healthRecord?.currentVitals
+                            ?.abdominalCircumference || 0
+                        }
+                        type="number"
+                        step="any"
+                        ref={register({ required: true })}
+                      />
+                      <label htmlFor="abdominalCircumference" className="ml-2">
+                        cm
+                      </label>
+                      <span
+                        style={{ color: 'red' }}
+                        className="col-md-4 offset-md-8"
+                      >
+                        {errors.abdominalCircumference && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -286,8 +321,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.temperature &&
-                          'Ingrese un valor.'}
+                        {errors.temperature && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -304,7 +338,8 @@ const PatientVitals = (props) => {
                         id="systolicBloodPressure"
                         name="systolicBloodPressure"
                         defaultValue={
-                          patient.healthRecord?.currentVitals?.systolicBloodPressure || 0
+                          patient.healthRecord?.currentVitals
+                            ?.systolicBloodPressure || 0
                         }
                         type="number"
                         step="any"
@@ -317,8 +352,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.systolicBloodPressure &&
-                          'Ingrese un valor.'}
+                        {errors.systolicBloodPressure && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -335,7 +369,8 @@ const PatientVitals = (props) => {
                         id="diastolicBloodPressure"
                         name="diastolicBloodPressure"
                         defaultValue={
-                          patient.healthRecord?.currentVitals?.diastolicBloodPressure || 0
+                          patient.healthRecord?.currentVitals
+                            ?.diastolicBloodPressure || 0
                         }
                         type="number"
                         step="any"
@@ -348,8 +383,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.diastolicBloodPressure &&
-                          'Ingrese un valor.'}
+                        {errors.diastolicBloodPressure && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -366,7 +400,8 @@ const PatientVitals = (props) => {
                         id="breathingRate"
                         name="breathingRate"
                         defaultValue={
-                          patient.healthRecord?.currentVitals?.breathingRate || 0
+                          patient.healthRecord?.currentVitals?.breathingRate ||
+                          0
                         }
                         type="number"
                         step="any"
@@ -379,8 +414,7 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.breathingRate &&
-                          'Ingrese un valor.'}
+                        {errors.breathingRate && 'Ingrese un valor.'}
                       </span>
                     </div>
                     <div className="form-group">
@@ -410,9 +444,101 @@ const PatientVitals = (props) => {
                         style={{ color: 'red' }}
                         className="col-md-4 offset-md-8"
                       >
-                        {errors.heartRate &&
-                          'Ingrese un valor.'}
+                        {errors.heartRate && 'Ingrese un valor.'}
                       </span>
+                    </div>
+                    {viewMore && (
+                      <Fragment>
+                        <div className="form-group">
+                          <label
+                            htmlFor="feetExam"
+                            className="f-w-600 col-md-12"
+                            style={{ justifyContent: 'left' }}
+                          >
+                            <i className="icofont icofont-foot-print mr-1 text-primary f-18"></i>{' '}
+                            Examen de Pies
+                          </label>
+                          <textarea
+                            className="form-control col-md-12 m-2"
+                            id="feetExam"
+                            name="feetExam"
+                            defaultValue={
+                              patient.healthRecord?.currentVitals?.feetExam ||
+                              ''
+                            }
+                            rows="3"
+                            ref={register({ required: false })}
+                          />
+                          <span
+                            style={{ color: 'red' }}
+                            className="col-md-4 offset-md-8"
+                          >
+                            {errors.feetExam && 'Ingrese un valor.'}
+                          </span>
+                        </div>
+                        <div className="form-group">
+                          <label
+                            htmlFor="backEyeExam"
+                            className="f-w-600 col-md-12"
+                            style={{ justifyContent: 'left' }}
+                          >
+                            <i className="icofont icofont-eye-alt mr-1 text-primary f-18"></i>{' '}
+                            Examen de Fondo de Ojo
+                          </label>
+                          <textarea
+                            className="form-control col-md-12 m-2"
+                            id="backEyeExam"
+                            name="backEyeExam"
+                            defaultValue={
+                              patient.healthRecord?.currentVitals
+                                ?.backEyeExam || ''
+                            }
+                            rows="3"
+                            ref={register({ required: false })}
+                          />
+                          <span
+                            style={{ color: 'red' }}
+                            className="col-md-4 offset-md-8"
+                          >
+                            {errors.backEyeExam && 'Ingrese un valor.'}
+                          </span>
+                        </div>
+                        <div className="form-group">
+                          <label
+                            htmlFor="others"
+                            className="f-w-600 col-md-12"
+                            style={{ justifyContent: 'left' }}
+                          >
+                            <i className="icofont icofont-stretcher mr-1 text-primary f-18"></i>{' '}
+                            Otros
+                          </label>
+                          <textarea
+                            className="form-control col-md-12 m-2"
+                            id="others"
+                            name="others"
+                            defaultValue={
+                              patient.healthRecord?.currentVitals
+                                ?.others || ''
+                            }
+                            rows="3"
+                            ref={register({ required: false })}
+                          />
+                          <span
+                            style={{ color: 'red' }}
+                            className="col-md-4 offset-md-8"
+                          >
+                            {errors.others && 'Ingrese un valor.'}
+                          </span>
+                        </div>
+                      </Fragment>
+                    )}
+                    <div className="text-center">
+                      <a
+                        href="#javascript"
+                        onClick={() => setViewMore(!viewMore)}
+                      >
+                        {viewMore ? '...ver menos' : '...ver más'}
+                      </a>
                     </div>
                   </div>
                   {isEditing && (
