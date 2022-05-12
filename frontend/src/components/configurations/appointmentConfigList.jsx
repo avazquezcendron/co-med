@@ -190,7 +190,9 @@ const AppointmentConfigList = (props) => {
 
   const handleRowClick = (row, event) => {
     setCurrentAppointmentConfig(row);
-    setDoctor({ id: row.doctor });
+    if (row.doctor?.id) {
+      setDoctor(row.doctor);
+    }
     modalToggle();
   };
 
@@ -213,7 +215,9 @@ const AppointmentConfigList = (props) => {
       selector: 'description',
       sortable: true,
       left: true,
-      cell: (row, index, column, id) => <span title={row.description}>{row.description}</span>,
+      cell: (row, index, column, id) => (
+        <span title={row.description}>{row.description}</span>
+      ),
     },
     {
       name: 'Duración en horas',
@@ -237,7 +241,7 @@ const AppointmentConfigList = (props) => {
       name: 'Doctor/a',
       selector: 'doctorName',
       sortable: true,
-      left: true
+      left: true,
     },
     {
       name: 'Sessión 1 (Mañana)',
@@ -484,7 +488,6 @@ const AppointmentConfigList = (props) => {
                               ? doctors.filter((x) => x.id === doctor.id)
                               : null
                           }
-                          innerRef={register('doctor', { required: false })}
                           renderMenuItemChildren={(option, props) => (
                             <Fragment>
                               <Highlighter search={props.text}>

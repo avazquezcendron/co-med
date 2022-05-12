@@ -4,6 +4,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 
 import PatientCard from './patientCard';
+import PatientVitals from './patientVitals';
 import Breadcrumb from '../common/breadcrumb';
 import PatientHealthRecord from './patientHealthRecord';
 import PatientVisitHistory from './patientVisitHistory';
@@ -60,7 +61,14 @@ const PatientProfile = (props) => {
             ) : (
               <Fragment>
                 <div className="col-xl-4 col-lg-12  style-1 default-according faq-accordion">
-                  {!hrExpanded && <PatientCard />}
+                  <div className="row">
+                    <div className="col-xl-12 col-lg-6 mb-4">
+                      {!hrExpanded && <PatientCard />}
+                    </div>
+                    <div className="col-xl-12 col-lg-6">
+                      {!hrExpanded && <PatientVitals />}
+                    </div>
+                  </div>
                 </div>
                 <div
                   className={`${

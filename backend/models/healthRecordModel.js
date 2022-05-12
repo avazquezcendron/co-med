@@ -91,7 +91,7 @@ const healthRecordSchema = mongoose.Schema(
       extraComments: String,
     },
     vitalsAndMetrics: [{
-      date: Date,
+      date: { type: Date, default: new Date() },
       systolicBloodPressure: Number,
       diastolicBloodPressure: Number,
       breathingRate: Number,
@@ -160,6 +160,14 @@ healthRecordSchema.virtual('visits', {
   ref: 'Visit',
   localField: '_id',
   foreignField: 'healthRecord'
+});
+
+healthRecordSchema.virtual('currentVitals').get(function () { 
+  if (this.vitalsAndMetrics && this.vitalsAndMetrics.length > 0) {
+    return this.vitalsAndMetrics.sort((x, y) => y.date - x.date)[0];
+  } else {
+    return {};
+  }
 });
 
 const HealthRecord = mongoose.model('HealthRecord', healthRecordSchema);

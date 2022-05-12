@@ -784,7 +784,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
               </fieldset>
             </form>
           </div>
-          {mode === 'browse' && (loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
+          {mode === 'browse' && (
             <div className="card-footer m-b-40">
               <span className="pull-right">
                 <Link

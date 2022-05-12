@@ -22,6 +22,7 @@ import {
 import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import PatientCard from './patientCard';
+import PatientVitals from './patientVitals';
 
 const PatientList = (props) => {
   const { patients, status } = useSelector((store) => store.Patients);
@@ -147,6 +148,12 @@ const PatientList = (props) => {
   const handleViewCardClick = async (patientRow) => {
     await dispatch(patientGetByIdWatcher(patientRow.id));
     setModalData('patientCard');
+    modalToggle();
+  };
+
+  const handleViewVitalsClick = async (patientRow) => {
+    await dispatch(patientGetByIdWatcher(patientRow.id));
+    setModalData('patientVitals');
     modalToggle();
   };
 
@@ -305,6 +312,11 @@ const PatientList = (props) => {
                 actionClick: handleViewCardClick,
               },
               {
+                actionName: 'Signos Vitales',
+                actionIcon: 'icofont icofont-pulse',
+                actionClick: handleViewVitalsClick,
+              },
+              {
                 actionName: 'Próx. Turnos',
                 actionIcon: 'fa fa-calendar',
                 actionClick: handleViewNextAppointmentsClick,
@@ -380,7 +392,7 @@ const PatientList = (props) => {
               </div>
             </Col>
           </Row>
-          <Modal isOpen={modal} toggle={modalToggle} size="lg" centered>
+          <Modal isOpen={modal} toggle={modalToggle} size={modalData === 'patientVitals' ? 'md' : 'lg'} centered>
             {modalData === 'patientNexAppointments' && (
               <ModalHeader toggle={modalToggle}>
                 <i className="fa fa-calendar"></i> Próximos turnos de{' '}
@@ -392,6 +404,12 @@ const PatientList = (props) => {
                 <div className="row mr-0 ml-0">
                   <div className="col-md-12 style-1 default-according faq-accordion mb-0 p-0">
                     <PatientCard collapsed={true} />
+                  </div>
+                </div>
+              ) : modalData === 'patientVitals' ? (
+                <div className="row mr-0 ml-0">
+                  <div className="col-md-12 style-1 default-according faq-accordion mb-0 p-0">
+                    <PatientVitals />
                   </div>
                 </div>
               ) : (
