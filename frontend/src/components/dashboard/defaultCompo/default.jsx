@@ -282,7 +282,7 @@ const Default = (props) => {
             <div className="card o-hidden">
               <div
                 className="bg-primary b-r-4 card-body toggle-data"
-                onClick={() => handleAppointmentsClick()}
+                onClick={() => handleAppointmentsClick('currentMonth')}
               >
                 <div className="media static-top-widget">
                   <div className="align-self-center text-center">

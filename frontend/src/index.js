@@ -116,7 +116,6 @@ const Root = () => {
                                     (loggedUser.user.isAdmin || loggedUser.user.isReceptionist) ?
                                         <Fragment>
                                             
-                                            <Route path={`${process.env.PUBLIC_URL}/settings/user/:id`} component={UserProfile} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} />
                                         

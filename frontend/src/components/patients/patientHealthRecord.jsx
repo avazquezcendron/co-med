@@ -11,6 +11,7 @@ import PatientLaboratories from './patientLaboratories';
 import PatientStudies from './patientStudies';
 import PatientFiles from './patientFiles';
 import PatientEvolution from './patientEvolution';
+import PatientNotes from './patientNotes';
 import { SUCCEEDED, LOADED, FAILED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 
@@ -157,6 +158,18 @@ const PatientHealthRecord = (props) => {
                       Evolución
                     </a>
                   </li>
+                  <li className="nav-item">
+                    <a
+                      href="#javascript"
+                      className={`nav-link ${
+                        dataTab === 'notes' ? 'active' : ''
+                      }`}
+                      onClick={() => setdataTab('notes')}
+                    >
+                      <i className="icofont icofont-notepad"></i>
+                      Notas
+                    </a>
+                  </li>
                 </Fragment>
               )}
             </ul>
@@ -196,6 +209,11 @@ const PatientHealthRecord = (props) => {
                   <TabPane tabId="evolucion" className="fade show">
                     <div className="col-md-12">
                       <PatientEvolution />
+                    </div>
+                  </TabPane>
+                  <TabPane tabId="notes" className="fade show">
+                    <div className="col-md-12">
+                      <PatientNotes />
                     </div>
                   </TabPane>
                 </Fragment>

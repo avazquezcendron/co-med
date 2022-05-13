@@ -21,12 +21,12 @@ export const MENUITEMS = [
     {
         title: 'Prescripciones', path: '/prescription', icon: Clipboard, type: 'link', active: false, bookmark: false
     },
-    {
-        title: 'Reportes', icon: FileText, type: 'sub', active: false, children: [
-            { path: '/pages/maintenance', type: 'link', title: 'General' },
-            { path: '/pages/maintenance', type: 'link', title: 'Varios' }
-        ]
-    },
+    // {
+    //     title: 'Reportes', icon: FileText, type: 'sub', active: false, children: [
+    //         { path: '/pages/maintenance', type: 'link', title: 'General' },
+    //         { path: '/pages/maintenance', type: 'link', title: 'Varios' }
+    //     ]
+    // },
     {
         title: 'Catálogos', icon: Briefcase, type: 'sub', active: false, onlyAdminAndRecep: true,  children: [
             { path: '/catalogues/drug', type: 'link', title: 'Fármacos' },
@@ -40,7 +40,7 @@ export const MENUITEMS = [
         title: 'Configuración', icon: Settings, onlyAdminAndRecep: true, type: 'sub', active: false,
         children: [
             { path: '/settings/user', icon: Users, title: 'Usuarios', type: 'link' },
-            { path: '/settings/form', icon: FileText, title: 'Formularios', type: 'link' },
+            // { path: '/settings/form', icon: FileText, title: 'Formularios', type: 'link' },
             { path: '/settings/appointmentConfig', icon: FileText, title: 'Turnos', type: 'link' },
         ]
     }

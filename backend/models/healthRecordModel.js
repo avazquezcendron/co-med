@@ -4,7 +4,8 @@ const healthRecordSchema = mongoose.Schema(
   {
     healthRecordNumber: { type: Number, required: true, unique: true },
     bloodType: String,
-    rhFactor: String,
+    rhFactor: String,    
+    notes: String,
     pathologicalBackground: {
       heartDisease: Boolean,
       heartDiseaseText: String,

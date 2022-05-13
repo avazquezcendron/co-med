@@ -55,7 +55,7 @@ const Calender = ({ history }) => {
         'appointmentsConfigSelected'
       );
       let appointmentsConfigDefault = {};
-      if (appointmentsConfigSelected.id) {
+      if (appointmentsConfigSelected?.id) {
         appointmentsConfigDefault = JSON.parse(appointmentsConfigSelected);
       } else {
         if (loggedUser.user.isDoctor) {
@@ -400,6 +400,8 @@ const Calender = ({ history }) => {
                       initialView={
                         filter === 'todayAppointments'
                           ? 'listDay'
+                          : filter === 'currentMonth'
+                          ? 'dayGridMonth'
                           : 'timeGridWeek'
                       }
                       themeSystem="standar"
@@ -408,7 +410,7 @@ const Calender = ({ history }) => {
                         left: 'prev,next today',
                         center: 'title',
                         right:
-                        'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
+                          'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
                       }}
                       views={{
                         listDay: { buttonText: 'Agenda del día' },
@@ -435,8 +437,7 @@ const Calender = ({ history }) => {
                           <img className="img-fluid" src={notFoundImg} alt="" />
                           <br />
                           <span className="txt-info">
-                            No hay turnos para el filtro
-                            seleccionado...
+                            No hay turnos para el filtro seleccionado...
                           </span>
                         </div>
                       }
