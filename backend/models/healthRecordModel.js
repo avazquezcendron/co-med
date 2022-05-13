@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const healthRecordSchema = mongoose.Schema(
   {
-    healthRecordNumber: { type: Number, required: true, unique: true },    
+    healthRecordNumber: { type: Number, required: true, unique: true },
     bloodType: String,
     rhFactor: String,
     pathologicalBackground: {
@@ -42,8 +42,8 @@ const healthRecordSchema = mongoose.Schema(
       hospitalizationsText: String,
       surgeries: Boolean,
       surgeriesText: String,
-      others: String
-    },    
+      others: String,
+    },
     noPathologicalBackground: {
       smoking: Boolean,
       smokingText: String,
@@ -55,7 +55,7 @@ const healthRecordSchema = mongoose.Schema(
       vaccinesText: String,
       physicalActivities: Boolean,
       physicalActivitiesText: String,
-      others: String
+      others: String,
     },
     hereditaryBackground: {
       thyroid: Boolean,
@@ -72,7 +72,7 @@ const healthRecordSchema = mongoose.Schema(
       neurologicalText: String,
       oncological: Boolean,
       oncologicalText: String,
-      others: String
+      others: String,
     },
     psychiatricBackgroud: String,
     nutritionalBackgroud: String,
@@ -90,22 +90,24 @@ const healthRecordSchema = mongoose.Schema(
       ],
       extraComments: String,
     },
-    vitalsAndMetrics: [{
-      date: { type: Date, default: new Date() },
-      systolicBloodPressure: Number,
-      diastolicBloodPressure: Number,
-      breathingRate: Number,
-      heartRate: Number,
-      temperature: Number,
-      bodyFat: Number,
-      bodyWeight: Number,
-      weight: Number,
-      height: Number,
-      abdominalCircumference: Number,
-      feetExam: String,
-      backEyeExam: String,
-      others: String,
-    }],
+    vitalsAndMetrics: [
+      {
+        date: { type: Date, default: new Date() },
+        systolicBloodPressure: { type: Number, default: 0 },
+        diastolicBloodPressure: { type: Number, default: 0 },
+        breathingRate: { type: Number, default: 0 },
+        heartRate: { type: Number, default: 0 },
+        temperature: { type: Number, default: 0 },
+        bodyFat: { type: Number, default: 0 },
+        bodyWeight: { type: Number, default: 0 },
+        weight: { type: Number, default: 0 },
+        height: { type: Number, default: 0 },
+        abdominalCircumference: { type: Number, default: 0 },
+        feetExam: String,
+        backEyeExam: String,
+        others: String,
+      },
+    ],
     // prescriptions: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
@@ -163,10 +165,10 @@ healthRecordSchema.set('toObject', {
 healthRecordSchema.virtual('visits', {
   ref: 'Visit',
   localField: '_id',
-  foreignField: 'healthRecord'
+  foreignField: 'healthRecord',
 });
 
-healthRecordSchema.virtual('currentVitals').get(function () { 
+healthRecordSchema.virtual('currentVitals').get(function () {
   if (this.vitalsAndMetrics && this.vitalsAndMetrics.length > 0) {
     return this.vitalsAndMetrics.sort((x, y) => y.date - x.date)[0];
   } else {

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ReactToPrint from 'react-to-print';
 
-import logo from '../../../assets/images/co-med-logo.jpg';
+import logo from '../../../assets/images/logo-principal-gris.png';
 
 const AppointmentResumeComponent = (props) => {
   const appointment = useSelector((store) => store.AppointmentForm);
@@ -11,45 +11,23 @@ const AppointmentResumeComponent = (props) => {
   const [displayClassHeader, setDisplayClassHeader] = useState('none');
   const [displayClassIconPrint, setDisplayClassIconPrint] = useState('');
 
-  const handlePrintClick = (displayClassHeaderParam, displayClassIconPrintParam) => {
-    setDisplayClassHeader(displayClassHeaderParam);
-    setDisplayClassIconPrint(displayClassIconPrintParam);
+  const handlePrintClick = async (
+    displayClassHeaderParam,
+    displayClassIconPrintParam
+  ) => {
+    await setDisplayClassHeader(displayClassHeaderParam);
+    await setDisplayClassIconPrint(displayClassIconPrintParam);
   };
 
   return (
-    <div className="m-2" ref={componentRef}>
-      <div className="row  m-2 m-b-40" style={{ display: displayClassHeader }}>
-        <div className="col">
-          <img
-            className="media-object pull-left b-r-8"
-            style={{ width: 100 }}
-            src={logo}
-            alt=""
-          />
-        </div>
-        <div className="col">
-          <div className="text-muted text-center mt-2">
-            <small>Co-Med</small>
-            <br />
-            <small>Consultorio Médicos San Julián</small>
-            <br />
-            <small><i className="fa fa-phone"></i> 02966 682961</small>
-            <br />
-            <small><i className="fa fa-map-marker"></i> Moreno 850</small>
-            <br />
-            <small><i className="fa fa-map-marker"></i> Puerto San Julián, Santa Cruz, Argentina</small>
-            <br />
-          </div>
-        </div>
-        <div className="col"></div>
-      </div>
+    <div className={`m-2 ${displayClassHeader !== 'none' ? 'p-50 m-50' : ''}`} ref={componentRef}>
       <div className="row">
         <div className="col col-md-3">
           <hr />
         </div>
         <h4 className="col col-md-6 text-muted text-center m-b-40">
           Resumen del Turno
-          {appointment.isActive && !appointment.new && !appointment.edit  && (
+          {appointment.isActive && !appointment.new && !appointment.edit && (
             <ReactToPrint
               trigger={() => (
                 <a
@@ -98,22 +76,18 @@ const AppointmentResumeComponent = (props) => {
         </div>
         <div className="col"></div>
         <div className="col"></div>
-      </div>    
+      </div>
       <div className="row m-2 ml-5">
         <div className="col col-md-3 m-t-20">
           <i className="icofont icofont-bed-patient"></i>{' '}
           <span className="f-w-600">Consutlrio</span>
         </div>
         <div className="col col-md-9 m-t-20">
-          <p>
-          {appointment.doctor
-              ? appointment.doctor.room 
-              : ''}
-          </p>
+          <p>{appointment.doctor ? appointment.doctor.room : ''}</p>
         </div>
         <div className="col"></div>
         <div className="col"></div>
-      </div> 
+      </div>
       <div className="row m-2 ml-5">
         <div className=" col col-md-3 m-t-20">
           <i className="icofont icofont-crutches"></i>{' '}
@@ -131,11 +105,7 @@ const AppointmentResumeComponent = (props) => {
           <span className="f-w-600">Doctor/a</span>
         </div>
         <div className="col col-md-9 m-t-20">
-          <p>
-            {appointment.doctor
-              ? appointment.doctor.fullName 
-              : ''}
-          </p>
+          <p>{appointment.doctor ? appointment.doctor.fullName : ''}</p>
         </div>
         <div className="col"></div>
         <div className="col"></div>
@@ -156,16 +126,19 @@ const AppointmentResumeComponent = (props) => {
         <div className="col"></div>
       </div>
       <div className="row m-2 ml-5">
-        <div className=" col col-md-3 m-t-20">
+        <div className=" col col-md-3 col-xl-3 m-t-20">
           <i className="fa fa-medkit"></i>{' '}
           <span className="f-w-600">Obra Social</span>
         </div>
-        <div className="col col-md-9 m-t-20">
+        <div className="col col-md-9 col-xl-9 m-t-20">
           <p>
             {appointment.patient &&
             appointment.patient.healthInsurances?.length > 0
               ? appointment.patient.healthInsurances[0].healthInsuranceCompany
-                  .description + ' (' + appointment.patient.healthInsurances[0].plan.code + ')' +
+                  .description +
+                ' (' +
+                appointment.patient.healthInsurances[0].plan.code +
+                ')' +
                 ' | Nro. de Credencial ' +
                 appointment.patient.healthInsurances[0].cardNumber
               : ' - '}
@@ -229,6 +202,39 @@ const AppointmentResumeComponent = (props) => {
           </p>
         </div>
       )}
+      <div style={{ display: displayClassHeader }}>
+        <hr className="mr-4 ml-4 mt-0 mb-0" />
+        <div className="row ml-2 mr-2">
+          <div className="col">
+            <img
+              className="pull-left"
+              style={{ width: 200, height: 130 }}
+              src={logo}
+              alt=""
+            />
+          </div>
+          <div className="col text-right pt-3">
+            <small>
+              <i className="fa fa-home"></i> Moreno N° 850
+            </small>
+            <br />
+            <small>
+              <i className="icofont icofont-brand-whatsapp"></i>{' '}
+              <i className="fa fa-phone"></i> 2966-682961
+            </small>
+            <br />
+            <small>
+              <i className="fa fa-envelope"></i> consultoriossanjulian@gmail.com
+            </small>
+            <br />
+            <small>
+              <i className="fa fa-map-marker"></i> 9310 Puerto San Julián - Sta.
+              Cruz
+            </small>
+            <br />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
