@@ -21,6 +21,8 @@ class PatientController extends BaseController {
     this.getPrescriptions = this.getPrescriptions.bind(this);
     this.getLaboratoryExams = this.getLaboratoryExams.bind(this);
     this.createLaboratoryExam = this.createLaboratoryExam.bind(this);
+    this.getStudyExams = this.getStudyExams.bind(this);
+    this.createStudyExam = this.createStudyExam.bind(this);
   }
 
   /**
@@ -425,6 +427,51 @@ class PatientController extends BaseController {
       await laboratoryExam.save();
       // healthRecord.laboratoryExams.push(laboratoryExam);
       // await healthRecord.save();
+      return this.getById(req, res, next);
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async getStudyExams(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const startDate = req.query.startDate;
+      const endDate = req.query.endDate;
+
+      let filterDates = {};
+      if (startDate && endDate) {
+        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+      }
+
+      const finalFilter = {
+        ...filterDates,
+        healthRecord: patient.healthRecord?._id,
+      };
+
+      const studyExams = await StudyExam.find(finalFilter)
+        .sort({ createdAt: 'desc' })
+        .populate({
+          path: 'studyType',
+        });
+      if (studyExams) {
+        return res.status(200).json(studyExams);
+      } else {
+        return res
+          .status(404)
+          .json('El Paciente no tiene estudios complementarios registrados.');
+      }
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async createStudyExam(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const studyExam = new StudyExam(req.body);
+      studyExam.healthRecord = patient.healthRecord._id;
+      await studyExam.save();
       return this.getById(req, res, next);
     } else {
       return res.status(404).json('Paciente inexistente.');

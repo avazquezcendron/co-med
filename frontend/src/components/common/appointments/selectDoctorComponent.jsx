@@ -36,7 +36,7 @@ const SelectDoctorComponent = forwardRef(({ jumpToStep }, ref) => {
     }
     const doctor = appointment.doctor || loggedUser.user?.doctor || doctorAppointmentConfig;
     setDoctors(doctor ? [doctor] : []);
-    setDoctor(doctor);
+    setDoctor(doctor || {});
     if (loggedUser.user?.isDoctor && !loggedUser.user?.isAdmin) {
       setIsDisabled(true);
       jumpToStep(1);

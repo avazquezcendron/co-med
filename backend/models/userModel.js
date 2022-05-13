@@ -73,7 +73,7 @@ UserSchema.virtual('isAdmin').get(function () {
 });
 
 UserSchema.virtual('isDoctor').get(function () { 
-  return this.roles.includes('doctor') && this.doctor;
+  return this.roles.includes('doctor') && (this.doctor != null);
 });
 
 UserSchema.virtual('isPatient').get(function () { 

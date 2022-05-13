@@ -152,7 +152,7 @@ class DoctorController extends BaseController {
       slotPreparation,
       sessions: timeArr,
     } = appointmentsConfigFinal;
-    const serachDate = new Date(req.body.date);
+    const serachDate = new Date(new Date(req.body.date).setHours(0, 0, 0, 0));
     let serchDay = serachDate.getDay();
     let defaultDate = serachDate.toISOString().substring(0, 10);
     let sessions = [];

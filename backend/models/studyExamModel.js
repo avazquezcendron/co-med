@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 const studyExamSchema = mongoose.Schema(
   {
-    fileUrl: { type: String, required: true },
+    fileUrl: { type: String },
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

@@ -13,8 +13,8 @@ class PrescriptionPrintPreview extends Component {
             <div className="text-muted text-center">
               <small className="f-w-900 f-14">
                 {prescriptionInfo.doctor?.biologicalSex === 'm'
-                  ? 'Dr.'
-                  : 'Dra.' + prescriptionInfo.doctor?.fullName}
+                  ? 'Dr. '  + prescriptionInfo.doctor?.fullName
+                  : 'Dra. ' + prescriptionInfo.doctor?.fullName}
               </small>
               <br />
               <small>

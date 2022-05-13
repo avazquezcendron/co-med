@@ -40,8 +40,8 @@ const NewPrescriptionModalComponent = (props) => {
     requiresDuplicate: false,
     longTerm: false,
     drugs: [],
-    doctor: doctor,
-    healthRecord: {},
+    doctor: loggedUser.user.doctor,
+    healthRecord: { ...patient.healthRecord, patient: patient },
   });
 
   const [quantity, setQuantity] = useState(0);
@@ -56,8 +56,10 @@ const NewPrescriptionModalComponent = (props) => {
       setDoctors([props.prescription.doctor]);
       setprescriptionDrugsList(props.prescription?.drugs);
     } else {
-      setDoctor(loggedUser.user.doctor || {});
-      setDoctors(loggedUser.user.doctor ? [loggedUser.user.doctor] : []);
+      if (loggedUser.user.isDoctor) {
+        setDoctor(loggedUser.user.doctor);
+        setDoctors([loggedUser.user.doctor]);
+      }      
     }
     setprescriptionDrugs([]);
     setQuantity(0);
@@ -74,6 +76,15 @@ const NewPrescriptionModalComponent = (props) => {
       });
     }
   }, [patient]);
+
+  // useEffect(() => {
+  //   if (visit.diagnosis) {
+  //     setprescription({
+  //       ...prescription,
+  //       diagnosis: visit.diagnosis,
+  //     });
+  //   }
+  // }, [visit]);
 
   const handleDoctorChange = (selected) => {
     let doctor = selected.length > 0 ? selected[0] : {};
@@ -223,7 +234,7 @@ const NewPrescriptionModalComponent = (props) => {
       size="lg"
     >
       <ModalHeader toggle={props.prescriptionModalToggle}>
-        Nueva Prescripción
+        {prescription.id ? `Prescripción generada el dia ${new Date(prescription.createdAt).toLocaleDateString('es')}` : 'Nueva Prescripción'}
       </ModalHeader>
       <ModalBody>
         <div className="card badge badge-light m-l-20 m-r-20">
@@ -235,7 +246,7 @@ const NewPrescriptionModalComponent = (props) => {
                     {'Paciente'}
                   </p>
                   <p className="col-md-12">
-                    <b>{prescription.healthRecord.patient?.fullName}</b>
+                    <b>{prescription.healthRecord?.patient?.fullName}</b>
                   </p>
                 </div>
               </div>
@@ -245,7 +256,7 @@ const NewPrescriptionModalComponent = (props) => {
                     {'Edad'}
                   </p>
                   <p className="col-md-12 ">
-                    <b>{prescription.healthRecord.patient?.age}</b>
+                    <b>{prescription.healthRecord?.patient?.age}</b>
                   </p>
                 </div>
               </div>
@@ -253,10 +264,10 @@ const NewPrescriptionModalComponent = (props) => {
                 <div className="row">
                   <p className="col-md-12 col-form-label f-w-100 f-14 ">
                     Doc. Tipo:{' '}
-                    {prescription.healthRecord.patient?.nationalIdType}
+                    {prescription.healthRecord?.patient?.nationalIdType}
                   </p>
                   <p className="col-md-12 ">
-                    <b>{prescription.healthRecord.patient?.nationalId}</b>
+                    <b>{prescription.healthRecord?.patient?.nationalId}</b>
                   </p>
                 </div>
               </div>
@@ -269,9 +280,9 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12">
                     <b>
-                      {prescription.healthRecord.patient?.healthInsurances
+                      {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                        ? prescription.healthRecord?.patient?.healthInsurances[0]
                             .healthInsuranceCompany?.description
                         : ''}
                     </b>
@@ -285,9 +296,9 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {prescription.healthRecord.patient?.healthInsurances
+                      {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                        ? prescription.healthRecord?.patient?.healthInsurances[0]
                             .plan.code
                         : ''}
                     </b>
@@ -301,9 +312,9 @@ const NewPrescriptionModalComponent = (props) => {
                   </p>
                   <p className="col-md-12 ">
                     <b>
-                      {prescription.healthRecord.patient?.healthInsurances
+                      {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord.patient?.healthInsurances[0]
+                        ? prescription.healthRecord?.patient?.healthInsurances[0]
                             .cardNumber
                         : ''}
                     </b>
@@ -637,7 +648,7 @@ const NewPrescriptionModalComponent = (props) => {
               )}
               <div style={{ display: 'none' }}>
                 <PrescriptionPrintPreview
-                  patient={prescription.healthRecord.patient || {}}
+                  patient={prescription.healthRecord?.patient || {}}
                   prescriptionDrugsList={prescriptionDrugsList}
                   prescriptionInfo={prescription}
                   ref={componentRef}

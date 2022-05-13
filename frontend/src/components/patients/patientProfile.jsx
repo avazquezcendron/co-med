@@ -60,16 +60,18 @@ const PatientProfile = (props) => {
               </div>
             ) : (
               <Fragment>
-                <div className="col-xl-4 col-lg-12  style-1 default-according faq-accordion">
-                  <div className="row">
-                    <div className="col-xl-12 col-lg-6 mb-4">
-                      {!hrExpanded && <PatientCard />}
-                    </div>
-                    <div className="col-xl-12 col-lg-6">
-                      {!hrExpanded && <PatientVitals />}
+                {!hrExpanded && (
+                  <div className="col-xl-4 col-lg-12  style-1 default-according faq-accordion">
+                    <div className="row">
+                      <div className="col-xl-12 col-lg-6 mb-4">
+                        <PatientCard />
+                      </div>
+                      <div className="col-xl-12 col-lg-6">
+                        <PatientVitals />
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
                 <div
                   className={`${
                     hrExpanded
@@ -85,11 +87,12 @@ const PatientProfile = (props) => {
                     handleHrExpanded={() => setHrExpanded(!hrExpanded)}
                   />
                 </div>
-                <div className="col-xl-12 col-lg-12  style-1 default-according faq-accordion">
-                  {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
-                    <PatientVisitHistory />
+                {!hrExpanded &&
+                  (loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                    <div className="col-xl-12 col-lg-12  style-1 default-according faq-accordion">
+                      <PatientVisitHistory />
+                    </div>
                   )}
-                </div>
               </Fragment>
             )}
           </div>

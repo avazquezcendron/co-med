@@ -71,22 +71,22 @@ const Bookmark = () => {
     }
   };
 
-  const escFunction = useCallback((event) => {
-    // eslint-disable-next-line
-    if (event.keyCode == 27) {
-      //Do whatever when esc is pressed
-      setSearchValue('');
-      setSearchResult([]);
-      setOpenSearch(false);
-      document.querySelector('.filled-bookmark').classList.remove('is-open');
-      document
-        .querySelector('.page-wrapper')
-        .classList.remove('offcanvas-bookmark');
-    }
-  }, []);
+  // const escFunction = useCallback((event) => {
+  //   // eslint-disable-next-line
+  //   if (event.keyCode == 27) {
+  //     //Do whatever when esc is pressed
+  //     setSearchValue('');
+  //     setSearchResult([]);
+  //     setOpenSearch(false);
+  //     document.querySelector('.filled-bookmark').classList.remove('is-open');
+  //     document
+  //       .querySelector('.page-wrapper')
+  //       .classList.remove('offcanvas-bookmark');
+  //   }
+  // }, []);
 
   useEffect(() => {
-    document.addEventListener('keydown', escFunction, false);
+    // document.addEventListener('keydown', escFunction, false);
     mainmenu.filter((menuItems) => {
       if (menuItems.bookmark) {
         setBookmarkItems((bookmarkItems) => [...bookmarkItems, menuItems]);
@@ -95,9 +95,9 @@ const Bookmark = () => {
     });
 
     return () => {
-      document.removeEventListener('keydown', escFunction, false);
+      // document.removeEventListener('keydown', escFunction, false);
     };
-  }, [escFunction, mainmenu]);
+  }, [mainmenu]);
 
   const handleSearchKeyword = (keyword) => {
     keyword ? addFix() : removeFix();

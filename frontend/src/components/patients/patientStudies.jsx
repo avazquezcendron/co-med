@@ -1,15 +1,20 @@
-import React, { useState, useEffect, Fragment } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { useLocation, useParams } from 'react-router-dom';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import DataTable from 'react-data-table-component';
+import 'react-dropzone-uploader/dist/styles.css';
+import Dropzone from 'react-dropzone-uploader';
+import { toast } from 'react-toastify';
+import ReactToPrint from 'react-to-print';
 
-import NewPrescriptionModalComponent from '../common/newPrescriptionModal';
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as entityService from '../../services/entity.service';
+import * as patientService from '../../services/patient.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
 
 function useQuery() {
@@ -21,19 +26,50 @@ const PatientStudies = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
-  const { register, handleSubmit, setValue, errors } = useForm();
+  const { register, handleSubmit, setError, clearErrors, errors } = useForm();
+  
+  const componentRef = useRef();
 
   const query = useQuery();
   const mode = query.get('mode');
-
-  const [prescriptionModal, setprescriptionModal] = useState(false);
-  const prescriptionModalToggle = () => {
-    setprescriptionModal(!prescriptionModal);
+  const { id } = useParams();
+  
+  const [modalEdit, setModalEdit] = useState(true);
+  const [modal, setModal] = useState(false);
+  const modalToggle = () => {
+    if (modal) {
+      setFiles([]);
+      setFilePreview(null);
+      setStudyExam(null);
+    }
+    setModal(!modal);
+  };
+  const [modalPreviewFile, setModalPreviewFile] = useState(false);
+  const modalPreviewFileToggle = () => {
+    setModalPreviewFile(!modalPreviewFile);
   };
 
-  const addPrescription = () => {
-    // prescriptionModalToggle();
-  };
+  const [files, setFiles] = useState([]);
+  const [filePreview, setFilePreview] = useState(null);
+  const [studyExam, setStudyExam] = useState({});
+  const [studyExams, setStudyExams] = useState([]);
+  const [statusUpdate, setStatusUpdate] = useState(false);
+
+  const [studyTypes, setStudyTypes] = useState([]);
+  useEffect(() => {
+    entityService
+      .getAll('studyType', loggedUser)
+      .then((data) => setStudyTypes(data));
+    return () => {};
+  }, []);
+
+  useEffect(() => {
+    if (patient && patient.id === id) {
+      patientService
+        .getStudy({ patientId: patient.id }, loggedUser)
+        .then((data) => setStudyExams(data));
+    }
+  }, [id, patient, statusUpdate]);
 
   const paginationComponentOptions = {
     rowsPerPageText: 'Filas por página',
@@ -42,22 +78,92 @@ const PatientStudies = (props) => {
     selectAllRowsItemText: 'Todos',
   };
 
-  const handleRowClickPrescriptions = (row, event) => {};
-
-  const columnsConfigPrescription = [
+  const columnsConfigStudy = [
     {
       name: 'Fecha',
-      selector: (row) => row.date,
+      selector: (row) => new Date(row.createdAt).toLocaleDateString('es'),
       sortable: true,
       left: true,
     },
     {
-      name: 'Diagnóstico',
-      selector: (row) => row.diagnosis,
+      name: 'Tipo de Estudio',
+      selector: (row) => row.studyType.description,
       sortable: true,
       left: true,
     },
   ];
+
+  const handleSubmitForm = (data) => {
+    if (files.length === 0) {
+      setError('studies', {});
+    } else {
+      clearErrors('studies');
+      SweetAlert.fire({
+        title: 'Atención',
+        text: `Se generará un nuevo estudio complementario para el paciente ${patient.fullName}.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#ff0000',
+        reverseButtons: true,
+      }).then(async (result) => {
+        if (result.value) {
+          const studyExamData = { studyType: studyExam.studyType };
+          await patientService
+            .saveStudy(patient, studyExamData, loggedUser)
+            .then((data) => {
+              setStatusUpdate(!statusUpdate);
+              modalToggle();
+            });
+        }
+      });
+    }
+  };
+
+  const handleRowClick = (row, event) => {
+    setStudyExam(row);
+    setModalEdit(false);
+    modalToggle();
+  };
+
+  // specify upload params and url for your files
+  const getUploadParams = ({ meta }) => {
+    return { url: 'https://httpbin.org/post' };
+  };
+  // called every time a file's `status` changes
+
+  const handleChangeStatus = (fileWithMeta, status, allFiles) => {
+    if (status === 'done') {
+      toast.success(
+        `Archivo "${fileWithMeta.meta.name}" cargado exitosamente!`,
+        {
+          position: toast.POSITION.BOTTOM_RIGHT,
+        }
+      );
+      setFiles([...files, { file: fileWithMeta.file, ...fileWithMeta.meta }]);
+      clearErrors('studies');
+      fileWithMeta.remove(fileWithMeta, allFiles);
+    } else if (status === 'aborted') {
+      toast.error(`Falló la carga del archivo "${fileWithMeta.meta.name}".`, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
+    }
+  };
+
+  // receives array of files that are done uploading when submit button is clicked
+  const handleSubmitFile = (filesWithMeta, allFiles) => {
+    let addedFiles = [];
+    allFiles.forEach((f) => {
+      f.remove();
+      addedFiles.push({ file: f.file, ...f.meta });
+    });
+    setFiles([...files, ...addedFiles]);
+  };
+
+  const handleRemoveFile = (file, index) => {
+    setFiles(files.filter((x) => x.id !== file.id));
+  };
 
   return (
     <Fragment>
@@ -71,17 +177,24 @@ const PatientStudies = (props) => {
               <div className="row">
                 <div className="col-md-6">
                   <h5>{'Estudios Complementarios'}</h5>
-                  <span className="text-muted f-12 m-t-5"
+                  <span
+                    className="text-muted f-12 m-t-5"
                     style={{
                       letterSpacing: 1,
-                    }}>
-                    {'Estudios, imágenes y archivos varios del paciente.'}
+                    }}
+                  >
+                    {
+                      'Estudios complementarios, imágenes y archivos varios del paciente.'
+                    }
                   </span>
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">
                     <button
-                      onClick={addPrescription}
+                      onClick={() => {
+                        setModalEdit(true);
+                        modalToggle();
+                      }}
                       className="btn btn-primary"
                     >
                       {'Agregar'}
@@ -93,10 +206,8 @@ const PatientStudies = (props) => {
             <div className="card-body datatable-react">
               <div className="table-responsive support-table">
                 <DataTable
-                  columns={columnsConfigPrescription}
-                  data={patient.healthRecord?.studyExams}
-                  // striped={true}
-                  // center={true}
+                  columns={columnsConfigStudy}
+                  data={studyExams}
                   pagination
                   highlightOnHover
                   pointerOnHover
@@ -105,7 +216,7 @@ const PatientStudies = (props) => {
                   subHeaderAlign={'left'}
                   paginationPerPage={20}
                   paginationComponentOptions={paginationComponentOptions}
-                  onRowClicked={handleRowClickPrescriptions}
+                  onRowClicked={handleRowClick}
                   noDataComponent={
                     <div className="col-md-12 text-center m-50">
                       <img className="img-fluid" src={notFoundImg} alt="" />
@@ -119,11 +230,225 @@ const PatientStudies = (props) => {
               </div>
             </div>
           </div>
-          {prescriptionModal && (
-            <NewPrescriptionModalComponent
-              prescriptionModal={prescriptionModal}
-              prescriptionModalToggle={prescriptionModalToggle}
-            />
+          {modal && (
+            <Modal isOpen={modal} toggle={modalToggle} size="lg">
+              <ModalHeader toggle={modalToggle}>
+              {!modalEdit
+                  ? `Estudio Complementario realizado el día ${new Date(studyExam?.createdAt).toLocaleDateString('es')} | Paciente 
+                ${patient.fullName}`
+                  : 'Nuevo Estudio Complementario'}
+              </ModalHeader>
+              <ModalBody>
+                <div className="card">
+                  <form
+                    className="theme-form mega-form"
+                    onSubmit={handleSubmit(handleSubmitForm)}
+                  >
+                    <div className="card-body">
+                      <h6>{'Tipo de Estudio'}</h6>
+                      <div className="form-group row">
+                        <div className="col-md-4">
+                          <div className="row">
+                            <label
+                              className="col-md-12 col-form-label"
+                              htmlFor="drug"
+                            >
+                              {''}
+                            </label>
+                            <div className="col-md-12">
+                              <select
+                                className="form-control"
+                                name="studyType"
+                                id="studyType"
+                                disabled={!modalEdit}
+                                value={studyExam?.studyType?.id}
+                                onChange={(e) =>
+                                  setStudyExam({
+                                    ...studyExam,
+                                    studyType: studyTypes.filter(
+                                      (x) => x.id === e.target.value
+                                    )[0],
+                                  })
+                                }
+                                ref={register({ required: true })}
+                              >
+                                <option></option>
+                                {studyTypes &&
+                                  studyTypes.map((study, i) => (
+                                    <option key={study.id} value={study.id}>
+                                      {study.description}
+                                    </option>
+                                  ))}
+                              </select>
+                              <span style={{ color: 'red' }}>
+                                {errors.studyType && 'Ingrese un valor.'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span style={{ color: 'red' }}>
+                        {errors.studies &&
+                          'Debe ingresar al menos un archivo.'}
+                      </span>
+                      <hr className="mt-4 mb-4" />
+                      <h6>Archivos</h6>
+                      <div className="file-content">
+                        <div className="file-manager">
+                          <ul className="files row">
+                            {files.map((data, i) => {
+                              return (
+                                <li
+                                  className="file-box col-md-3 faq-image"
+                                  key={data.id}
+                                >
+                                  <div className="file-top">
+                                    {' '}
+                                    {data.previewUrl ? (
+                                      <img
+                                        alt="Crop preview"
+                                        src={window.URL.createObjectURL(
+                                          data.file
+                                        )}
+                                        style={{
+                                          maxWidth: '50%',
+                                          maxHeight: '90%',
+                                          cursor: 'pointer',
+                                        }}
+                                        onClick={() => {
+                                          setFilePreview(data);
+                                          modalPreviewFileToggle();
+                                        }}
+                                      />
+                                    ) : (
+                                      <i
+                                        className="fa fa-file-picture-o txt-info"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => {
+                                          setFilePreview(data);
+                                          modalPreviewFileToggle();
+                                        }}
+                                      ></i>
+                                    )}
+                                    <a href="#javascript">
+                                      <ReactToPrint
+                                        trigger={() => (
+                                          <i
+                                            title="Imprimir"
+                                            className="fa fa-print text-primary f-14 ellips mr-3"
+                                          ></i>
+                                        )}
+                                        content={() => componentRef.current}
+                                        onBeforeGetContent={async () => {
+                                          await setFilePreview(data);
+                                        }}
+                                        onAfterPrint={() => {
+                                          setFilePreview(null);
+                                        }}
+                                      />
+                                      <i
+                                        title="Borrar"
+                                        className="fa fa-trash text-danger f-14 ellips"
+                                        onClick={() =>
+                                          handleRemoveFile(data, i)
+                                        }
+                                      ></i>
+                                    </a>
+                                  </div>
+                                  <div className="file-bottom">
+                                    <h6>{data.name} </h6>
+                                    {/* <p className="mb-1">{data.size}</p> */}
+                                    <small>
+                                      <b>{'Subido el día'}: </b>
+                                      {new Date(
+                                        data.uploadedDate
+                                      ).toLocaleString('es')}
+                                    </small>
+                                  </div>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </div>
+                      </div>
+                      <div className="dz-message needsclick mt-4">
+                        <Dropzone
+                          getUploadParams={getUploadParams}
+                          onChangeStatus={handleChangeStatus}
+                          // onSubmit={handleSubmitFile}
+                          maxFiles={1}
+                          multiple={false}
+                          canCancel={false}
+                          inputContent="Agregar archivo"
+                          disabled={(files) =>
+                            !modalEdit ||
+                            files.some((f) =>
+                              [
+                                'preparing',
+                                'getting_upload_params',
+                                'uploading',
+                              ].includes(f.meta.status)
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="card-footer text-center">
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={() => modalToggle()}
+                      >
+                        {'Cancelar'}
+                      </button>
+                      {modalEdit && (
+                        <button className="btn btn-primary ml-2">
+                          Guardar
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </div>
+              </ModalBody>
+            </Modal>
+          )}
+          {modalPreviewFile && (
+            <Modal
+              isOpen={modalPreviewFile}
+              toggle={modalPreviewFileToggle}
+              size="xl"
+              centered
+            >
+              <ModalHeader toggle={modalPreviewFileToggle}>
+                Examen de Laboratorio "{filePreview.name}" | Paciente{' '}
+                {patient.fullName}
+              </ModalHeader>
+              <ModalBody>
+                <iframe
+                  title="filePreviewFrame"
+                  style={{
+                    width: '100%',
+                    height: '900px',
+                  }}
+                  src={window.URL.createObjectURL(filePreview.file)}
+                  allowFullScreen
+                ></iframe>
+              </ModalBody>
+            </Modal>
+          )}
+          {filePreview && (
+            <div style={{ display: 'none' }}>
+              <iframe
+                title="filePrintFrame"
+                id="filePrintFrame"
+                style={{
+                  width: '300%',
+                  height: '3000px',
+                }}
+                src={window.URL.createObjectURL(filePreview.file)}
+                ref={componentRef}
+              ></iframe>
+            </div>
           )}
         </Fragment>
       ) : (

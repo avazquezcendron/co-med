@@ -38,6 +38,7 @@ const PatientLaboratories = (props) => {
     if (modal) {
       setFiles([]);
       setFilePreview(null);
+      setLaboratoryExamDate(null);
       setLaboratories([]);
     }
     setModal(!modal);
@@ -49,6 +50,7 @@ const PatientLaboratories = (props) => {
 
   const [files, setFiles] = useState([]);
   const [filePreview, setFilePreview] = useState(null);
+  const [laboratoryExamDate, setLaboratoryExamDate] = useState(null);
   const [laboratories, setLaboratories] = useState([]);
   const [laboratoryExams, setLaboratoryExams] = useState([]);
   const [statusUpdate, setStatusUpdate] = useState(false);
@@ -201,11 +203,12 @@ const PatientLaboratories = (props) => {
             });
         }
       });
-    }      
+    }
   };
 
   const handleRowClick = (row, event) => {
     setLaboratories(row.laboratories);
+    setLaboratoryExamDate(row.createdAt);
     setModalEdit(false);
     modalToggle();
   };
@@ -288,7 +291,13 @@ const PatientLaboratories = (props) => {
                 </div>
                 <div className="col-md-6">
                   <div className="text-right">
-                      <button onClick={() => { setModalEdit(true); modalToggle();}} className="btn btn-primary">
+                    <button
+                      onClick={() => {
+                        setModalEdit(true);
+                        modalToggle();
+                      }}
+                      className="btn btn-primary"
+                    >
                       {'Agregar'}
                     </button>
                   </div>
@@ -300,8 +309,6 @@ const PatientLaboratories = (props) => {
                 <DataTable
                   columns={columnsConfigPrescription}
                   data={laboratoryExams}
-                  // striped={true}
-                  // center={true}
                   pagination
                   highlightOnHover
                   pointerOnHover
@@ -327,7 +334,10 @@ const PatientLaboratories = (props) => {
           {modal && (
             <Modal isOpen={modal} toggle={modalToggle} size="lg">
               <ModalHeader toggle={modalToggle}>
-                Nuevo Examen de Laboratorio
+                {!modalEdit
+                  ? `Examen de Laboratorio realizado el día ${new Date(laboratoryExamDate).toLocaleDateString('es')} | Paciente 
+                ${patient.fullName}`
+                  : 'Nuevo Examen de Laboratorio'}
               </ModalHeader>
               <ModalBody>
                 <div className="card">
@@ -511,7 +521,8 @@ const PatientLaboratories = (props) => {
                           multiple={false}
                           canCancel={false}
                           inputContent="Agregar archivo"
-                          disabled={(files) => !modalEdit || 
+                          disabled={(files) =>
+                            !modalEdit ||
                             files.some((f) =>
                               [
                                 'preparing',
@@ -531,7 +542,11 @@ const PatientLaboratories = (props) => {
                       >
                         {'Cancelar'}
                       </button>
-                      {modalEdit && <button className="btn btn-primary ml-2">Guardar</button>}
+                      {modalEdit && (
+                        <button className="btn btn-primary ml-2">
+                          Guardar
+                        </button>
+                      )}
                     </div>
                   </form>
                 </div>
