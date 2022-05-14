@@ -2,9 +2,7 @@ import mongoose from 'mongoose';
 
 const healthRecordSchema = mongoose.Schema(
   {
-    healthRecordNumber: { type: Number, required: true, unique: true },
-    bloodType: String,
-    rhFactor: String,    
+    healthRecordNumber: { type: Number, required: true, unique: true },   
     notes: String,
     pathologicalBackground: {
       heartDisease: Boolean,

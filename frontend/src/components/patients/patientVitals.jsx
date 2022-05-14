@@ -142,6 +142,36 @@ const PatientVitals = (props) => {
                     </div>
                     <div className="form-group">
                       <label
+                        htmlFor="bloodType"
+                        className="f-w-600 col-md-8"
+                        style={{ justifyContent: 'left' }}
+                      >
+                        <i className="icofont icofont-blood-drop mr-1 text-primary f-18"></i>{' '}
+                        Grupo Sanguíneo y Factor RH
+                      </label>
+                      <a
+                        href="#javascript"
+                        className="badge badge-pill badge-primary col-md-2 ml-3"
+                        // disabled={false}
+                      >
+                        {patient.bloodType}{' '}
+                        <i
+                          className={`fa fa-${
+                            patient.rhFactor === '+' ? 'plus' : 'minus'
+                          }`}
+                        ></i>
+                      </a>
+                      {/* <label
+                        className="col-md-2 pr-1"
+                      >
+                        {patient.bloodType}
+                      </label>
+                      <label htmlFor="bloodType" className="ml-2">
+                        {patient.rhFactor}
+                      </label> */}
+                    </div>
+                    <div className="form-group">
+                      <label
                         htmlFor="height"
                         className="f-w-600 col-md-8"
                         style={{ justifyContent: 'left' }}
@@ -517,8 +547,7 @@ const PatientVitals = (props) => {
                             id="others"
                             name="others"
                             defaultValue={
-                              patient.healthRecord?.currentVitals
-                                ?.others || ''
+                              patient.healthRecord?.currentVitals?.others || ''
                             }
                             rows="3"
                             ref={register({ required: false })}

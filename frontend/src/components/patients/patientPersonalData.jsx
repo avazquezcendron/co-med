@@ -50,8 +50,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
   const [healthInsurancePlans, setHealthInsurancePlans] = useState([]);
   const [healthInsuranceCompany, setHealthInsuranceCompany] =
     useState(undefined);
-  const [healthInsurancePlan, setHealthInsurancePlan] =
-    useState(undefined);
+  const [healthInsurancePlan, setHealthInsurancePlan] = useState(undefined);
   const [dateOfBirth, setdobDate] = useState(null);
   const [osFecIngresoDate, setosFecIngresoDate] = useState(null);
   useEffect(() => {
@@ -73,9 +72,9 @@ const PatientPersonalData = ({ history, showAvatar }) => {
       if (patient.dateOfBirth) {
         setdobDate(new Date(patient.dateOfBirth));
       }
-  
+
       setTags(patient.tags);
-    }    
+    }
   }, [id, patient]);
 
   const [healthInsurancesCompanies, setHealthInsurancesCompanies] = useState();
@@ -579,9 +578,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       name="healthInsurances.0.plan.code"
                       id="healthInsurancePlan"
                       value={healthInsurancePlan}
-                      onChange={(e) =>
-                        setHealthInsurancePlan(e.target.value)
-                      }
+                      onChange={(e) => setHealthInsurancePlan(e.target.value)}
                       ref={register({ required: false })}
                     >
                       {healthInsurancePlans &&
@@ -733,6 +730,45 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                 </div>
                 <hr className="mt-4 mb-4" />
                 <h6>{'Información adicional'}</h6>
+                <div className="form-group row">
+                  <label
+                    className="col-md-2 col-form-label"
+                    htmlFor="bloodType"
+                  >
+                    {'Grupo Sanguíneo'}
+                  </label>
+                  <div className="col-md-3">
+                    <select
+                      className="form-control"
+                      id="bloodType"
+                      type="text"
+                      name="bloodType"
+                      defaultValue={patient.bloodType}
+                      ref={register({ required: false })}
+                    >
+                      <option value="A">{'A'}</option>
+                      <option value="B">{'B'}</option>
+                      <option value="AB">{'AB'}</option>
+                      <option value="0">{'0'}</option>
+                    </select>
+                  </div>
+                  <label className="col-md-2 col-form-label" htmlFor="rhFactor">
+                    {'Factor RH'}
+                  </label>
+                  <div className="col-md-2">
+                    <select
+                      className="form-control"
+                      id="rhFactor"
+                      type="text"
+                      name="rhFactor"
+                      defaultValue={patient.rhFactor}
+                      ref={register({ required: false })}
+                    >
+                      <option value="+">{'+'}</option>
+                      <option value="-">{'-'}</option>
+                    </select>
+                  </div>
+                </div>
                 <div className="form-group row">
                   <label className="col-md-2 col-form-label" htmlFor="tags">
                     {'Tags'}

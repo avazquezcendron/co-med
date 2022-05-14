@@ -10,6 +10,8 @@ const PatientSchema = mongoose.Schema(
     nationalIdType: { type: String, required: true },
     nationality: { type: String, required: false },
     gender: { type: String, required: false, default: 'cisgenero' },
+    bloodType: String,
+    rhFactor: String, 
     email: {
       type: String,
       lowercase: true,
