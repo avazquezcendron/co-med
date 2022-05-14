@@ -21,6 +21,7 @@ import {
 
 function* logout({ payload }) {
   localStorage.removeItem('loggedUser')
+  localStorage.removeItem('appointmentsConfigSelected')
   yield put(userLogout());
   document.location.href = `${process.env.PUBLIC_URL}/login`
 }

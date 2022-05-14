@@ -30,21 +30,34 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
 
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
   useEffect(() => {
-    doctorService.getDoctorSessions(appointment.doctor.id, startDate, loggedUser).then((sessions) => {
-      setAppointmentsSessions(sessions);
-      const startTime = moment(appointment.start);
-      if (startTime) {
-        sessions.forEach((session) => {
-          const activeSlot = session.slots.filter(
-            (slot) =>
-            moment(slot.startTime).isSame(startTime)
-            // && slot.available
-          );
-          if (activeSlot && activeSlot.length > 0)
-            setSelectedSlot(activeSlot[0]);
-        });
-      }
-    });
+    doctorService
+      .getDoctorSessions(appointment.doctor.id, startDate, loggedUser)
+      .then((sessions) => {
+        let drSessions = [];
+        if (appointment.appointmentType !== 'turno') {
+          drSessions = sessions.map((x) => {
+            return {
+              ...x,
+              slots: x.slots.map((s) => {
+                return { ...s, available: true };
+              }),
+            };
+          });
+        } else {
+          drSessions = sessions;
+        }
+        setAppointmentsSessions(drSessions);
+        const startTime = moment(appointment.start);
+        if (startTime) {
+          drSessions.forEach((session) => {
+            const activeSlot = session.slots.filter((slot) =>
+              moment(slot.startTime).isSame(startTime)
+            );
+            if (activeSlot && activeSlot.length > 0)
+              setSelectedSlot(activeSlot[0]);
+          });
+        }
+      });
   }, [startDate]);
 
   const handleAppDateChange = (date) => {

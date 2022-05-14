@@ -18,7 +18,7 @@ const AppointmentConfirmComponent = (props) => {
     } else {
       SweetAlert.fire({
         title: 'Atención',
-        text: `Se dará de alta un turno el día ${
+        text: `Se dará de alta un ${appointmentData.appointmentType === 'turno' ? 'turno' : 'sobreturno'} el día ${
         appointmentData.start
           ? appointmentData.start.toLocaleDateString('es-AR', {
             weekday: 'long',

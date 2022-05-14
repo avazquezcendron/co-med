@@ -87,7 +87,7 @@ class AppointmentController extends BaseController {
     const doctor = await Doctor.findById(req.body.doctor.id).populate({
       path: 'appointments',
     });
-    if (!this._checkDoctorAvailability(doctor, req.body.start)) {
+    if (req.body.appointmentType === 'turno' && !this._checkDoctorAvailability(doctor, req.body.start)) {
       return res
         .status(409)
         .json('El doctor no tiene disponibilidad para el slot seleccionado.');
@@ -121,7 +121,7 @@ class AppointmentController extends BaseController {
     const doctor = await Doctor.findById(req.body.doctor.id).populate({
       path: 'appointments',
     });
-    if (!this._checkDoctorAvailability(doctor, req.body.start, req.params.id)) {
+    if (req.body.appointmentType === 'turno' && !this._checkDoctorAvailability(doctor, req.body.start, req.params.id)) {
       return res
         .status(409)
         .json('El doctor no tiene disponibilidad para el slot seleccionado.');

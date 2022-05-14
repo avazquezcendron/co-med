@@ -51,12 +51,15 @@ const Calender = ({ history }) => {
   useEffect(() => {
     appointmentService.getAppointmentSlotsConfig(loggedUser).then((data) => {
       setAppointmentsConfig(data);
-      const appointmentsConfigSelected = localStorage.getItem(
+      let appointmentsConfigSelected = localStorage.getItem(
         'appointmentsConfigSelected'
       );
       let appointmentsConfigDefault = {};
-      if (appointmentsConfigSelected?.id) {
-        appointmentsConfigDefault = JSON.parse(appointmentsConfigSelected);
+      if (appointmentsConfigSelected) {
+        appointmentsConfigSelected = JSON.parse(appointmentsConfigSelected);
+        if (appointmentsConfigSelected.id) {
+          appointmentsConfigDefault = appointmentsConfigSelected;
+        }
       } else {
         if (loggedUser.user.isDoctor) {
           const appointmentsConfigDr = data.filter((x) => x.doctor);

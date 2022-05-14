@@ -27,7 +27,19 @@ const Appointments = (props) => {
   }, []);
 
   useEffect(() => {
-    if (status === SUCCEEDED) dispatch(getAppointmentsWatcher());
+    if (status === SUCCEEDED) {
+      let appointmentsConfigSelected = localStorage.getItem(
+        'appointmentsConfigSelected'
+      );
+      let appointmentsConfigDefault = {};
+      if (appointmentsConfigSelected) {
+        appointmentsConfigSelected = JSON.parse(appointmentsConfigSelected);
+        if (appointmentsConfigSelected.id) {
+          appointmentsConfigDefault = appointmentsConfigSelected;  
+        }        
+      } 
+      dispatch(getAppointmentsWatcher(appointmentsConfigDefault.doctor?.id));
+    } 
   }, [status]);
 
   return (

@@ -152,7 +152,6 @@ const PatientVitals = (props) => {
                       <a
                         href="#javascript"
                         className="badge badge-pill badge-primary col-md-2 ml-3"
-                        // disabled={false}
                       >
                         {patient.bloodType}{' '}
                         <i
