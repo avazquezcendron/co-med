@@ -80,11 +80,19 @@ const AppointmentModalComponent = (props) => {
     >
       <ModalHeader
         toggle={props.appointmentModalToggle}
-        className={`border-3 ${appointment.isCancelled ? 'b-l-danger' : ''} ${
-          appointment.isDone ? 'b-l-success' : ''
-        } ${appointment.isExpired ? 'b-l-dark' : ''} ${
-          appointment.isActive ? 'b-l-primary' : ''
-        } `}
+        className={`border-3 ${
+          appointment.appointmentType === 'sobreturno'
+            ? 'b-l-warning'
+            : appointment.isCancelled
+            ? 'b-l-danger'
+            : appointment.isDone
+            ? 'b-l-success'
+            : appointment.isExpired
+            ? 'b-l-dark'
+            : appointment.isActive
+            ? 'b-l-primary'
+            : ''
+        }`}
       >
         {appointment.new ? (
           'Nuevo Turno'

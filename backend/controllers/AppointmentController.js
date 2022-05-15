@@ -164,7 +164,7 @@ class AppointmentController extends BaseController {
       (docAppointment) =>
         docAppointment._id.toString() !== appointmentId?.toString() &&
         docAppointment.isActive &&
-        moment(docAppointment.start).isSame(appointmentStart, 'minute')
+        moment(appointmentStart).isBetween(docAppointment.start, docAppointment.end, 'minute', '[)')
     );
     const slotIsAvailable = docAppointmentsInSameSlot.length === 0;
     return slotIsAvailable;

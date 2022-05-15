@@ -36,7 +36,8 @@ appointmentSchema.set('toJSON', {
 });
 
 appointmentSchema.virtual('title').get(function () {
-  return `Paciente ${this.patient.fullName} - ${this.doctor.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${this.doctor.fullName} | ${this.mode}`;
+  return `Paciente ${this.patient.fullName} (${this.patient.healthInsurances?.length > 0 ? this.patient.healthInsurances[0].healthInsuranceCompany
+    .description : 'particular'}) - ${this.doctor.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${this.doctor.fullName} | ${this.mode}`;
 });
 
 appointmentSchema.virtual('isDone').get(function () {

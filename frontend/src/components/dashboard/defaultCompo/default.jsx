@@ -548,8 +548,8 @@ const Default = (props) => {
                       ) : (
                         ''
                       )}
-                      <div key={index} className={`media ${appointment.isCancelled ? 'b-r-danger border-4' : ''} ${appointment.isDone ? 'b-r-success border-4' : ''} `}
-                      title={`TURNO ${appointment.isCancelled ? 'CANCELADO' : ''} ${appointment.isDone ? 'FINALIZADO' : ''}  ${appointment.isActive ? 'ACTIVO' : ''}`}
+                      <div key={index} className={`media ${appointment.appointmentType === 'sobreturno' ? 'b-r-warning border-4' : appointment.isCancelled ? 'b-r-danger border-4' : ''} ${appointment.isDone ? 'b-r-success border-4' : ''} `}
+                      title={`${appointment.appointmentType === 'sobreturno' ? 'SOBRETURNO' : 'TURNO'} ${appointment.isCancelled ? 'CANCELADO' : ''}${appointment.isDone ? 'FINALIZADO' : ''}${appointment.isActive ? 'ACTIVO' : ''}`}
                       >                        
                         <h6>
                           <i className="icofont icofont-clock-time"></i>{' '}

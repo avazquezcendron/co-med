@@ -247,6 +247,13 @@ const PatientsAgenda = (props) => {
         // color: 'white',
       },
     },
+    {
+      when: (row) => row.appointmentType === 'sobreturno',
+      style: {
+        backgroundColor: '#ffa5005e',
+        // color: 'white',
+      },
+    },
   ];
 
   const olumnsConfig = [
@@ -364,18 +371,26 @@ const PatientsAgenda = (props) => {
       sortable: true,
       center: true,
       // width: '120px',
-      cell: (row, index, column, id) =>
-        row.status === 'active' ? (
-          <span className="badge badge-secondary">Activo</span>
-        ) : row.status === 'expired' ? (
-          <span className="badge badge-light">Expirado</span>
-        ) : row.status === 'cancelled' ? (
-          <span className="badge badge-danger">Cancelado</span>
-        ) : row.status === 'done' ? (
-          <span className="badge badge-success">Finalizado</span>
-        ) : (
-          ''
-        ),
+      cell: (row, index, column, id) => (
+        <Fragment>
+          {row.appointmentType === 'sobreturno' ? (
+            <span className="badge badge-warning mr-1">SOBRETURNO</span>
+          ) : (
+            ''
+          )}
+          {row.status === 'active' ? (
+            <span className="badge badge-secondary">ACTIVO</span>
+          ) : row.status === 'expired' ? (
+            <span className="badge badge-light">EXPIRADO</span>
+          ) : row.status === 'cancelled' ? (
+            <span className="badge badge-danger">CANCELADO</span>
+          ) : row.status === 'done' ? (
+            <span className="badge badge-success">FINALIZADO</span>
+          ) : (
+            ''
+          )}
+        </Fragment>
+      ),
     },
     {
       sortable: false,

@@ -136,8 +136,9 @@ const Calender = ({ history }) => {
   };
 
   const handleEventOverlap = (stillEvent, movingEvent) => {
-    if (!stillEvent.extendedProps.doctor || !stillEvent.extendedProps.patient)
+    if (!stillEvent.extendedProps.doctor || !stillEvent.extendedProps.patient || stillEvent.extendedProps.appointmentType === 'sobreturno' || movingEvent.extendedProps.appointmentType === 'sobreturno')
       return true;
+    
     return (
       movingEvent.extendedProps.doctor.id !==
         stillEvent.extendedProps.doctor.id &&
@@ -203,21 +204,27 @@ const Calender = ({ history }) => {
     );
     const dayGridMonthView = info.view.type === 'dayGridMonth';
 
-    if (info.event.extendedProps.isExpired) {
-      bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
-      txtColor = isListView || dayGridMonthView ? 'gray' : 'white';
-      title = 'TURNO EXPIRADO. ' + title;
-    } else if (info.event.extendedProps.isCancelled) {
-      bgColor = isListView || dayGridMonthView ? bgColor : 'red';
-      txtColor = isListView || dayGridMonthView ? 'red' : 'white';
-      title = 'TURNO CANCELADO. ' + title;
-      txtDecoration = 'line-through';
-    } else if (info.event.extendedProps.isDone) {
-      bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
-      txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
-      title = 'TURNO FINALIZADO. ' + title;
+    if (info.event.extendedProps.appointmentType === 'sobreturno') {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
+      txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
+      title = 'SOBRETURNO. ' + title;
     } else {
-      title = title ? 'TURNO ACTIVO. ' + title : '';
+      if (info.event.extendedProps.isExpired) {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
+        txtColor = isListView || dayGridMonthView ? 'gray' : 'white';
+        title = 'TURNO EXPIRADO. ' + title;
+      } else if (info.event.extendedProps.isCancelled) {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'red';
+        txtColor = isListView || dayGridMonthView ? 'red' : 'white';
+        title = 'TURNO CANCELADO. ' + title;
+        txtDecoration = 'line-through';
+      } else if (info.event.extendedProps.isDone) {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
+        txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
+        title = 'TURNO FINALIZADO. ' + title;
+      } else {
+        title = title ? 'TURNO ACTIVO. ' + title : '';
+      }
     }
 
     if (isListView) {
@@ -372,7 +379,7 @@ const Calender = ({ history }) => {
                 </div>
                 <div className="card-body">
                   {appointmentConfig.description ? (
-                    <p className="mb-5">
+                    <p className="mb-3">
                       <mark>
                         <i className="fa fa-info-circle mr-1"></i>
                         Configuración de turnos seleccionada: "
@@ -398,6 +405,33 @@ const Calender = ({ history }) => {
                       </mark>
                     </p>
                   )}
+                  <p className="mb-3">
+                    {/* <mark> */}
+                      <span className="mr-2">
+                        <i className="fa fa-question-circle mr-1"></i>Significado de
+                        los colores:
+                      </span>
+                      <span className="mr-2">
+                        <i className="fa fa-circle text-primary"></i> Turno
+                        Activo
+                      </span>
+                      <span className="mr-2">
+                        <i className="fa fa-circle text-danger"></i> Turno
+                        Cancelado
+                      </span>
+                      <span className="mr-2">
+                        <i className="fa fa-circle text-success"></i> Turno
+                        Finalizado
+                      </span>
+                      <span className="mr-2">
+                        <i className="fa fa-circle text-muted"></i> Turno
+                        Expirado
+                      </span>
+                      <span className="mr-2">
+                        <i className="fa fa-circle text-warning"></i> Sobreturno
+                      </span>
+                    {/* </mark> */}
+                  </p>
                   {businessHours.length > 0 ? (
                     <FullCalendar
                       initialView={

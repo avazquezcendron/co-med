@@ -11,8 +11,7 @@ class DoctorController extends BaseController {
     this.getSessions = this.getSessions.bind(this);
   }
 
-
-   /**
+  /**
    * @desc   Create <model>
    * @route  POST /api/<model>/:id
    * @access Private
@@ -22,56 +21,60 @@ class DoctorController extends BaseController {
    * @param {function} next The callback to the next program handler
    * @return {Object} res The response object
    */
-    async create(req, res, next) {
-      const createModel = new this._model(req.body);
-      const savedModel = await createModel.save();
-      if (savedModel && req.body.user) {
+  async create(req, res, next) {
+    const createModel = new this._model(req.body);
+    const savedModel = await createModel.save();
+    if (savedModel && req.body.user) {
+      const user = await User.findById(req.body.user);
+      if (user) {
+        user.doctor = savedModel._id;
+        await user.save();
+      }
+    }
+    req.params = {
+      ...req.params,
+      id: savedModel._id,
+    };
+    return this.getById(req, res, next);
+  }
+
+  /**
+   * @desc   Update <model>
+   * @route  PUT /api/<model>/:id
+   * @access Private
+   *
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {function} next The callback to the next program handler
+   * @return {Object} res The response object
+   */
+  async update(req, res, next) {
+    let model = await this._model.findById(req.params.id);
+    if (model) {
+      if (model.__v !== req.body.__v) {
+        return res
+          .status(409)
+          .json(
+            'El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+          );
+      }
+
+      for (const [key, value] of Object.entries(req.body)) {
+        model[key] = value;
+      }
+      await model.save();
+      if (model && req.body.user) {
         const user = await User.findById(req.body.user);
         if (user) {
-          user.doctor = savedModel._id;
+          user.doctor = model._id;
           await user.save();
         }
       }
-      req.params = {
-        ...req.params,
-        id: savedModel._id
-      };
       return this.getById(req, res, next);
+    } else {
+      return res.status(404).json('Registro no encontrado.');
     }
-  
-    /**
-     * @desc   Update <model>
-     * @route  PUT /api/<model>/:id
-     * @access Private
-     *
-     * @param {Object} req The request object
-     * @param {Object} res The response object
-     * @param {function} next The callback to the next program handler
-     * @return {Object} res The response object
-     */
-    async update(req, res, next) {
-      let model = await this._model.findById(req.params.id);
-      if (model) {
-        if (model.__v !== req.body.__v) {
-          return res.status(409).json('El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
-        }
-  
-        for (const [key, value] of Object.entries(req.body)) {
-          model[key] = value;
-        }
-        await model.save();
-        if (model && req.body.user) {
-          const user = await User.findById(req.body.user);
-          if (user) {
-            user.doctor = model._id;
-            await user.save();
-          }
-        }
-        return this.getById(req, res, next);
-      } else {
-        return res.status(404).json('Registro no encontrado.');
-      }
-    }
+  }
 
   /**
    * @desc   Get All <model>
@@ -132,8 +135,12 @@ class DoctorController extends BaseController {
 
     const doctorAppointments = doctor.appointments;
 
-    const doctorAppointmentsConfig = appointmentsConfig.filter(x => x.doctor?.toString() === req.params.id);
-    const generalAppointmentsConfig = appointmentsConfig.filter(x => !x.doctor);
+    const doctorAppointmentsConfig = appointmentsConfig.filter(
+      (x) => x.doctor?.toString() === req.params.id
+    );
+    const generalAppointmentsConfig = appointmentsConfig.filter(
+      (x) => !x.doctor
+    );
 
     let appointmentsConfigFinal = {};
     if (doctorAppointmentsConfig.length > 0) {
@@ -142,8 +149,8 @@ class DoctorController extends BaseController {
       appointmentsConfigFinal = generalAppointmentsConfig[0];
     } else {
       return res
-      .status(200)
-      .json('No hay sesiones de turnos configuradas para el Doctor.');
+        .status(200)
+        .json('No hay sesiones de turnos configuradas para el Doctor.');
     }
 
     const {
@@ -200,7 +207,14 @@ class DoctorController extends BaseController {
             id: slotId,
             startTime: new Date(_startSlot),
             endTime: _endSlot,
-            available: moment(_startSlot).isSameOrAfter(moment()) && timeArr[i].daysOfWeek[serchDay] === 1 && doctorAppointments.filter(appointment => appointment.isActive && moment(appointment.start).isSame(_startSlot, 'minute')).length === 0
+            available:
+              moment(_startSlot).isSameOrAfter(moment()) &&
+              timeArr[i].daysOfWeek[serchDay] === 1 &&
+              doctorAppointments.filter(
+                (appointment) =>
+                appointment.isActive &&
+                  moment(_startSlot).isBetween(appointment.start, appointment.end, 'minute', '[)')
+              ).length === 0,
           });
         }
 
