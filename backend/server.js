@@ -10,7 +10,6 @@ import userRoutes from './routes/userRoutes.js'
 import patientRoutes from './routes/patientRoutes.js'
 import doctorRoutes from './routes/doctorRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
-import hospitalRoutes from './routes/hospitalRoutes.js'
 import healthInsuranceCompanyRoutes from './routes/healthInsuranceCompanyRoutes.js'
 import appointmentRoutes from './routes/appointmentRoutes.js'
 import appointmentConfigRoutes from './routes/appointmentConfigRoutes.js'
@@ -33,7 +32,6 @@ app.use('/api/user', userRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/patient', patientRoutes)
 app.use('/api/doctor', doctorRoutes)
-app.use('/api/hospital', hospitalRoutes)
 app.use('/api/healthInsurance', healthInsuranceCompanyRoutes)
 app.use('/api/upload', uploadRoutes)
 app.use('/api/appointment', appointmentRoutes)

@@ -10,12 +10,14 @@ import 'react-dropzone-uploader/dist/styles.css';
 import Dropzone from 'react-dropzone-uploader';
 import { toast } from 'react-toastify';
 import ReactToPrint from 'react-to-print';
+import { getDownloadURL } from 'firebase/storage';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as entityService from '../../services/entity.service';
 import * as patientService from '../../services/patient.service';
 import notFoundImg from '../../assets/images/search-not-found.png';
+import { firebase_app } from '../../data/config';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -27,13 +29,13 @@ const PatientStudies = (props) => {
   const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
-  
+
   const componentRef = useRef();
 
   const query = useQuery();
   const mode = query.get('mode');
   const { id } = useParams();
-  
+
   const [modalEdit, setModalEdit] = useState(true);
   const [modal, setModal] = useState(false);
   const modalToggle = () => {
@@ -91,6 +93,12 @@ const PatientStudies = (props) => {
       sortable: true,
       left: true,
     },
+    {
+      name: 'Archivos',
+      selector: (row) => row.files?.length,
+      sortable: false,
+      center: true,
+    },
   ];
 
   const handleSubmitForm = (data) => {
@@ -109,7 +117,23 @@ const PatientStudies = (props) => {
         reverseButtons: true,
       }).then(async (result) => {
         if (result.value) {
-          const studyExamData = { studyType: studyExam.studyType };
+          let addedFiles = [];
+          for (const file of files) {
+            const fileRef = await firebase_app
+              .storage()
+              .ref(`${patient.fullName}/estudios/${file.name}`);
+            const result = await fileRef.put(file.file).then((snapshot) => {
+              return getDownloadURL(snapshot.ref).then((url) => {
+                return url;
+              });
+            });
+            addedFiles.push({ ...file, downloadURL: result });
+          }
+
+          const studyExamData = {
+            studyType: studyExam.studyType,
+            files: addedFiles,
+          };
           await patientService
             .saveStudy(patient, studyExamData, loggedUser)
             .then((data) => {
@@ -123,6 +147,7 @@ const PatientStudies = (props) => {
 
   const handleRowClick = (row, event) => {
     setStudyExam(row);
+    setFiles(row.files);
     setModalEdit(false);
     modalToggle();
   };
@@ -141,7 +166,15 @@ const PatientStudies = (props) => {
           position: toast.POSITION.BOTTOM_RIGHT,
         }
       );
-      setFiles([...files, { file: fileWithMeta.file, ...fileWithMeta.meta }]);
+      setFiles([
+        ...files,
+        {
+          file: fileWithMeta.file,
+          ...fileWithMeta.meta,
+          name: new Date().getTime() + '-' + fileWithMeta.meta.name,
+          fileType: fileWithMeta.meta.type,
+        },
+      ]);
       clearErrors('studies');
       fileWithMeta.remove(fileWithMeta, allFiles);
     } else if (status === 'aborted') {
@@ -149,16 +182,6 @@ const PatientStudies = (props) => {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     }
-  };
-
-  // receives array of files that are done uploading when submit button is clicked
-  const handleSubmitFile = (filesWithMeta, allFiles) => {
-    let addedFiles = [];
-    allFiles.forEach((f) => {
-      f.remove();
-      addedFiles.push({ file: f.file, ...f.meta });
-    });
-    setFiles([...files, ...addedFiles]);
   };
 
   const handleRemoveFile = (file, index) => {
@@ -233,8 +256,10 @@ const PatientStudies = (props) => {
           {modal && (
             <Modal isOpen={modal} toggle={modalToggle} size="lg">
               <ModalHeader toggle={modalToggle}>
-              {!modalEdit
-                  ? `Estudio Complementario realizado el día ${new Date(studyExam?.createdAt).toLocaleDateString('es')} | Paciente 
+                {!modalEdit
+                  ? `Estudio Complementario realizado el día ${new Date(
+                      studyExam?.createdAt
+                    ).toLocaleDateString('es')} | Paciente 
                 ${patient.fullName}`
                   : 'Nuevo Estudio Complementario'}
               </ModalHeader>
@@ -288,8 +313,7 @@ const PatientStudies = (props) => {
                         </div>
                       </div>
                       <span style={{ color: 'red' }}>
-                        {errors.studies &&
-                          'Debe ingresar al menos un archivo.'}
+                        {errors.studies && 'Debe ingresar al menos un archivo.'}
                       </span>
                       <hr className="mt-4 mb-4" />
                       <h6>Archivos</h6>
@@ -300,16 +324,16 @@ const PatientStudies = (props) => {
                               return (
                                 <li
                                   className="file-box col-md-3 faq-image"
-                                  key={data.id}
+                                  key={data.name}
                                 >
                                   <div className="file-top">
                                     {' '}
-                                    {data.previewUrl ? (
+                                    {data.fileType?.startsWith('image') ? (
                                       <img
                                         alt="Crop preview"
-                                        src={window.URL.createObjectURL(
-                                          data.file
-                                        )}
+                                        src={
+                                          data.downloadURL || data.previewUrl
+                                        }
                                         style={{
                                           maxWidth: '50%',
                                           maxHeight: '90%',
@@ -322,7 +346,7 @@ const PatientStudies = (props) => {
                                       />
                                     ) : (
                                       <i
-                                        className="fa fa-file-picture-o txt-info"
+                                        className="fa fa-file-text-o txt-info"
                                         style={{ cursor: 'pointer' }}
                                         onClick={() => {
                                           setFilePreview(data);
@@ -346,13 +370,15 @@ const PatientStudies = (props) => {
                                           setFilePreview(null);
                                         }}
                                       />
-                                      <i
-                                        title="Borrar"
-                                        className="fa fa-trash text-danger f-14 ellips"
-                                        onClick={() =>
-                                          handleRemoveFile(data, i)
-                                        }
-                                      ></i>
+                                      {!data._id && (
+                                        <i
+                                          title="Borrar"
+                                          className="fa fa-trash text-danger f-14 ellips"
+                                          onClick={() =>
+                                            handleRemoveFile(data, i)
+                                          }
+                                        ></i>
+                                      )}
                                     </a>
                                   </div>
                                   <div className="file-bottom">
@@ -430,7 +456,10 @@ const PatientStudies = (props) => {
                     width: '100%',
                     height: '900px',
                   }}
-                  src={window.URL.createObjectURL(filePreview.file)}
+                  src={
+                    filePreview.downloadURL ||
+                    window.URL.createObjectURL(filePreview.file)
+                  }
                   allowFullScreen
                 ></iframe>
               </ModalBody>
@@ -445,7 +474,10 @@ const PatientStudies = (props) => {
                   width: '300%',
                   height: '3000px',
                 }}
-                src={window.URL.createObjectURL(filePreview.file)}
+                src={
+                  filePreview.downloadURL ||
+                  window.URL.createObjectURL(filePreview.file)
+                }
                 ref={componentRef}
               ></iframe>
             </div>

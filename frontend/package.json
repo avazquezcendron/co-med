@@ -31,7 +31,7 @@
     "chartjs-plugin-datalabels": "^0.7.0",
     "emoji-mart": "^3.0.0",
     "feather-icons": "^4.28.0",
-    "firebase": "^9.6.5",
+    "firebase": "^9.8.1",
     "jkanban": "^1.2.1",
     "json-loader": "^0.5.7",
     "knob": "^1.1.0",

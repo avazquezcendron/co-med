@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import fileSchema from './fileSchema.js';
+
 const healthRecordSchema = mongoose.Schema(
   {
     healthRecordNumber: { type: Number, required: true, unique: true },   
@@ -107,6 +109,7 @@ const healthRecordSchema = mongoose.Schema(
         others: String,
       },
     ],
+    files: [ fileSchema ],
     // prescriptions: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,

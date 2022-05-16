@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
 
+import fileSchema from './fileSchema.js';
+
 const laboratoryExamSchema = mongoose.Schema(
   {
-    filesUrls: [String],
+    files: [ fileSchema ],
     laboratories: [
       {
         value: { type: String, required: true },

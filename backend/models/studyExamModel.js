@@ -1,8 +1,10 @@
 import mongoose from 'mongoose'
 
+import fileSchema from './fileSchema.js';
+
 const studyExamSchema = mongoose.Schema(
   {
-    fileUrl: { type: String },
+    files: [ fileSchema ],
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
