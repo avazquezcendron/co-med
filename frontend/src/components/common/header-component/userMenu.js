@@ -19,7 +19,7 @@ const UserMenu = ({ history }) => {
             position: toast.POSITION.BOTTOM_RIGHT,
           });
     }
-    setProfile(loggedUser?.user.avatarUrl || man);
+    setProfile(loggedUser?.user.avatar?.downloadURL || man);
   }, []);
 
   

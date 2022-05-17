@@ -51,7 +51,7 @@ const PatientFiles = (props) => {
     const fileName = new Date().getTime() + '-' + fileWithMeta.meta.name;
     const fileRef = await firebase_app
       .storage()
-      .ref(`${patient.fullName}/archivos/${fileName}`);
+      .ref(`pacientes/${patient.fullName}/archivos/${fileName}`);
     const result = await fileRef.put(fileWithMeta.file).then((snapshot) => {
       return getDownloadURL(snapshot.ref).then((url) => {
         return url;

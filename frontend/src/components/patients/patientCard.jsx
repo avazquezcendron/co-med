@@ -31,7 +31,7 @@ const PatientCard = (props) => {
                     <img
                       className="img-70 rounded-circle"
                       alt=""
-                      src={patient.avatarUrl || defaultuser}
+                      src={patient.avatar?.downloadURL || defaultuser}
                     />
                     <br />
                     <span className="badge badge-light text-info mt-2">

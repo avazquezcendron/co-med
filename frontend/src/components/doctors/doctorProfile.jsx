@@ -7,6 +7,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import SweetAlert from 'sweetalert2';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import es from 'date-fns/locale/es';
+import { getDownloadURL } from 'firebase/storage';
 
 import defaultuser from '../../assets/images/user/user.png';
 import * as userService from '../../services/user.service';
@@ -17,6 +18,7 @@ import {
 } from '../../redux/doctors/actions';
 import { LOADED, LOADING, SUCCEEDED, FAILED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
+import { firebase_app } from '../../data/config';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -35,8 +37,9 @@ const DoctorProfile = (props) => {
   const dispatch = useDispatch();
 
   const { register, handleSubmit, setError, clearErrors, errors } = useForm();
+
+  const [avatarFile, setAvatarFile] = useState(null);
   const [dateOfBirth, setdobDate] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
   const [specialities, setSpecialities] = useState([]);
 
   const [users, setUsers] = useState([]);
@@ -92,13 +95,36 @@ const DoctorProfile = (props) => {
         cancelButtonText: 'Cancelar',
         cancelButtonColor: '#ff0000',
         reverseButtons: true,
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.value) {
+          let avatarData = { ...doctor.avatar };
+          if (avatarFile) {
+            const fileName = new Date().getTime() + '-' + avatarFile.name;
+            const fileRef = await firebase_app
+              .storage()
+              .ref(
+                `doctores/${doctor.firstName} ${doctor.lastName}/avatar/${fileName}`
+              );
+            const avatarUrl = await fileRef
+              .put(avatarFile.file)
+              .then((snapshot) => {
+                return getDownloadURL(snapshot.ref).then((url) => {
+                  return url;
+                });
+              });
+            avatarData = {
+              name: avatarFile?.name,
+              fileType: avatarFile?.fileType,
+              downloadURL: avatarUrl,
+            };
+          }
+
           const licenses = data.licenses.filter((x) => x.licenseType !== '');
           const doctorData = {
             ...doctor,
             ...data,
-            dateOfBirth,
+            avatar: avatarData,
+            dateOfBirth: dateOfBirth,
             licenses: licenses,
             specialities: specialities,
             user: data.user || null,
@@ -120,12 +146,12 @@ const DoctorProfile = (props) => {
     if (mimeType.match(/image\/*/) == null) {
       return;
     }
-    // Image upload
-    var reader = new FileReader();
-    reader.readAsDataURL(event.target.files[0]);
-    reader.onload = (_event) => {
-      setImageUrl(reader.result);
+    const file = {
+      file: event.target.files[0],
+      name: event.target.files[0].name,
+      fileType: event.target.files[0].type,
     };
+    setAvatarFile(file);
   };
 
   const handleSpecialitiesChange = (specialities) => {
@@ -225,7 +251,14 @@ const DoctorProfile = (props) => {
                             <div className="col-md-4 offset-md-4 text-center">
                               <img
                                 className="rounded-circle img-100"
-                                src={imageUrl || defaultuser}
+                                src={
+                                  (avatarFile &&
+                                    window.URL.createObjectURL(
+                                      avatarFile.file
+                                    )) ||
+                                  doctor.avatar?.downloadURL ||
+                                  defaultuser
+                                }
                                 alt=""
                               />
                               <div className="icon-wrapper">

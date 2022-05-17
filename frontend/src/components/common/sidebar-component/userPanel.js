@@ -29,7 +29,7 @@ const UserPanel = () => {
         <Fragment>
             <div className="sidebar-user text-center">
                 <div>
-                    <img className="img-60 rounded-circle lazyloaded blur-up" src={url ? url : man} alt="#" />
+                    <img className="img-60 rounded-circle lazyloaded blur-up" src={loggedUser?.user.avatar?.downloadURL || man} alt="#" />
                     <div className="profile-edit">
                         <Link to={`${process.env.PUBLIC_URL}/settings/user/${loggedUser?.user.id}?mode=browse`}>
                             <Edit />

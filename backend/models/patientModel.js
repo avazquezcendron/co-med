@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import healthInsurancePlanSchema from './healthInsurancePlanSchema.js';
+import fileSchema from './fileSchema.js';
 
 const PatientSchema = mongoose.Schema(
   {
@@ -23,7 +24,7 @@ const PatientSchema = mongoose.Schema(
     biologicalSex: { type: String, required: false },
     dateOfBirth: { type: Date, required: false },
     phoneNumber: Number,
-    avatarUrl: String,
+    avatar: fileSchema,
     bio: String,
     contactPerson: {
       firstName: { type: String },

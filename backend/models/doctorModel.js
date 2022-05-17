@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import fileSchema from './fileSchema.js';
+
 const DoctorSchema = mongoose.Schema(
   {
     firstName: { type: String, required: true },
@@ -20,7 +22,7 @@ const DoctorSchema = mongoose.Schema(
     },
     dateOfBirth: { type: Date, required: false },
     phoneNumber: Number,
-    avatarUrl: String,
+    avatar: fileSchema,
     bio: String,
     status: { type: String, default: 'active' },
     address: {

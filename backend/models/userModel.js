@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcryptjs';
 
+import fileSchema from './fileSchema.js';
 
 const SALT_WORK_FACTOR = 10;
 
@@ -47,7 +48,7 @@ const UserSchema = mongoose.Schema(
       validated: { type: Boolean, default: false },
     },
     phoneNumber: { type: Number },
-    avatarUrl: String,
+    avatar: fileSchema,
     bio: String,
     address: {
       street: String,

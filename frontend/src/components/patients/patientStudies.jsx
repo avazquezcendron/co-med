@@ -121,7 +121,7 @@ const PatientStudies = (props) => {
           for (const file of files) {
             const fileRef = await firebase_app
               .storage()
-              .ref(`${patient.fullName}/estudios/${file.name}`);
+              .ref(`pacientes/${patient.fullName}/estudios/${file.name}`);
             const result = await fileRef.put(file.file).then((snapshot) => {
               return getDownloadURL(snapshot.ref).then((url) => {
                 return url;

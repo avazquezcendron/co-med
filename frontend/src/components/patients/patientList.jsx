@@ -180,7 +180,7 @@ const PatientList = (props) => {
       width: '80px',
       cell: (row, index, column, id) => (
         <img
-          src={row.avatarUrl || defaultuser}
+          src={row.avatar?.downloadURL || defaultuser}
           className="img-50 img-fluid"
           alt=""
         />

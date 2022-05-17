@@ -176,7 +176,8 @@ const PatientHealthRecord = (props) => {
             <TabContent activeTab={dataTab}>
               <TabPane className="fade show" tabId="datos">
                 <div className="col-md-12">
-                  <PatientPersonalData />
+                  <PatientPersonalData 
+                  showAvatar={true}/>
                 </div>
               </TabPane>
               <TabPane tabId="prescripciones" className="fade show">

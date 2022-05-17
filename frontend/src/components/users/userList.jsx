@@ -86,11 +86,15 @@ const UserList = (props) => {
   };
 
   const handleRowClick = (row, event) => {
-    props.history.push(`${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=browse`);
+    props.history.push(
+      `${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=browse`
+    );
   };
 
   const handleEditUserClick = (row, event) => {
-    props.history.push(`${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=edit`);
+    props.history.push(
+      `${process.env.PUBLIC_URL}/settings/user/${row.id}?mode=edit`
+    );
   };
 
   const handleUserChangeStatusClick = (user) => {
@@ -119,15 +123,35 @@ const UserList = (props) => {
   const labelKeyRenderRoles = (option, index) => {
     switch (option) {
       case 'external':
-        return <span key={index} className="badge badge-light">Usuario Externo</span>;
+        return (
+          <span key={index} className="badge badge-light">
+            Usuario Externo
+          </span>
+        );
       case 'patient':
-        return <span key={index} className="badge badge-info">Paciente</span>;
+        return (
+          <span key={index} className="badge badge-info">
+            Paciente
+          </span>
+        );
       case 'admin':
-        return <span key={index} className="badge badge-danger">Administrador</span>;
+        return (
+          <span key={index} className="badge badge-danger">
+            Administrador
+          </span>
+        );
       case 'receptionist':
-        return <span key={index} className="badge badge-secondary">Recepcionista</span>;
+        return (
+          <span key={index} className="badge badge-secondary">
+            Recepcionista
+          </span>
+        );
       case 'doctor':
-        return <span key={index} className="badge badge-primary">Doctor</span>;
+        return (
+          <span key={index} className="badge badge-primary">
+            Doctor
+          </span>
+        );
       default:
         break;
     }
@@ -150,11 +174,7 @@ const UserList = (props) => {
       width: '80px',
       cell: (row, index, column, id) => (
         <img
-          src={
-            row.avatarUrl
-              ? `${process.env.PUBLIC_URL}/assets/images/${row.avatarUrl}`
-              : defaultuser
-          }
+          src={row.avatar?.downloadURL || defaultuser}
           className="img-50 img-fluid"
           alt=""
         />
@@ -293,11 +313,7 @@ const UserList = (props) => {
                     onRowClicked={handleRowClick}
                     noDataComponent={
                       <Col md="12" className="text-center m-50">
-                        <img
-                          className="img-fluid"
-                          src={notFoundImg}
-                          alt=""
-                        />
+                        <img className="img-fluid" src={notFoundImg} alt="" />
                         <br />
                         <span className="txt-info">
                           No se encontraron usuarios...

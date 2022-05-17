@@ -120,7 +120,7 @@ const DoctorList = (props) => {
                       <Media
                         body
                         className="img-fluid"
-                        src={doctor.avatarUrl || defaultBg}
+                        src={defaultBg}
                         alt=""
                       />
                     </CardHeader>
@@ -128,7 +128,7 @@ const DoctorList = (props) => {
                       <Media
                         body
                         className="rounded-circle"
-                        src={doctor.avatarUrl || defaultuser}
+                        src={doctor.avatar?.downloadURL || defaultuser}
                         alt=""
                       />
                     </div>
