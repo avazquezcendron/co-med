@@ -1,32 +1,47 @@
 import {firebase_app} from '../data/config';
+import { getDatabase, ref, set, remove, update } from 'firebase/database';
 
 export const creatTodoList = (value) => {
-    firebase_app.firestore().collection('todo').add({
-        task: value,
+    const database = getDatabase(firebase_app);
+    set(ref(database, `notas/${value.id}`), {
+        task: value.task,
         completed: false,
-    })
+    });
 }
 
 export const deleteList = (taskId) => {
-    return firebase_app.firestore().collection('todo').doc(taskId).delete();
+    const database = getDatabase(firebase_app);
+    const notesRef = ref(
+      database,
+      `notas/${taskId}`
+    );
+    remove(notesRef);
 }
 
 export const updateTask = (value) => {
-    firebase_app.firestore().collection('todo').doc(value.id).set({
-        task: value.task,
-        completed: value.completed
-    })
+    const database = getDatabase(firebase_app);
+    const notesRef = ref(
+      database,
+      `notas/${value.id}`
+    );
+    update(notesRef, {
+        completed: value.completed,
+    });
 }
 
 export const markAllTask = (action) => {
-    const db = firebase_app.firestore();
-    db.collection('todo')
-        .get()
-        .then(snapshot => {
-            snapshot
-                .docs
-                .forEach(doc => {
-                    db.collection('todo').doc(doc.id).set({ task: doc.data().task, completed: action });
-                });
-        });
+    const database = getDatabase(firebase_app);
+    const notesRef = ref(
+      database,
+      `notas`
+    );
+    // db.collection('todo')
+    //     .get()
+    //     .then(snapshot => {
+    //         snapshot
+    //             .docs
+    //             .forEach(doc => {
+    //                 db.collection('todo').doc(doc.id).set({ task: doc.data().task, completed: action });
+    //             });
+    //     });
 }
