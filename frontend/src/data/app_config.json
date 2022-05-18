@@ -2,7 +2,7 @@
   "firebase": {
     "apiKey": "AIzaSyCzEn9VWaSSCo4kX0pXv9oamIyOa6vCHMM",
     "authDomain": "co-med-a09ae.firebaseapp.com",
-    "databaseURL": "Your Firebase Database URL",
+    "databaseURL": "https://co-med-a09ae-default-rtdb.firebaseio.com",
     "projectId": "co-med-a09ae",
     "storageBucket": "co-med-a09ae.appspot.com",
     "messagingSenderId": "97836475775",

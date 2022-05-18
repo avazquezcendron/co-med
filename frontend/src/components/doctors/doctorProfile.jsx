@@ -123,7 +123,7 @@ const DoctorProfile = (props) => {
           const doctorData = {
             ...doctor,
             ...data,
-            avatar: avatarData,
+            avatar: avatarData.name ? avatarData : null,
             dateOfBirth: dateOfBirth,
             licenses: licenses,
             specialities: specialities,

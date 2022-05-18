@@ -181,7 +181,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
           const patientData = {
             ...patient,
             ...data,
-            avatar: avatarData,
+            avatar: avatarData.name ? avatarData : null,
             dateOfBirth: dateOfBirth,
             tags: tags.map((x) => x.id),
           };

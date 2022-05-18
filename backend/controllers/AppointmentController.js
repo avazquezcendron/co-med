@@ -1,9 +1,12 @@
+import moment from 'moment';
+
+import sendMail from '../utils/nodemailer.js';
+import notifyNewAppointment from '../utils/notifications.js';
 import BaseController from './BaseController.js';
 import Appointment from '../models/appointmentModel.js';
 import Patient from '../models/patientModel.js';
 import Doctor from '../models/doctorModel.js';
 import AppointmentConfig from '../models/appointmentConfigModel.js';
-import moment from 'moment';
 
 class AppointmentController extends BaseController {
   constructor() {
@@ -86,15 +89,22 @@ class AppointmentController extends BaseController {
   async create(req, res, next) {
     const doctor = await Doctor.findById(req.body.doctor.id).populate({
       path: 'appointments',
+    }).populate({
+      path: 'user',
     });
-    if (req.body.appointmentType === 'turno' && !this._checkDoctorAvailability(doctor, req.body.start)) {
+    if (
+      req.body.appointmentType === 'turno' &&
+      !this._checkDoctorAvailability(doctor, req.body.start)
+    ) {
       return res
         .status(409)
         .json('El doctor no tiene disponibilidad para el slot seleccionado.');
     }
 
     const appointment = new this._model(req.body);
-    const patient = await Patient.findById(appointment.patient._id);
+    const patient = await Patient.findById(appointment.patient._id).populate({
+      path: 'healthInsurances.healthInsuranceCompany',
+    });
     const savedappointment = await appointment.save();
     // patient.appointments.push(savedappointment._id);
     // await patient.save();
@@ -104,6 +114,29 @@ class AppointmentController extends BaseController {
       ...req.params,
       id: savedappointment._id,
     };
+
+    const appointmentData = { ...req.body, doctor: doctor, patient: patient };
+    if (patient.email) {
+      sendMail(
+        patient.email,
+        `Co-Med | Nuevo Turno día ${new Date(appointment.start).toLocaleString(
+          'es',
+          {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          }
+        )} hs`,
+        'html',
+        'newAppointment',
+        appointmentData
+      );
+    }
+    
+    notifyNewAppointment(appointmentData);
     return this.getById(req, res, next);
   }
 
@@ -121,7 +154,10 @@ class AppointmentController extends BaseController {
     const doctor = await Doctor.findById(req.body.doctor.id).populate({
       path: 'appointments',
     });
-    if (req.body.appointmentType === 'turno' && !this._checkDoctorAvailability(doctor, req.body.start, req.params.id)) {
+    if (
+      req.body.appointmentType === 'turno' &&
+      !this._checkDoctorAvailability(doctor, req.body.start, req.params.id)
+    ) {
       return res
         .status(409)
         .json('El doctor no tiene disponibilidad para el slot seleccionado.');
@@ -164,7 +200,12 @@ class AppointmentController extends BaseController {
       (docAppointment) =>
         docAppointment._id.toString() !== appointmentId?.toString() &&
         docAppointment.isActive &&
-        moment(appointmentStart).isBetween(docAppointment.start, docAppointment.end, 'minute', '[)')
+        moment(appointmentStart).isBetween(
+          docAppointment.start,
+          docAppointment.end,
+          'minute',
+          '[)'
+        )
     );
     const slotIsAvailable = docAppointmentsInSameSlot.length === 0;
     return slotIsAvailable;

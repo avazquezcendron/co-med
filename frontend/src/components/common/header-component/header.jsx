@@ -93,9 +93,7 @@ const Header = () => {
                 <Language />
               </li> */}
               <li className="onhover-dropdown">
-                <Notification />
                 <Bell />
-                <span className="dot"></span>
                 <Notification />
               </li>
               {/* <li>

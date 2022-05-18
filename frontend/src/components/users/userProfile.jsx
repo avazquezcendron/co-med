@@ -88,7 +88,7 @@ const UserProfile = (props) => {
                 {
                   ...data,
                   roles: user.roles,
-                  avatar: avatarData,
+                  avatar: avatarData.name ? avatarData : null,
                 },
                 loggedUser
               )
@@ -103,7 +103,7 @@ const UserProfile = (props) => {
                 {
                   ...user,
                   ...data,
-                  avatar: avatarData,
+                  avatar: avatarData.name ? avatarData : null,
                 },
                 loggedUser
               )

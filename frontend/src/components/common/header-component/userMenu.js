@@ -37,10 +37,10 @@ const UserMenu = ({ history }) => {
               src={profile}
               alt="header-user"
             />
-            <div className="dotted-animation">
+            {/* <div className="dotted-animation">
               <span className="animate-circle"></span>
               <span className="main-circle"></span>
-            </div>
+            </div> */}
           </div>
           <ul className="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
             <li>
