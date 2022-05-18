@@ -64,11 +64,6 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
     setStartDate(date);
   };
 
-  const isWeekday = (date) => {
-    const day = date.getDay();
-    return day !== 0 && day !== 6;
-  };
-
   const handleSlotClick = (e, slot) => {
     e.preventDefault();
     if (!slot.available) return;

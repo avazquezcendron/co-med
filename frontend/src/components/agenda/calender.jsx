@@ -8,7 +8,6 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import esLocale from '@fullcalendar/core/locales/es';
 import SweetAlert from 'sweetalert2';
-import { toast } from 'react-toastify';
 import { Typeahead, Highlighter } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import moment from 'moment';

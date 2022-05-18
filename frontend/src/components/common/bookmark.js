@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Star, UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
+import React, { useState, useEffect } from 'react';
+import { UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const Bookmark = () => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const history = useHistory();
   const mainmenu = MENUITEMS;
-  const tooltipOpen = false;
+  // const tooltipOpen = false;
   const [openSearch, setOpenSearch] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [searchResult, setSearchResult] = useState(false);

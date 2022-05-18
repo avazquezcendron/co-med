@@ -15,7 +15,7 @@ import Loader from '../common/loader';
 const DrugList = (props) => {
   const { loggedUser } = useSelector((store) => store.UserLogin);
 
-  const { register, handleSubmit, errors, setError, clearErrors } = useForm();
+  const { register, handleSubmit, errors } = useForm();
 
   const [drugs, setDrugs] = useState('');
   const [currentDrug, setCurrentDrug] = useState({});
@@ -180,8 +180,6 @@ const DrugList = (props) => {
     setCurrentDrug(row);
     modalToggle();
   };
-
-  const handleEditDrugClick = (row, event) => {};
 
   const columnsConfig = [
     {

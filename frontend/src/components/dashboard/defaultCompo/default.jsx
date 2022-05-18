@@ -11,14 +11,6 @@ import Breadcrumb from '../../common/breadcrumb';
 import configDB from '../../../data/customizer/config';
 import Todo from '../../applications/todo-app/todo';
 import {
-  ByKan,
-  ByKaint,
-  ByTailer,
-  ByWaiter,
-  ByComman,
-  ByCall,
-} from '../../../constant';
-import {
   patientGetAllWatcher,
   patientsInitialize,
 } from '../../../redux/patients/actions';

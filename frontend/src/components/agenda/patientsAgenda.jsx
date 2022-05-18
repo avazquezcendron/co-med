@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import notFoundImg from '../../assets/images/search-not-found.png';
 import DataTableFilterComponent from '../common/data-table/dataTableFilterComponent';
-import CustomMaterialMenu from '../../components/common/data-table/customMaterialMenu';
 import {
   getAppointmentsWatcher,
   setDataAppointmentForm,

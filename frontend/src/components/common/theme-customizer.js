@@ -225,11 +225,10 @@ const ThemeCustomizer = () => {
 
     return (
         <Fragment>
-            <div className="customizer-links">
+            {/* <div className="customizer-links">
                 <div className="nav flex-column nac-pills" id="c-pills-tab" role="tablist" aria-orientation="vertical">
                     <Nav tabs className="tab-list-bottom border-tab-primary">
                         <NavItem className="nav nav-tabs" id="myTab" role="tablist">
-                            {/* eslint-disable-next-line */}
                             <NavLink className={activeTab1 == '1' ? 'active' : ''} onClick={() => setActiveTab1('1')}>
                                 <div className="settings">
                                     <i className="icofont icofont-ui-settings" onClick={openCustomizer}></i>
@@ -237,7 +236,6 @@ const ThemeCustomizer = () => {
                             </NavLink>
                         </NavItem>
                         <NavItem className="nav nav-tabs" id="myTab" role="tablist">
-                            {/* eslint-disable-next-line */}
                             <NavLink className={activeTab1 == '2' ? 'active' : ''} onClick={() => setActiveTab1('2')}>
                                 <div className="settings color-settings">
                                     <i className="icofont icofont-color-bucket" onClick={openCustomizer}></i>
@@ -306,7 +304,7 @@ const ThemeCustomizer = () => {
                     </div>
                     <div className="customizer-body custom-scrollbar">
                         <TabContent activeTab={activeTab1}>
-                            {/* <TabPane tabId="1">
+                            <TabPane tabId="1">
                                 <h6>{LayoutType}</h6>
                                 <ul className="main-layout layout-grid">
                                     <li data-attr="ltr" className={`${layout_type === 'ltr' ? 'active' : ''}`} onClick={() => handleLayout('ltr')}>
@@ -446,7 +444,7 @@ const ThemeCustomizer = () => {
                                         </div>
                                     </li>
                                 </ul>
-                            </TabPane> */}
+                            </TabPane>
                             <TabPane tabId="2">
                                 <h6>{LightLayout}</h6>
                                 <ul className="layout-grid customizer-color">
@@ -614,7 +612,7 @@ const ThemeCustomizer = () => {
                         </TabContent>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </Fragment>
     )
 }

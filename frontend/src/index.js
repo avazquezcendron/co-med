@@ -53,8 +53,8 @@ import Error503 from './pages/errors/error503';
 
 // Import Applications Components
 import Todo from './components/applications/todo-app/todo';
-import EmailDefault from './components/applications/email-app/emailDefault';
-import Chat from './components/applications/chat-app/chat';
+// import EmailDefault from './components/applications/email-app/emailDefault';
+// import Chat from './components/applications/chat-app/chat';
 
 import Signin from './auth/signin';
 
@@ -140,8 +140,8 @@ const Root = () => {
                                     <Route path={`${process.env.PUBLIC_URL}/patient/:id`} component={PatientProfile} />
 
                                     <Route path={`${process.env.PUBLIC_URL}/todo-app/todo`} component={Todo} />
-                                    <Route path={`${process.env.PUBLIC_URL}/email-app/emailDefault`} component={EmailDefault} />
-                                    <Route path={`${process.env.PUBLIC_URL}/chat-app/chat`} component={Chat} />
+                                    {/* <Route path={`${process.env.PUBLIC_URL}/email-app/emailDefault`} component={EmailDefault} />
+                                    <Route path={`${process.env.PUBLIC_URL}/chat-app/chat`} component={Chat} /> */}
                                 </App>
                              :
                                 <Redirect to={`${process.env.PUBLIC_URL}/login`} />

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import comingsoon from '../assets/images/other-images/coming-soon-bg.jpg';
-import authVideo from '../assets/video/auth-bg.mp4';
+// import authVideo from '../assets/video/auth-bg.mp4';
 import logo from '../assets/images/endless-logo.png';
 import { Login,LOGIN,YourName,Password,RememberMe } from '../constant';
 const LoginWithVideo = () => {
@@ -10,9 +10,9 @@ const LoginWithVideo = () => {
                 <div className="container-fluid p-0">
                     {/* <!-- login page with video background start--> */}
                     <div className="auth-bg-video">
-                        <video id="bgvid" poster={comingsoon} playsInline="" autoPlay={true} muted="" loop="" >
+                        {/* <video id="bgvid" poster={comingsoon} playsInline="" autoPlay={true} muted="" loop="" >
                             <source src={authVideo} type="video/mp4" />
-                        </video>
+                        </video> */}
                         <div className="authentication-box">
                             <div className="text-center"><img src={logo} alt="" /></div>
                             <div className="card mt-4">
