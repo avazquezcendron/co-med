@@ -3,22 +3,26 @@ import { translate } from 'react-switch-lang';
 import { toast } from 'react-toastify';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { getDatabase, ref, onValue, off } from 'firebase/database';
+import { useSelector } from 'react-redux';
 
 // import { ADD_NEW_ITEM, REMOVE_ITEM, MARK_ALL_ITEMS, SELECTED_ITEM, WATCH_TODO_LIST } from '../../../redux/actionTypes'
 import {
   deleteList,
   creatTodoList,
   updateTask,
-  markAllTask,
 } from '../../../services/todo-firebase.service';
+import { getAll as getAllUsers } from '../../../services/user.service';
 import { firebase_app } from '../../../data/config';
 
 const Todo = (props) => {
+  const { loggedUser } = useSelector((store) => store.UserLogin);
+
   const [todoList, setTodoList] = useState([]);
   const [addTask, setAddTask] = useState('');
   const border_danger = '';
   const [task, setTask] = useState('');
-  const [markAll, setMarkAll] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
 
   const pageSize = 6;
   const pagesCount = Math.ceil(todoList.length / pageSize);
@@ -34,18 +38,21 @@ const Todo = (props) => {
   useEffect(() => {
     // dispatch({ type: WATCH_TODO_LIST });
     const database = getDatabase(firebase_app);
-    const notasRef = ref(database, `notas`);
+    const notasRef = ref(database, `notas/${loggedUser.user.username}`);
     onValue(notasRef, (snapshot) => {
       const notesUpdated = [];
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
         if (childData?.task) {
-            notesUpdated.push({ ...childData, id: childKey });
+          notesUpdated.push({ ...childData, id: childKey });
         }
       });
       setTodoList(notesUpdated);
     });
+
+    getAllUsers(loggedUser).then((res) => setUsers(res.data));
+
     return () => off(notasRef);
   }, []);
 
@@ -54,17 +61,23 @@ const Todo = (props) => {
       document.querySelector('.ng-valid').classList.remove('border-danger');
       document.querySelector('.ng-valid').classList.add('border-danger');
     } else {
-      creatTodoList({ task: task, id: Date.now() });
+      creatTodoList(
+        { task: task, id: Date.now(), assignedTo: user },
+        loggedUser.user
+      );
       document.getElementById('newtask').value = '';
       document.querySelector('.ng-valid').classList.add('taskmag-hide');
       document.querySelector('.ng-valid').classList.remove('taskmag-show');
       setAddTask('');
+      setUser(null);
+      setTask('');
+      toast.success('Nota creada!');
     }
   };
 
   const handleRemoveTodo = (todoId) => {
     toast.success('Nota borrada!');
-    deleteList(todoId);
+    deleteList(todoId, loggedUser.user.username);
   };
 
   const handleMarkedTodo = (index, todo) => {
@@ -72,21 +85,21 @@ const Todo = (props) => {
       toast.success('Nota Completada !');
     }
     if (todo.completed === true) {
-      toast.error('Nota pendiente!');
+      toast.warning('Nota pendiente!');
     }
     todo.completed = !todo.completed;
-    updateTask(todo);
+    updateTask(todo, loggedUser.user.username);
   };
 
-  const markAllStatus = (checked) => {
-    if (checked === true) {
-      toast.success('Todas las notas pendientes.');
-    } else {
-      toast.error('Todas las notas completadas.');
-    }
-    setMarkAll(checked);
-    markAllTask(checked);
-  };
+  // const markAllStatus = (checked) => {
+  //   if (checked === true) {
+  //     toast.success('Todas las notas pendientes.');
+  //   } else {
+  //     toast.error('Todas las notas completadas.');
+  //   }
+  //   setMarkAll(checked);
+  //   markAllTask(checked);
+  // };
 
   const openTaskWrapper = () => {
     setAddTask(' visible');
@@ -94,10 +107,20 @@ const Todo = (props) => {
 
   const closeTaskWrapper = () => {
     setAddTask('');
+    setUser(null);
+    setTask('');
   };
 
   const onTaskChanged = (e) => {
     setTask(e.currentTarget.value);
+  };
+
+  const handleUserChange = (value) => {
+    if (value) {
+      setUser(users.filter((x) => x.id === value)[0]);
+    } else {
+      setUser(null);
+    }
   };
 
   return (
@@ -109,7 +132,7 @@ const Todo = (props) => {
       <div className="card">
         <div className="card-header">
           <h5>
-            <i className="icofont icofont-notepad"></i> {props.t('Notes')}
+            <i className="icofont icofont-notepad"></i> {'Notas'}
           </h5>
         </div>
         <div className="card-body">
@@ -171,6 +194,8 @@ const Todo = (props) => {
                             >
                               <div className="task-container">
                                 <h4 className="task-label">{todoData.task}</h4>
+                                {/* <small className="task-label text-muted">Creada por: Juli Llaneza</small> */}
+                                <cite className="text-muted">Creada por: {todoData.assignedBy}</cite>
                                 <span className="task-action-btn">
                                   <span
                                     className="action-box large delete-btn"
@@ -215,13 +240,38 @@ const Todo = (props) => {
                   <div className={'new-task-wrapper' + addTask}>
                     <textarea
                       className={
-                        'ng-untouched ng-pristine ng-valid' + border_danger
+                        'mb-0 ng-untouched ng-pristine ng-valid' + border_danger
                       }
                       id="newtask"
                       placeholder="Ingrese una nueva nota aquí. . ."
                       defaultValue={task}
                       onChange={onTaskChanged}
                     ></textarea>
+                    <div className="mb-4">
+                      <label
+                        className="col-md-12 col-form-label text-muted pl-0"
+                        htmlFor="inputUser"
+                      >
+                        {'Asignar a'}
+                      </label>
+                      <div className="col-md-6 p-1">
+                        <select
+                          className="form-control"
+                          name="user"
+                          id="inputUser"
+                          value={user?.id || ''}
+                          onChange={(e) => handleUserChange(e.target.value)}
+                        >
+                          <option value=""></option>
+                          {users &&
+                            users.map((user, index) => (
+                              <option key={index} value={user.id}>
+                                {`${user.firstName} ${user.lastName}`}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
                     <span
                       className="btn btn-danger cancel-btn"
                       id="close-task-panel"
@@ -239,12 +289,6 @@ const Todo = (props) => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="notification-popup hide">
-              <p>
-                <span className="task"></span>
-                <span className="notification-text"></span>
-              </p>
             </div>
           </div>
           {/* <!-- HTML Template for tasks--> */}
@@ -265,7 +309,7 @@ const Todo = (props) => {
                                 </script> */}
           <Pagination
             aria-label="ToDo Pagination"
-            className="pagination justify-content-center pagination-primary"
+            className="pagination justify-content-center pagination-primary mt-4"
           >
             <PaginationItem disabled={currentPage <= 0}>
               <PaginationLink

@@ -11,7 +11,6 @@ const initializeFirebaseApp = () => {
   try {
     const fbConfig = getFirebaseConfig();
     firebaseApp = initializeApp(fbConfig);
-    console.log(fbConfig.projectId);
     console.log(`Firebase App initilized:`.cyan.underline);
     return firebaseApp;
   } catch (error) {

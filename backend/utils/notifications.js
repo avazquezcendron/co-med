@@ -6,7 +6,7 @@ const notifyNewAppointment = (appointmentData) => {
   try {
     if (appointmentData.doctor.user?.username) {
       const database = getDatabase(getFirebaseApp());
-      set(ref(database, `notifications/appointments/${appointmentData.doctor.user ?.username}/${new Date(appointmentData.start).getTime()}`), {
+      set(ref(database, `notifications/appointments/${appointmentData.doctor.user?.username}/${new Date(appointmentData.start).getTime()}`), {
           description: `Tienes un nuevo turno con el paciente ${appointmentData.patient.firstName} ${appointmentData.patient.lastName} el día ${new Date(appointmentData.start).toLocaleString(
             'es',
             {
