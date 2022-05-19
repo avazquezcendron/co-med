@@ -5,15 +5,21 @@ import {
   Col,
   Card,
   CardHeader,
-  CardBody,
   CardFooter,
   Media,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  Label,
 } from 'reactstrap';
 import { translate } from 'react-switch-lang';
 import SweetAlert from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
 import { PlusCircle } from 'react-feather';
 import { Link } from 'react-router-dom';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import es from 'date-fns/locale/es';
+import moment from 'moment';
 
 import defaultuser from '../../assets/images/user/user.png';
 import defaultBg from '../../assets/images/other-images/auth-bg-2.png';
@@ -27,11 +33,30 @@ import {
 } from '../../redux/doctors/actions';
 import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
+import * as doctorService from '../../services/doctor.service';
 
 const DoctorList = (props) => {
+  registerLocale('es', es);
   const { doctors, status } = useSelector((store) => store.Doctors);
   const { status: doctorStoreStatus } = useSelector((store) => store.Doctor);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
+
+  const [doctor, setDoctor] = useState({});
+  const [selectedSlot, setSelectedSlot] = useState({});
+  const [startDate, setStartDate] = useState(null);
+  const [appointmentsSessions, setAppointmentsSessions] = useState([]);
+
+  const [modal, setModal] = useState(false);
+  const modalToggle = (patient) => {
+    if (modal) {
+      setDoctor({});
+      setStartDate(null);
+      setSelectedSlot({});
+      setAppointmentsSessions([]);
+    }
+    setModal(!modal);
+  };
 
   useEffect(() => {
     dispatch(doctorGetAllWatcher());
@@ -39,6 +64,27 @@ const DoctorList = (props) => {
       dispatch(doctorsInitialize());
     };
   }, []);
+
+  useEffect(() => {
+    if (startDate && doctor.id) {
+      doctorService
+        .getDoctorSessions(doctor.id, startDate, loggedUser)
+        .then((sessions) => {
+          let drSessions = sessions;
+          setAppointmentsSessions(drSessions);
+          const startTime = moment(startDate);
+          if (startTime) {
+            drSessions.forEach((session) => {
+              const activeSlot = session.slots.filter((slot) =>
+                moment(slot.startTime).isSame(startTime)
+              );
+              if (activeSlot && activeSlot.length > 0)
+                setSelectedSlot(activeSlot[0]);
+            });
+          }
+        });
+    }
+  }, [startDate]);
 
   useEffect(() => {
     if (doctorStoreStatus === SUCCEEDED) dispatch(doctorGetAllWatcher());
@@ -61,6 +107,30 @@ const DoctorList = (props) => {
         dispatch(doctorChangeStatustWatcher(doctor));
       }
     });
+  };
+
+  const handleAppDateChange = (date) => {
+    setStartDate(date);
+  };
+
+  const handleSlotClick = (e, slot) => {
+    e.preventDefault();
+    if (!slot.available) return;
+
+    setSelectedSlot(slot);
+    document.querySelectorAll('.slotButton').forEach((item) => {
+      item.classList.remove('active');
+    });
+    e.currentTarget.classList.add('active');
+  };
+
+  const isActiveSlot = (slot) => {
+    return slot.id === selectedSlot.id;
+  };
+
+  const handleCheckAvailabilityClick = (row) => {
+    setDoctor(row);
+    modalToggle();
   };
 
   return (
@@ -106,13 +176,19 @@ const DoctorList = (props) => {
               {doctors.map((doctor, i) => (
                 <Col md="3" lg="3" xl="3" className="box-col-3" key={i}>
                   {doctor.status === 'inactive' && (
-                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-danger" title={'Estado "Inactivo"'}>
+                    <div
+                      className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-danger"
+                      title={'Estado "Inactivo"'}
+                    >
                       <i className="icon-na"></i>
                     </div>
                   )}
                   {doctor.status === 'active' && (
-                    <div className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-success" title={'Estado "Activo"'}>
-                      <i className="icon-check" ></i>
+                    <div
+                      className="ribbon ribbon-bookmark ribbon-vertical-left ribbon-success"
+                      title={'Estado "Activo"'}
+                    >
+                      <i className="icon-check"></i>
                     </div>
                   )}
                   <Card className="custom-card features-faq product-box ribbon-vertical-right-wrapper">
@@ -211,7 +287,7 @@ const DoctorList = (props) => {
                       </CardFooter>
                       <div className="product-hover">
                         <ul>
-                          <li>
+                          {/* <li>
                             <a
                               href="#javascritp"
                               className="text-muted"
@@ -219,12 +295,15 @@ const DoctorList = (props) => {
                             >
                               <i className="icon-calendar"></i>
                             </a>
-                          </li>
+                          </li> */}
                           <li>
                             <a
                               href="#javascritp"
                               className="text-muted"
                               title="Consultar disponibilidad de turnos"
+                              onClick={() =>
+                                handleCheckAvailabilityClick(doctor)
+                              }
                             >
                               <i className="icofont icofont-wall-clock"></i>
                             </a>
@@ -278,6 +357,93 @@ const DoctorList = (props) => {
                 </Col>
               ))}
             </Row>
+            <Modal isOpen={modal} toggle={modalToggle} size="lg">
+              <ModalHeader toggle={modalToggle}>
+                Consulta Disponibilidad Horaria - {doctor.fullName}
+              </ModalHeader>
+              <ModalBody>
+                <div className="card">
+                  <div className="row">
+                    {startDate && (
+                      <p className="text-muted col-md-12">
+                        * Turnos disponibles para el{' '}
+                        <mark>
+                          <u>
+                            {startDate.toLocaleDateString('es-AR', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </u>{' '}
+                          con el doctor/a {doctor.fullName}
+                        </mark>
+                      </p>
+                    )}
+                    <div className="col-md-6">
+                      <Label>{'Día'}</Label>
+                      <DatePicker
+                        name="startDate"
+                        className="form-control digits"
+                        placeholderText="Seleccionar una fecha"
+                        selected={startDate}
+                        minDate={new Date()}
+                        // filterDate={isWeekday}
+                        todayButton="Hoy"
+                        inline
+                        locale="es"
+                        dateFormat="dd/MM/yyyy"
+                        onChange={handleAppDateChange}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <Label>{'Hora'}</Label>
+                      <div className="">
+                        {appointmentsSessions.map((session, index) => (
+                          <div key={index}>
+                            <p className="text-center mt-2">
+                              {session.sessionName}
+                            </p>
+                            {session.slots.map((slot, index) => (
+                              <button
+                                key={index}
+                                className={`btn btn-outline-primary btn-xs m-5 slotButton ${
+                                  slot.available ? '' : 'disabled'
+                                } ${isActiveSlot(slot) ? 'active' : ''}`}
+                                type="button"
+                                onClick={(e) => handleSlotClick(e, slot)}
+                              >
+                                {slot.available ? (
+                                  new Date(slot.startTime).toLocaleTimeString(
+                                    'es',
+                                    {
+                                      hour: 'numeric',
+                                      minute: 'numeric',
+                                      hour12: false,
+                                    }
+                                  )
+                                ) : (
+                                  <s>
+                                    {new Date(
+                                      slot.startTime
+                                    ).toLocaleTimeString('es', {
+                                      hour: 'numeric',
+                                      minute: 'numeric',
+                                      hour12: false,
+                                    })}
+                                  </s>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                      {/* <button className="btn btn-primary m-40">Nuevo turno</button> */}
+                    </div>
+                  </div>
+                </div>
+              </ModalBody>
+            </Modal>
           </Container>
         </Fragment>
       ) : (
