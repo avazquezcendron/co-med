@@ -74,51 +74,51 @@ const Default = (props) => {
     };
   }, []);
 
-  useEffect(() => {
-    var appointmentsAvailablesToday = Knob({
-      label: '%',
-      labelColor: primary,
-      value: 15,
-      left: 1,
-      angleOffset: 0,
-      className: 'review',
-      thickness: 0.1,
-      width: 70,
-      height: 70,
-      fgColor: primary,
-      readOnly: true,
-      dynamicDraw: false,
-      tickColorizeValues: true,
-      bgColor: '#f6f7fb',
-      lineCap: 'round',
-      displayPrevious: true,
-    });
-    document
-      .getElementById('appAvailToday')
-      .appendChild(appointmentsAvailablesToday);
+  // useEffect(() => {
+  //   var appointmentsAvailablesToday = Knob({
+  //     label: '%',
+  //     labelColor: primary,
+  //     value: 15,
+  //     left: 1,
+  //     angleOffset: 0,
+  //     className: 'review',
+  //     thickness: 0.1,
+  //     width: 70,
+  //     height: 70,
+  //     fgColor: primary,
+  //     readOnly: true,
+  //     dynamicDraw: false,
+  //     tickColorizeValues: true,
+  //     bgColor: '#f6f7fb',
+  //     lineCap: 'round',
+  //     displayPrevious: true,
+  //   });
+  //   document
+  //     .getElementById('appAvailToday')
+  //     .appendChild(appointmentsAvailablesToday);
 
-    var appointmentsAvailablesMonth = Knob({
-      label: '%',
-      labelColor: primary,
-      value: 60,
-      left: 1,
-      angleOffset: 0,
-      className: 'review',
-      thickness: 0.1,
-      width: 70,
-      height: 70,
-      fgColor: primary,
-      readOnly: true,
-      dynamicDraw: false,
-      tickColorizeValues: true,
-      bgColor: '#f6f7fb',
-      lineCap: 'round',
-      displayPrevious: true,
-    });
-    document
-      .getElementById('appAvailMonth')
-      .appendChild(appointmentsAvailablesMonth);
-  }, []);
+  //   var appointmentsAvailablesMonth = Knob({
+  //     label: '%',
+  //     labelColor: primary,
+  //     value: 60,
+  //     left: 1,
+  //     angleOffset: 0,
+  //     className: 'review',
+  //     thickness: 0.1,
+  //     width: 70,
+  //     height: 70,
+  //     fgColor: primary,
+  //     readOnly: true,
+  //     dynamicDraw: false,
+  //     tickColorizeValues: true,
+  //     bgColor: '#f6f7fb',
+  //     lineCap: 'round',
+  //     displayPrevious: true,
+  //   });
+  //   document
+  //     .getElementById('appAvailMonth')
+  //     .appendChild(appointmentsAvailablesMonth);
+  // }, []);
 
   useEffect(() => {
     if (appointmentsStatus === SUCCEEDED) dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
@@ -354,7 +354,7 @@ const Default = (props) => {
 
           <div className="col-md-8 xl-100">
             <div className="row">
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <div className="card">
                   <div className="card-body">
                     <div className="number-widgets">
@@ -371,9 +371,9 @@ const Default = (props) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
-              <div className="col-md-6">
+              {/* <div className="col-md-6">
                 <div className="card">
                   <div className="card-body">
                     <div className="number-widgets">
@@ -390,37 +390,37 @@ const Default = (props) => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="col-md-6">
                 <div className="card">
                   <div className="card-header">
-                    <h5>{'Pacientes por género'}</h5>
+                    <h5>{'Pacientes por género percibido'}</h5>
                   </div>
                   <div className="card-body p-0">
                     <Chart
                       width={'100%'}
-                      height={'192px'}
+                      height={'190px'}
                       chartType="PieChart"
                       loader={<div>{'Cargando...'}</div>}
                       data={[
                         ['Género', 'Porcentaje'],
-                        ['Masculino', 41],
-                        ['Femenino', 33],
-                        ['Otro', 26],
+                        ['Cisgénero', patients.filter(x => x.gender === 'cisgenero').length],
+                        ['Transgénero', patients.filter(x => x.gender === 'transgenero').length],
+                        ['No-binario', patients.filter(x => x.gender === 'no-binario').length],
                       ]}
                       options={{
                         title: '',
                         colors: [
                           '#4466f2',
-                          '#1ea6ec',
                           '#fa9f40',
                           '#31af47',
+                          '#1ea6ec',
                           '#4466f2',
                         ],
-                        sliceVisibilityThreshold: 0.2, // 20%
+                        // sliceVisibilityThreshold: 0.2, // 20%
                       }}
-                      rootProps={{ 'data-testid': '7' }}
+                      // rootProps={{ 'data-testid': '0' }}
                     />
                   </div>
                 </div>
@@ -434,15 +434,15 @@ const Default = (props) => {
                   <div className="card-body p-0">
                     <Chart
                       width={'100%'}
-                      height={'192px'}
+                      height={'190px'}
                       chartType="PieChart"
                       loader={<div>{'Cargando'}</div>}
                       data={[
                         ['Rango Etáreo', 'Cantidad de Pacientes'],
-                        ['0-10', 20],
-                        ['11-20', 25],
-                        ['21-40', 30],
-                        ['+40', 80],
+                        ['0-10', patients.filter(x => x.age < 11).length],
+                        ['11-20', patients.filter(x => x.age > 10 && x.age < 21).length],
+                        ['21-40', patients.filter(x => x.age > 20 && x.age < 41).length],
+                        ['+40', patients.filter(x => x.age > 40).length],
                       ]}
                       options={{
                         title: '',
@@ -456,7 +456,7 @@ const Default = (props) => {
                         // Just add this option
                         pieHole: 0.4,
                       }}
-                      rootProps={{ 'data-testid': '3' }}
+                      // rootProps={{ 'data-testid': '0' }}
                     />
                   </div>
                 </div>

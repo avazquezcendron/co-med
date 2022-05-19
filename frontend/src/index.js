@@ -3,11 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import { BrowserRouter, Switch, Route,Redirect } from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
+import {
+    setTranslations,
+    setDefaultLanguage,
+    setLanguageCookie,
+} from 'react-switch-lang';
 
 // ** Import custom components for redux **
 import { Provider } from 'react-redux';
 import store from './store';
 import App from "./components/app";
+
+
+import en from './assets/i18n/en.json';
+import es from './assets/i18n/es.json';
+import pt from './assets/i18n/pt.json';
+import fr from './assets/i18n/fr.json';
 
 // Import custom Components 
 import Default from './components/dashboard/defaultCompo/default';
@@ -68,6 +79,9 @@ const Root = () => {
     const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
 
     useEffect(() => {
+        setTranslations({ en, es, pt, fr });
+        setDefaultLanguage('es');
+        setLanguageCookie();
 
         const color = localStorage.getItem('color')
         const layout = localStorage.getItem('layout_version') || configDB.data.color.layout_version
