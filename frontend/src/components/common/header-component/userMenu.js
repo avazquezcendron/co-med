@@ -57,7 +57,7 @@ const UserMenu = ({ history }) => {
                 {'LockScreen'}
               </a>
             </li> */}
-            {loggedUser?.user.isAdmin && (
+            {(loggedUser?.user.isAdmin || loggedUser?.user.isReceptionist) && (
               <li >
                 <Link to={`${process.env.PUBLIC_URL}/settings/generalSettings`}>
                   <Settings />

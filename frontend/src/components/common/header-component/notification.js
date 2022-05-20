@@ -51,6 +51,21 @@ const Notifications = (props) => {
   return (
     <Fragment>
       <div>
+        {newNotifications && (
+          <span
+            class="p-0 badge-pill badge-danger text-center"
+            style={{
+              position: 'absolute',
+              right: 10,
+              bottom: 20,
+              width: 12,
+              height: 12,
+              fontSize: 'x-small',
+            }}
+          >
+            {notificationsCount}
+          </span>
+        )}
         {newNotifications && <span className="dot bg-danger"></span>}
         <ul className="notification-dropdown onhover-show-div p-0 text-muted">
           <li>
