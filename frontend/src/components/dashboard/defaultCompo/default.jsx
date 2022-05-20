@@ -412,11 +412,9 @@ const Default = (props) => {
                       options={{
                         title: '',
                         colors: [
-                          '#4466f2',
-                          '#fa9f40',
-                          '#31af47',
                           '#1ea6ec',
-                          '#4466f2',
+                          '#22af47',
+                          '#6c757d',
                         ],
                         // sliceVisibilityThreshold: 0.2, // 20%
                       }}
