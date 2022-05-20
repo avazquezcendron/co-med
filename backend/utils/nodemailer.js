@@ -10,18 +10,7 @@ const sendMail = (
   appointmentData
 ) => {
   const transporter = nodemailer.createTransport(`smtps://${process.env.MAIL_USERNAME}%40gmail.com:${process.env.MAIL_PASSWORD}@smtp.gmail.com`);
-  // const transporter = nodemailer.createTransport({
-  //   service: 'gmail',
-  //   auth: {
-  //     type: 'OAuth2',
-  //     user: process.env.MAIL_USERNAME,
-  //     pass: process.env.MAIL_PASSWORD,
-  //     clientId: process.env.OAUTH_CLIENTID,
-  //     clientSecret: process.env.OAUTH_CLIENT_SECRET,
-  //     refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-  //     accessToken: newAccessToken,
-  //   },
-  // });
+  
   const handlebarOptions = {
     viewEngine: {
       partialsDir: path.resolve('./backend/views/'),

@@ -41,7 +41,8 @@ export const MENUITEMS = [
         children: [
             { path: '/settings/user', icon: Users, title: 'Usuarios', type: 'link' },
             // { path: '/settings/form', icon: FileText, title: 'Formularios', type: 'link' },
-            { path: '/settings/appointmentConfig', icon: FileText, title: 'Turnos', type: 'link' },
+            // { path: '/settings/appointmentConfig', icon: FileText, title: 'Turnos', type: 'link' },
+            { path: '/settings/generalSettings', icon: FileText, title: 'Conf. Generales', type: 'link' },
         ]
     }
     // {

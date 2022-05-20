@@ -24,7 +24,8 @@ import fr from './assets/i18n/fr.json';
 import Default from './components/dashboard/defaultCompo/default';
 
 // Settings
-import AppointmentConfigList from './components/configurations/appointmentConfigList';
+// import AppointmentConfigList from './components/configurations/appointmentConfigList';
+import GeneralSettings from './components/configurations/generalSettings';
 
 // Users
 import UserProfile from './components/users/userProfile';
@@ -131,7 +132,8 @@ const Root = () => {
                                         <Fragment>
                                             
                                             <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
-                                            <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} />
+                                            {/* <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} /> */}
+                                            <Route exact path={`${process.env.PUBLIC_URL}/settings/generalSettings`} component={GeneralSettings} />
                                         
                                             <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
                                             <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />

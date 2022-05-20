@@ -4,6 +4,8 @@ import StudyType from '../models/studyTypeModel.js';
 import AppointmentConfig from '../models/appointmentConfigModel.js';
 import Tag from '../models/tagModel.js';
 import LaboratoryType from '../models/laboratoryTypeModel.js';
+import ClinicData from '../models/clinicDataModel.js';
+import EmailSettigs from '../models/emailSettingsModel.js';
 
 class BaseEntityController extends BaseController {
   constructor() {
@@ -14,6 +16,8 @@ class BaseEntityController extends BaseController {
     this._modelsDic.set('studyType', StudyType);
     this._modelsDic.set('tag', Tag);
     this._modelsDic.set('laboratoryType', LaboratoryType);
+    this._modelsDic.set('clinicData', ClinicData);
+    this._modelsDic.set('emailSettigs', EmailSettigs);
   }
 
 

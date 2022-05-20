@@ -15,14 +15,13 @@ const UserMenu = ({ history }) => {
 
   useEffect(() => {
     if (loggedUser && loggedUser.user) {
-        toast.success(`Bienvenid@ ${loggedUser.user.firstName}!`, {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          });
+      toast.success(`Bienvenid@ ${loggedUser.user.firstName}!`, {
+        position: toast.POSITION.BOTTOM_RIGHT,
+      });
     }
     setProfile(loggedUser?.user.avatar?.downloadURL || man);
   }, []);
 
-  
   const logout = () => {
     dispatch(userLogoutWatcher());
   };
@@ -44,7 +43,9 @@ const UserMenu = ({ history }) => {
           </div>
           <ul className="profile-dropdown onhover-show-div p-20 profile-dropdown-hover">
             <li>
-              <Link to={`${process.env.PUBLIC_URL}/settings/user/${loggedUser.user.id}?mode=browse`}>
+              <Link
+                to={`${process.env.PUBLIC_URL}/settings/user/${loggedUser.user.id}?mode=browse`}
+              >
                 <User />
                 {'Mi Perfil'}
               </Link>
@@ -56,15 +57,17 @@ const UserMenu = ({ history }) => {
                 {'LockScreen'}
               </a>
             </li> */}
-            <li>
-              <a href="#javascript">
-                <Settings />
-                {'Opciones'}
-              </a>
-            </li>
-            <li>
+            {loggedUser?.user.isAdmin && (
+              <li >
+                <Link to={`${process.env.PUBLIC_URL}/settings/generalSettings`}>
+                  <Settings />
+                  {'Configuración'}
+                </Link>
+              </li>
+            )}
+            <li className="b-t-light border-3 pb-0 mt-3">
               <a onClick={logout} href="#javascript">
-                <LogOut /> {'Cerrar Sesión'}
+                <LogOut /> {'Salir'}
               </a>
             </li>
           </ul>

@@ -293,9 +293,9 @@ const AppointmentConfigList = (props) => {
 
   return (
     <Fragment>
-      <Breadcrumb title="Configuración de Turnos" parent="Configuración" />
+      {/* <Breadcrumb title="Configuración de Turnos" parent="Configuración" /> */}
       {!isLoading ? (
-        <Container fluid={true}>
+        <Fragment>
           <Row>
             <Col md="12" lg="12" xl="12">
               <div className="card">
@@ -1006,7 +1006,7 @@ const AppointmentConfigList = (props) => {
               </div>
             </ModalBody>
           </Modal>
-        </Container>
+        </Fragment>
       ) : (
         <Loader show={true} />
       )}
