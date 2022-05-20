@@ -34,6 +34,8 @@ import {
 import { LOADED, SUCCEEDED } from '../../redux/statusTypes';
 import Loader from '../common/loader';
 import * as doctorService from '../../services/doctor.service';
+import { setDataAppointmentForm } from '../../redux/appointments/actions';
+import AppointmentModalComponent from '../common/appointments/appointmentModalComponent';
 
 const DoctorList = (props) => {
   registerLocale('es', es);
@@ -46,6 +48,11 @@ const DoctorList = (props) => {
   const [selectedSlot, setSelectedSlot] = useState({});
   const [startDate, setStartDate] = useState(null);
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
+
+  const [appointmentModal, setAppointmentModal] = useState(false);
+  const appointmentModalToggle = () => {
+    setAppointmentModal(!appointmentModal);
+  };
 
   const [modal, setModal] = useState(false);
   const modalToggle = (patient) => {
@@ -115,7 +122,10 @@ const DoctorList = (props) => {
 
   const handleSlotClick = (e, slot) => {
     e.preventDefault();
-    if (!slot.available) return;
+    if (!slot.available) {
+      setSelectedSlot({});
+      return;
+    }
 
     setSelectedSlot(slot);
     document.querySelectorAll('.slotButton').forEach((item) => {
@@ -130,6 +140,31 @@ const DoctorList = (props) => {
 
   const handleCheckAvailabilityClick = (row) => {
     setDoctor(row);
+    modalToggle();
+  };
+
+  const handleNewAppointment = () => {
+    dispatch(
+      setDataAppointmentForm({
+        new: true,
+        doctor: doctor,
+        start: new Date(
+          startDate.setHours(
+            new Date(selectedSlot.startTime).getHours(),
+            new Date(selectedSlot.startTime).getMinutes(),
+            0
+          )
+        ),
+        end: new Date(
+          startDate.setHours(
+            new Date(selectedSlot.endTime).getHours(),
+            new Date(selectedSlot.endTime).getMinutes(),
+            0
+          )
+        ),
+      })
+    );
+    appointmentModalToggle();
     modalToggle();
   };
 
@@ -364,7 +399,7 @@ const DoctorList = (props) => {
               <ModalBody>
                 <div className="card">
                   <div className="row">
-                    {startDate && (
+                    {startDate ? (
                       <p className="text-muted col-md-12">
                         * Turnos disponibles para el{' '}
                         <mark>
@@ -377,6 +412,13 @@ const DoctorList = (props) => {
                             })}
                           </u>{' '}
                           con el doctor/a {doctor.fullName}
+                        </mark>
+                      </p>
+                    ) : (
+                      <p className="text-muted col-md-12">
+                        <mark>
+                          * Indique una fecha en el calendario para consultar
+                          los horarios disponibles.
                         </mark>
                       </p>
                     )}
@@ -398,52 +440,71 @@ const DoctorList = (props) => {
                     </div>
                     <div className="col-md-6">
                       <Label>{'Hora'}</Label>
-                      <div className="">
-                        {appointmentsSessions.map((session, index) => (
-                          <div key={index}>
-                            <p className="text-center mt-2">
-                              {session.sessionName}
-                            </p>
-                            {session.slots.map((slot, index) => (
-                              <button
-                                key={index}
-                                className={`btn btn-outline-primary btn-xs m-5 slotButton ${
-                                  slot.available ? '' : 'disabled'
-                                } ${isActiveSlot(slot) ? 'active' : ''}`}
-                                type="button"
-                                onClick={(e) => handleSlotClick(e, slot)}
-                              >
-                                {slot.available ? (
-                                  new Date(slot.startTime).toLocaleTimeString(
-                                    'es',
-                                    {
-                                      hour: 'numeric',
-                                      minute: 'numeric',
-                                      hour12: false,
-                                    }
-                                  )
-                                ) : (
-                                  <s>
-                                    {new Date(
-                                      slot.startTime
-                                    ).toLocaleTimeString('es', {
-                                      hour: 'numeric',
-                                      minute: 'numeric',
-                                      hour12: false,
-                                    })}
-                                  </s>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                      {/* <button className="btn btn-primary m-40">Nuevo turno</button> */}
+                      {startDate && (
+                        <div className="">
+                          {appointmentsSessions.map((session, index) => (
+                            <div key={index}>
+                              <p className="text-center mt-2">
+                                {session.sessionName}
+                              </p>
+                              {session.slots.map((slot, index) => (
+                                <button
+                                  key={index}
+                                  className={`btn btn-outline-primary btn-xs m-5 slotButton ${
+                                    slot.available ? '' : 'disabled'
+                                  } ${isActiveSlot(slot) ? 'active' : ''}`}
+                                  type="button"
+                                  onClick={(e) => handleSlotClick(e, slot)}
+                                >
+                                  {slot.available ? (
+                                    new Date(slot.startTime).toLocaleTimeString(
+                                      'es',
+                                      {
+                                        hour: 'numeric',
+                                        minute: 'numeric',
+                                        hour12: false,
+                                      }
+                                    )
+                                  ) : (
+                                    <s>
+                                      {new Date(
+                                        slot.startTime
+                                      ).toLocaleTimeString('es', {
+                                        hour: 'numeric',
+                                        minute: 'numeric',
+                                        hour12: false,
+                                      })}
+                                    </s>
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-md-6 offset-md-6">
+                      {selectedSlot.startTime && (
+                        <button
+                          href="#javascript"
+                          className="btn btn-primary pull-right"
+                          onClick={handleNewAppointment}
+                          title={`Cargar nuevo turno con ${doctor.fullName} en este día
+                            y horario.`}
+                        >
+                          <i className="fa fa-plus mr-1"></i> Nuevo turno
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
               </ModalBody>
             </Modal>
+            <AppointmentModalComponent
+              history={props.history}
+              appointmentModal={appointmentModal}
+              appointmentModalToggle={appointmentModalToggle}
+            />
           </Container>
         </Fragment>
       ) : (

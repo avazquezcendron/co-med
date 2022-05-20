@@ -242,7 +242,6 @@ const Bookmark = () => {
           history={history}
           appointmentModal={appointmentModal}
           appointmentModalToggle={appointmentModalToggle}
-          // appointmentData={appointmentData}
         />
         <SelectPatientModalComponent
           modal={selectPatientModal}
