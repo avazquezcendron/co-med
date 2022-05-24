@@ -47,11 +47,9 @@ const ClinicDataConfig = () => {
                 setStatusUpdate(!statusUpdate);
               });
           } else {
-            entityService
-              .save('clinicData', data, loggedUser)
-              .then((data) => {
-                setStatusUpdate(!statusUpdate);
-              });
+            entityService.save('clinicData', data, loggedUser).then((data) => {
+              setStatusUpdate(!statusUpdate);
+            });
           }
           setIsEditing(false);
         }
@@ -80,7 +78,14 @@ const ClinicDataConfig = () => {
                 <div className="row">
                   <div className="col-md-6">
                     <h5>{'Datos generales del Centro Médico'}</h5>
-                    <span>{'Información básica y de contacto.'}</span>
+                    <span
+                      className="text-muted f-12 m-t-5"
+                      style={{
+                        letterSpacing: 1,
+                      }}
+                    >
+                      {'Información básica y de contacto.'}
+                    </span>
                   </div>
                   <div className="col-md-6">
                     {!isEditing && (

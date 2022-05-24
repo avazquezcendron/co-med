@@ -20,12 +20,12 @@ const GeneralSettings = () => {
                 {'Datos de Co-Comed'}
               </Tab>
               <Tab>
-                <Mail />
-                {'Configuración de E-Mails'}
-              </Tab>
-              <Tab>
                 <Calendar />
                 {'Configuración de Turnos'}
+              </Tab>
+              <Tab>
+                <Mail />
+                {'Configuración de E-Mails'}
               </Tab>
             </TabList>
             <div className="tab-content-cls">
@@ -35,13 +35,13 @@ const GeneralSettings = () => {
                 </div>
               </TabPanel>
               <TabPanel>
-              <div className="tab-content" id="tab-EmailSettings">
-                  <EmailSettings />
+              <div className="tab-content" id="tab-Appointments">
+                  <AppointmentConfigList />
                 </div>
               </TabPanel>
               <TabPanel>
-              <div className="tab-content" id="tab-Appointments">
-                  <AppointmentConfigList />
+              <div className="tab-content" id="tab-EmailSettings">
+                  <EmailSettings />
                 </div>
               </TabPanel>
             </div>

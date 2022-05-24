@@ -17,7 +17,7 @@ const emailSettingsSchema = mongoose.Schema(
       validated: { type: Boolean, default: false },
     },
     private: {
-      uername: String,
+      username: String,
       password: String,
     },
     templates: [emailTemplateSchema]

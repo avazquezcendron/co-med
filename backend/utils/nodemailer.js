@@ -1,16 +1,26 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 import hbs from 'nodemailer-express-handlebars';
+import EmailSettings from '../models/emailSettingsModel.js';
 
-const sendMail = (
+const sendMail = async (
   to,
   subject,
   type,
   contentOrTemplateName,
   appointmentData
 ) => {
-  const transporter = nodemailer.createTransport(`smtps://${process.env.MAIL_USERNAME}%40gmail.com:${process.env.MAIL_PASSWORD}@smtp.gmail.com`);
-  
+  const emailSettings = await EmailSettings.find({});
+  if (emailSettings.length === 0) {
+    console.log('Error al enviar mail: no hay opciones de envío de mails configuradas.');
+    return;
+  }
+  const username = emailSettings[0].private.username;
+  const password = emailSettings[0].private.password;
+  const transporter = nodemailer.createTransport(
+    `smtps://${username}%40gmail.com:${password}@smtp.gmail.com`
+  );
+
   const handlebarOptions = {
     viewEngine: {
       partialsDir: path.resolve('./backend/views/'),
