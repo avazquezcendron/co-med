@@ -1,0 +1,23 @@
+[
+  {
+    "code": "nn",
+    "description": "Ninguna",
+    "plans":[]
+  },
+  {
+    "code": "OSD",
+    "description": "Osde",
+    "plans":[{
+      "code": "510",
+      "description": "510"
+    }]
+  },
+  {
+    "code": "swiss",
+    "description": "Swiss Medical",
+    "plans":[{
+      "code": "SMG10",
+      "description": "SMG10"
+    }]
+  }
+]

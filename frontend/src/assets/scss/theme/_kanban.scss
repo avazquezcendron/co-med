@@ -1,0 +1,144 @@
+/**=====================
+   61. base_inputs CSS start
+==========================**/
+
+.bg-light-info{
+    background-color: rgba(169,39,249,0.2) !important;
+  }
+.bg-light-warning{
+  background-color: rgba(248,214,43,0.2) !important;
+  }
+.bg-light-success{
+    background-color: rgba(81,187,37,0.2) !important;
+  }
+
+.card{
+  .card-header, .card-body{
+    h6{
+      font-weight: 600;
+    }
+  }
+}
+.jkanban-container{
+  .btn{
+    margin-bottom: 10px;
+  }
+  .note{
+  a{
+    display:  contents;
+  }
+}
+}
+.kanban-board-header{
+  height: auto;
+  width: auto;
+  line-height: unset;
+  background: #f1f1f1;
+}
+.kanban-container{
+      display: contents;
+ .kanban-board{
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  box-shadow: 1px 5px 24px 0 rgba(68,102,242,0.05);
+  overflow: hidden;
+}
+.kanban-item {
+  background: transparent;
+  padding: 0;
+  margin-bottom: 20px;
+  p{
+    opacity: 0.7;
+  }
+  &:last-child {
+      margin-bottom: 0;
+  }
+  .list{
+  display: inline-block;
+  opacity: 0.4;
+  li{
+    display: inline-block;
+    font-size: 12px;
+    margin-right: 7px;
+    i{
+      margin-right: 5px;
+    }
+  }    
+}
+  .kanban-box{
+  border: 1px solid darken($light, 2%);
+  border-radius: 5px;
+  padding: 20px;
+  background-color: lighten($light, 2%);
+  position: relative;
+  display: block;
+  color: inherit;
+  &:hover{
+    color: inherit;
+  }
+  &+.kanban-box{
+    margin-top: 20px;
+  }
+  .badge{
+    font-size: 10px;
+  }
+  h6{
+    font-size: 15px;
+    margin-top: 5px;
+    font-family: $font-nunito;
+    font-weight: 600;
+  }
+  .dropdown{
+    display: inline-block;
+    right: 10px;
+    position: absolute;
+    top: 20px;
+    .dropdown-item{
+      font-size: 13px;
+      font-weight: 500;
+      padding: 5px 10px;
+      text-align: left;
+    }
+    svg{
+      height: 14px;
+    }
+  }
+  .d-flex{
+    justify-content: space-between;
+  }
+  .dropdown-toggle{
+    &:after{
+      content: none;
+    }
+  }
+  .customers ul li+li {
+    margin-left: -10px;
+  }
+  .date{
+    font-size: 11px;
+    opacity: 0.5;
+  }
+}
+}
+footer{
+  margin: 0;
+  padding: 0;
+}
+}
+
+
+/**=====================
+    61. base_inputs CSS ends
+==========================**/
+
+
+
+
+
+
+
+
+
+

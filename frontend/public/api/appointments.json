@@ -1,0 +1,118 @@
+[
+  {
+    "id": 1,
+    "title": "Jesica Alba - Presencial",
+    "description": "Descripción del turno.",
+    "start": "2022-03-25 08:30:00",
+    "end": "2022-03-25 09:00:00",
+    "patient": {
+      "id": 1,
+        "age": "35",
+        "sex": "f",
+        "image": "user/1.jpg",
+        "name": "Jesica Alba",
+        "nationalId": "35769315",
+        "birthDate": "02/03/1984",
+        "healthInsurance": "OSDE",
+        "healthRecordId": "123671873",
+        "email": "email@ejemplo.com",
+        "lastVisit": "06/01/2022",
+        "status": "active"
+    },
+    "doctor": {
+      "id": 1,
+      "name": "Tayhana Ortolá",
+      "speciality": "Clínica Médica"
+    },
+    "type": "turno",
+    "mode": "presencial",
+    "status": "active"
+  },
+  {
+    "id": 2,
+    "title": "Agustina Cherri - Presencial",
+    "description": "Descripción del turno.",
+    "start": "2022-03-28 09:00:00",
+    "end": "2022-03-28 09:30:00",
+    "patient": {
+      "id": 3,
+      "age": "35",
+      "sex": "f",
+      "image": "user/3.png",
+      "name": "Agustina Cherri",
+      "nationalId": "24569315",
+      "birthDate": "02/03/1982",
+      "healthInsurance": "AMUTMIN",
+      "healthRecordId": "453671873",
+      "email": "email@ejemplo.com",
+      "lastVisit": "06/01/2022",
+      "status": "pending"
+    },
+    "doctor": {
+      "id": 1,
+      "name": "Tayhana Ortolá",
+      "speciality": "Clínica Médica"
+    },
+    "type": "turno",
+    "mode": "presencial",
+    "status": "active"
+  },
+  {
+    "id": 3,
+    "title": "Agustín Vázquez - Presencial",
+    "description": "Descripción del turno.",
+    "start": "2022-03-28 09:30:00",
+    "end": "2022-03-28 10:00:00",
+    "patient": {
+      "id": 5,
+      "age": "35",
+      "sex": "m",
+      "image": "user/5.png",
+      "name": "Agustín Vázquez",
+      "nationalId": "35569315",
+      "birthDate": "02/03/1990",
+      "healthInsurance": "AMUTMIN",
+      "healthRecordId": "123671873",
+      "email": "email@ejemplo.com",
+      "lastVisit": "06/01/2022",
+      "status": "active"
+    },
+    "doctor": {
+      "id": 1,
+      "name": "Tayhana Ortolá",
+      "speciality": "Clínica Médica"
+    },
+    "type": "turno",
+    "mode": "presencial",
+    "status": "active"
+  },
+  {
+    "id": 4,
+    "title": "Kevin Kostner - Presencial",
+    "description": "Descripción del turno.",
+    "start": "2022-03-30 10:00:00",
+    "end": "2022-03-30 10:30:00",
+    "patient": {
+      "id": 7,
+      "age": "35",
+      "sex": "m",
+      "image": "user/7.jpg",
+      "name": "Kevin Kostner",
+      "nationalId": "29569315",
+      "birthDate": "02/03/1980",
+      "healthInsurance": "OSDE",
+      "healthRecordId": "715671873",
+      "email": "email@ejemplo.com",
+      "lastVisit": "06/01/2021",
+      "status": "active"
+    },
+    "doctor": {
+      "id": 1,
+      "name": "Tayhana Ortolá",
+      "speciality": "Clínica Médica"
+    },
+    "type": "turno",
+    "mode": "presencial",
+    "status": "active"
+  }
+]

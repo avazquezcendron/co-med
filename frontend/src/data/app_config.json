@@ -1,0 +1,12 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyCzEn9VWaSSCo4kX0pXv9oamIyOa6vCHMM",
+    "authDomain": "co-med-a09ae.firebaseapp.com",
+    "databaseURL": "https://co-med-a09ae-default-rtdb.firebaseio.com",
+    "projectId": "co-med-a09ae",
+    "storageBucket": "co-med-a09ae.appspot.com",
+    "messagingSenderId": "97836475775",
+    "appId": "1:97836475775:web:eda8f6d48ad60d72f7264a",
+    "measurementId": "G-9KHDCE9BQS"
+  }
+}

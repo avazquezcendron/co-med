@@ -1,0 +1,50 @@
+{
+  "name": "co-med",
+  "version": "1.0.0",
+  "description": "EHR & Clinic Management Web Application",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server",
+    "server": "nodemon backend/server",
+    "client": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avazquezcendron/co-med.git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "healthcare",
+    "mongodb"
+  ],
+  "author": "Agustín Vázquez Cendron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/avazquezcendron/co-med/issues"
+  },
+  "homepage": "https://github.com/avazquezcendron/co-med#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "express-async-handler": "^1.2.0",
+    "fast-two-sms": "^3.0.0",
+    "firebase": "^9.8.1",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.26.0",
+    "mongoose": "^6.2.9",
+    "mongoose-unique-validator": "^3.0.0",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.7.5",
+    "nodemailer-express-handlebars": "^5.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0",
+    "nodemon": "^2.0.15"
+  }
+}

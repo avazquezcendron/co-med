@@ -1,0 +1,22 @@
+[
+    {
+        "id": 1,
+        "image": "user/1.jpg",
+        "name": "Tayhana Ortolá",
+        "speciality": "Clínica Médica",
+        "nationalId": "34769315",
+        "birthDate": "30/09/1987",
+        "email": "taypity@gmail.com",
+        "status": "active"
+    },
+    {
+        "id": 2,
+        "image": "user/2.png",
+        "name": "Osumani Dembelé",
+        "speciality": "Cardiología",
+        "nationalId": "32769315",
+        "birthDate": "30/09/1984",
+        "email": "osudem@gmail.com",
+        "status": "active"
+    }
+]
