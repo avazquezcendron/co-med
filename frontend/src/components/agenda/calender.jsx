@@ -444,6 +444,7 @@ const Calender = ({ history }) => {
                       }
                       themeSystem="standar"
                       locale={esLocale}
+                      timeZone= 'UTC'
                       headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
