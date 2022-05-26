@@ -64,6 +64,8 @@ const Calender = ({ history }) => {
           const appointmentsConfigDr = data.filter((x) => x.doctor);
           if (appointmentsConfigDr.length > 0) {
             appointmentsConfigDefault = appointmentsConfigDr[0];
+          } else {
+            appointmentsConfigDefault = data.length > 0 ? data[0] : {};
           }
         } else {
           appointmentsConfigDefault = data.length > 0 ? data[0] : {};
@@ -135,9 +137,14 @@ const Calender = ({ history }) => {
   };
 
   const handleEventOverlap = (stillEvent, movingEvent) => {
-    if (!stillEvent.extendedProps.doctor || !stillEvent.extendedProps.patient || stillEvent.extendedProps.appointmentType === 'sobreturno' || movingEvent.extendedProps.appointmentType === 'sobreturno')
+    if (
+      !stillEvent.extendedProps.doctor ||
+      !stillEvent.extendedProps.patient ||
+      stillEvent.extendedProps.appointmentType === 'sobreturno' ||
+      movingEvent.extendedProps.appointmentType === 'sobreturno'
+    )
       return true;
-    
+
     return (
       movingEvent.extendedProps.doctor.id !==
         stillEvent.extendedProps.doctor.id &&
@@ -408,29 +415,27 @@ const Calender = ({ history }) => {
                   )}
                   <p className="mb-3">
                     {/* <mark> */}
-                      <span className="mr-2">
-                        <i className="fa fa-question-circle mr-1"></i>Significado de
-                        los colores:
-                      </span>
-                      <span className="mr-2">
-                        <i className="fa fa-circle text-primary"></i> Turno
-                        Activo
-                      </span>
-                      <span className="mr-2">
-                        <i className="fa fa-circle text-danger"></i> Turno
-                        Cancelado
-                      </span>
-                      <span className="mr-2">
-                        <i className="fa fa-circle text-success"></i> Turno
-                        Finalizado
-                      </span>
-                      <span className="mr-2">
-                        <i className="fa fa-circle text-muted"></i> Turno
-                        Expirado
-                      </span>
-                      <span className="mr-2">
-                        <i className="fa fa-circle text-warning"></i> Sobreturno
-                      </span>
+                    <span className="mr-2">
+                      <i className="fa fa-question-circle mr-1"></i>Significado
+                      de los colores:
+                    </span>
+                    <span className="mr-2">
+                      <i className="fa fa-circle text-primary"></i> Turno Activo
+                    </span>
+                    <span className="mr-2">
+                      <i className="fa fa-circle text-danger"></i> Turno
+                      Cancelado
+                    </span>
+                    <span className="mr-2">
+                      <i className="fa fa-circle text-success"></i> Turno
+                      Finalizado
+                    </span>
+                    <span className="mr-2">
+                      <i className="fa fa-circle text-muted"></i> Turno Expirado
+                    </span>
+                    <span className="mr-2">
+                      <i className="fa fa-circle text-warning"></i> Sobreturno
+                    </span>
                     {/* </mark> */}
                   </p>
                   {businessHours.length > 0 ? (
@@ -444,7 +449,7 @@ const Calender = ({ history }) => {
                       }
                       themeSystem="standar"
                       locale={esLocale}
-                      timeZone= 'UTC'
+                      timeZone="UTC"
                       headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
