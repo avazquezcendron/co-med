@@ -464,7 +464,7 @@ const Calender = ({ history }) => {
                       weekends={true}
                       businessHours={businessHours}
                       slotDuration={slotDuration}
-                      // slotLabelInterval={'01:00'}//{slotDuration}
+                      slotLabelInterval={slotDuration}
                       slotMinTime={'06:00:00'}
                       //   slotMaxTime={'22:00:00'}
                       nowIndicator={true}

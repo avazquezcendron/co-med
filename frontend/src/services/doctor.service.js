@@ -36,9 +36,7 @@ export const getDoctorsByFilter = async (filter, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del registro. Detalle: ${errorMsg}`,
       {
@@ -57,15 +55,17 @@ export const getDoctorSessions = async (id, startDate, loggedUser) => {
     };
     const { data } = await axios.post(
       `${process.env.PUBLIC_URL}/api/doctor/${id}/sessions`,
-      { date: startDate.toLocaleString() },
+      {
+        date: startDate.toLocaleString('es', {
+          timeZone: 'UTC',
+        }),
+      },
       config
     );
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener las sesiones del Doctor. Detalle: ${errorMsg}`,
       {
