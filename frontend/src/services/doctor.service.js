@@ -56,9 +56,7 @@ export const getDoctorSessions = async (id, startDate, loggedUser) => {
     const { data } = await axios.post(
       `${process.env.PUBLIC_URL}/api/doctor/${id}/sessions`,
       {
-        date: startDate.toLocaleString('es', {
-          timeZone: 'UTC',
-        }),
+        date: startDate.toLocaleDateString(),
       },
       config
     );

@@ -205,7 +205,8 @@ const Calender = ({ history }) => {
     let bgColor = info.el.style.backgroundColor;
     let txtColor = info.el.style.color;
     let txtDecoration = info.el.style.textDecoration;
-    let title = info.event.title;
+    let title = `Paciente ${info.event.extendedProps.patient?.fullName} (${info.event.extendedProps.patient?.healthInsurances?.length > 0 ? info.event.extendedProps.patient?.healthInsurances[0].healthInsuranceCompany
+        .description : 'particular'}) - ${info.event.extendedProps.doctor?.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${info.event.extendedProps.doctor?.fullName} | ${info.event.extendedProps.mode}`;
 
     const isListView = ['listDay', 'listWeek', 'listMonth'].includes(
       info.view.type
@@ -449,7 +450,7 @@ const Calender = ({ history }) => {
                       }
                       themeSystem="standar"
                       locale={esLocale}
-                      timeZone="UTC"
+                      timeZone="America/Argentina/Buenos_Aires"
                       headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
@@ -461,11 +462,12 @@ const Calender = ({ history }) => {
                         listWeek: { buttonText: 'Agenda semanal' },
                         listMonth: { buttonText: 'Agenda mensual' },
                       }}
-                      weekends={true}
+                      weekends={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions.filter(x => x.daysOfWeek[0] === 1 || x.daysOfWeek[6] === 1).length > 0 : true}
                       businessHours={businessHours}
                       slotDuration={slotDuration}
                       slotLabelInterval={slotDuration}
-                      slotMinTime={'06:00:00'}
+                      slotMinTime={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions[0].startTime : '08:00:00'}
+                      // slotMaxTime={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions[1].endTime : '22:00:00'}
                       //   slotMaxTime={'22:00:00'}
                       nowIndicator={true}
                       weekNumbers={true}
@@ -474,6 +476,7 @@ const Calender = ({ history }) => {
                       eventDurationEditable={true}
                       editable={true}
                       droppable={true}
+                      displayEventEnd={false}
                       dayMaxEvents={true}
                       dayMaxEventRows={2}
                       noEventsContent={
