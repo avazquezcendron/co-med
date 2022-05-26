@@ -133,6 +133,7 @@ const PatientVisitHistory = (props) => {
                         }
                       )}  
                       ${new Date(visit.createdAt).toLocaleTimeString('es', {
+                        timeZone: 'UTC',
                         hour: 'numeric',
                         minute: 'numeric',
                         hour12: false,
@@ -273,6 +274,7 @@ const PatientVisitHistory = (props) => {
                                         {new Date(
                                           visit.createdAt
                                         ).toLocaleDateString('es-AR', {
+                                          timeZone: 'UTC',
                                           year: 'numeric',
                                           month: 'long',
                                         })}
@@ -280,6 +282,7 @@ const PatientVisitHistory = (props) => {
                                         {new Date(
                                           visit.createdAt
                                         ).toLocaleTimeString('es', {
+                                          timeZone: 'UTC',
                                           hour: 'numeric',
                                           minute: 'numeric',
                                           hour12: false,
@@ -345,6 +348,7 @@ const PatientVisitHistory = (props) => {
                                         {new Date(
                                           visit.createdAt
                                         ).toLocaleDateString('es-AR', {
+                                          timeZone: 'UTC',
                                           year: 'numeric',
                                           month: 'long',
                                         })}
@@ -352,6 +356,7 @@ const PatientVisitHistory = (props) => {
                                         {new Date(
                                           visit.createdAt
                                         ).toLocaleTimeString('es', {
+                                          timeZone: 'UTC',
                                           hour: 'numeric',
                                           minute: 'numeric',
                                           hour12: false,

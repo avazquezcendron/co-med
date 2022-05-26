@@ -43,7 +43,6 @@ const UserSchema = mongoose.Schema(
       lowercase: true,
       match: [/\S+@\S+\.\S+/, 'is invalid'],
       index: true,
-      unique: true,
       // Change the default to true if you don't need to validate a new user's email address
       validated: { type: Boolean, default: false },
     },

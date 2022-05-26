@@ -156,12 +156,14 @@ const Calender = ({ history }) => {
         text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
           'es-AR',
           {
+            timeZone: 'UTC',
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           }
         )} a las ${info.event.start.toLocaleTimeString('es', {
+          timeZone: 'UTC',
           hour: 'numeric',
           minute: 'numeric',
           hour12: false,
