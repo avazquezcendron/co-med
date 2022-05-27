@@ -181,7 +181,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
                       >
                         {slot.available ? (
                           new Date(slot.startTime).toLocaleTimeString('es', {
-                            timeZone: 'UTC',
+                            // timeZone: 'UTC',
                             hour: 'numeric',
                             minute: 'numeric',
                             hour12: false,
@@ -189,7 +189,7 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
                         ) : (
                           <s>
                             {new Date(slot.startTime).toLocaleTimeString('es', {
-                              timeZone: 'UTC',
+                              // timeZone: 'UTC',
                               hour: 'numeric',
                               minute: 'numeric',
                               hour12: false,

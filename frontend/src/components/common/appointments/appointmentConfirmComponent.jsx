@@ -21,7 +21,7 @@ const AppointmentConfirmComponent = (props) => {
         text: `Se dará de alta un ${appointmentData.appointmentType === 'turno' ? 'turno' : 'sobreturno'} el día ${
         appointmentData.start
           ? appointmentData.start.toLocaleDateString('es-AR', {
-            timeZone: 'UTC',
+            // timeZone: 'UTC',
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -29,7 +29,7 @@ const AppointmentConfirmComponent = (props) => {
           }) +
           ', ' +
           appointmentData.start.toLocaleTimeString('es', {
-            timeZone: 'UTC',
+            // timeZone: 'UTC',
             hour: 'numeric',
             minute: 'numeric',
             hour12: false,

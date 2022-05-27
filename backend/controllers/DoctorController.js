@@ -212,8 +212,13 @@ class DoctorController extends BaseController {
               timeArr[i].daysOfWeek[serchDay] === 1 &&
               doctorAppointments.filter(
                 (appointment) =>
-                appointment.isActive &&
-                  moment(_startSlot).isBetween(appointment.start, appointment.end, 'minute', '[)')
+                  appointment.isActive &&
+                  moment(_startSlot).isBetween(
+                    appointment.start,
+                    appointment.end,
+                    'minute',
+                    '[)'
+                  )
               ).length === 0,
           });
         }
@@ -223,10 +228,10 @@ class DoctorController extends BaseController {
           _endSlot.getMinutes() + parseInt(slotPreparation)
         );
       }
-
       sessions.push(session);
     }
-
+    console.log(new Date().toString());
+    console.log(new Date().toJSON());
     return res.status(200).json(sessions);
   }
 }

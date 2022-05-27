@@ -59,7 +59,7 @@ const AppointmentResumeComponent = (props) => {
           <p>
             {appointment.start
               ? appointment.start.toLocaleDateString('es-AR', {
-                  timeZone: 'UTC',
+                  // timeZone: 'UTC',
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -67,7 +67,7 @@ const AppointmentResumeComponent = (props) => {
                 }) +
                 ', ' +
                 appointment.start.toLocaleTimeString('es', {
-                  timeZone: 'UTC',
+                  // timeZone: 'UTC',
                   hour: 'numeric',
                   minute: 'numeric',
                   hour12: false,

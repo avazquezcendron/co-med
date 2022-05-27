@@ -69,6 +69,8 @@ class PatientController extends BaseController {
 
     const patients = await this._model
       .find(finalFilter)
+      .collation({locale: "es" })
+      .sort({ firstName: 'asc' })
       .populate({
         path: 'tags',
       })

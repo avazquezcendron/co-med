@@ -460,7 +460,7 @@ const DoctorList = (props) => {
                                     new Date(slot.startTime).toLocaleTimeString(
                                       'es',
                                       {
-                                        timeZone: 'UTC',
+                                        // timeZone: 'UTC',
                                         hour: 'numeric',
                                         minute: 'numeric',
                                         hour12: false,
@@ -471,7 +471,7 @@ const DoctorList = (props) => {
                                       {new Date(
                                         slot.startTime
                                       ).toLocaleTimeString('es', {
-                                        timeZone: 'UTC',
+                                        // timeZone: 'UTC',
                                         hour: 'numeric',
                                         minute: 'numeric',
                                         hour12: false,

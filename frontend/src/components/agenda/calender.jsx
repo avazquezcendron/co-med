@@ -172,14 +172,14 @@ const Calender = ({ history }) => {
         text: `Está a punto de reprogramar el turno para el día ${info.event.start.toLocaleDateString(
           'es-AR',
           {
-            timeZone: 'UTC',
+            // timeZone: 'UTC',
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
           }
         )} a las ${info.event.start.toLocaleTimeString('es', {
-          timeZone: 'UTC',
+          // timeZone: 'UTC',
           hour: 'numeric',
           minute: 'numeric',
           hour12: false,
@@ -459,7 +459,7 @@ const Calender = ({ history }) => {
                       }
                       themeSystem="standar"
                       locale={esLocale}
-                      timeZone="America/Argentina/Buenos_Aires"
+                      // timeZone="America/Argentina/Buenos_Aires"
                       headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',

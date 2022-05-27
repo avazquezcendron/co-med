@@ -273,7 +273,7 @@ const PatientsAgenda = (props) => {
             <h6>
               <i className="icofont icofont-clock-time"></i>{' '}
               {new Date(row.start).toLocaleTimeString('es', {
-                timeZone: 'UTC',
+                // timeZone: 'UTC',
                 hour: '2-digit',
                 minute: 'numeric',
                 hour12: false,

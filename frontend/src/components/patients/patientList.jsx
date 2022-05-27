@@ -433,6 +433,7 @@ const PatientList = (props) => {
                                 {new Date(appointment.start).toLocaleString(
                                   'es',
                                   {
+                                    // timeZone: 'UTC',
                                     year: 'numeric',
                                     month: 'long',
                                     day: 'numeric',
