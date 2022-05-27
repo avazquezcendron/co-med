@@ -442,7 +442,7 @@ const DoctorList = (props) => {
                       <Label>{'Hora'}</Label>
                       {startDate && (
                         <div className="">
-                          {appointmentsSessions.map((session, index) => (
+                          {appointmentsSessions?.map((session, index) => (
                             <div key={index}>
                               <p className="text-center mt-2">
                                 {session.sessionName}
