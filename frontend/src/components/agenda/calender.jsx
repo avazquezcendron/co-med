@@ -102,7 +102,7 @@ const Calender = ({ history }) => {
   }, [appointmentConfig]);
 
   const handleNewAppointment = (calenderData) => {
-    if (selectAllowHover(calenderData)) {
+    if (selectAllow(calenderData)) {
       dispatch(
         setDataAppointmentForm({
           start: calenderData?.start,
@@ -164,7 +164,7 @@ const Calender = ({ history }) => {
 
   const handleEventDrop = (info) => {
     if (
-      selectAllowHover(info.event) &&
+      selectAllow(info.event) &&
       (info.event.extendedProps.isActive || info.event.extendedProps.isExpired)
     ) {
       SweetAlert.fire({
@@ -501,7 +501,7 @@ const Calender = ({ history }) => {
                       eventDrop={handleEventDrop}
                       eventResize={handleEventDrop}
                       selectable={true}
-                      selectAllow={selectAllowHover}
+                      selectAllow={selectAllow}
                       selectConstraint={'businessHours'}
                       selectMirror={true}
                       select={handleNewAppointment}
