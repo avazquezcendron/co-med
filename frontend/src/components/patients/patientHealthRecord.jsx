@@ -84,6 +84,20 @@ const PatientHealthRecord = (props) => {
                   <i className="icofont icofont-id"></i>Datos
                 </a>
               </li>
+              {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                <li className="nav-item">
+                  <a
+                    href="#javascript"
+                    className={`nav-link ${
+                      dataTab === 'antecedentes' ? 'active' : ''
+                    }`}
+                    onClick={() => setdataTab('antecedentes')}
+                  >
+                    <i className="icofont icofont-medical"></i>
+                    Antecendentes
+                  </a>
+                </li>
+              )}
               <li className="nav-item">
                 <a
                   href="#javascript"
@@ -96,56 +110,43 @@ const PatientHealthRecord = (props) => {
                   Prescripciones
                 </a>
               </li>
+
+              <li className="nav-item">
+                <a
+                  href="#javascript"
+                  className={`nav-link ${
+                    dataTab === 'laboratorios' ? 'active' : ''
+                  }`}
+                  onClick={() => setdataTab('laboratorios')}
+                >
+                  <i className="icofont icofont-laboratory"></i>
+                  Laboratorios
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="#javascript"
+                  className={`nav-link ${
+                    dataTab === 'estudioscompl' ? 'active' : ''
+                  }`}
+                  onClick={() => setdataTab('estudioscompl')}
+                >
+                  <i className="icofont icofont-heartbeat"></i>
+                  Estudios Compl.
+                </a>
+              </li>
+              <li className="nav-item">
+                <a
+                  href="#javascript"
+                  className={`nav-link ${dataTab === 'files' ? 'active' : ''}`}
+                  onClick={() => setdataTab('files')}
+                >
+                  <i className="icofont icofont-files"></i>
+                  Otros Archivos
+                </a>
+              </li>
               {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
                 <Fragment>
-                  <li className="nav-item">
-                    <a
-                      href="#javascript"
-                      className={`nav-link ${
-                        dataTab === 'antecedentes' ? 'active' : ''
-                      }`}
-                      onClick={() => setdataTab('antecedentes')}
-                    >
-                      <i className="icofont icofont-medical"></i>
-                      Antecendentes
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="#javascript"
-                      className={`nav-link ${
-                        dataTab === 'laboratorios' ? 'active' : ''
-                      }`}
-                      onClick={() => setdataTab('laboratorios')}
-                    >
-                      <i className="icofont icofont-laboratory"></i>
-                      Laboratorios
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="#javascript"
-                      className={`nav-link ${
-                        dataTab === 'estudioscompl' ? 'active' : ''
-                      }`}
-                      onClick={() => setdataTab('estudioscompl')}
-                    >
-                      <i className="icofont icofont-heartbeat"></i>
-                      Estudios Compl.
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      href="#javascript"
-                      className={`nav-link ${
-                        dataTab === 'files' ? 'active' : ''
-                      }`}
-                      onClick={() => setdataTab('files')}
-                    >
-                      <i className="icofont icofont-files"></i>
-                      Otros Archivos
-                    </a>
-                  </li>
                   <li className="nav-item">
                     <a
                       href="#javascript"
@@ -176,37 +177,38 @@ const PatientHealthRecord = (props) => {
             <TabContent activeTab={dataTab}>
               <TabPane className="fade show" tabId="datos">
                 <div className="col-md-12">
-                  <PatientPersonalData 
-                  showAvatar={true}/>
+                  <PatientPersonalData showAvatar={true} />
                 </div>
               </TabPane>
+              {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
+                <TabPane tabId="antecedentes" className="fade show">
+                  <div className="col-md-12">
+                    <PatientBackground />
+                  </div>
+                </TabPane>
+              )}
               <TabPane tabId="prescripciones" className="fade show">
                 <div className="col-md-12">
                   <PatientPrescriptions />
                 </div>
               </TabPane>
+              <TabPane tabId="laboratorios" className="fade show">
+                <div className="col-md-12">
+                  <PatientLaboratories />
+                </div>
+              </TabPane>
+              <TabPane tabId="estudioscompl" className="fade show">
+                <div className="col-md-12">
+                  <PatientStudies />
+                </div>
+              </TabPane>
+              <TabPane tabId="files" className="fade show">
+                <div className="col-md-12">
+                  <PatientFiles />
+                </div>
+              </TabPane>
               {(loggedUser.user.isAdmin || loggedUser.user.isDoctor) && (
                 <Fragment>
-                  <TabPane tabId="antecedentes" className="fade show">
-                    <div className="col-md-12">
-                      <PatientBackground />
-                    </div>
-                  </TabPane>
-                  <TabPane tabId="laboratorios" className="fade show">
-                    <div className="col-md-12">
-                      <PatientLaboratories />
-                    </div>
-                  </TabPane>
-                  <TabPane tabId="estudioscompl" className="fade show">
-                    <div className="col-md-12">
-                      <PatientStudies />
-                    </div>
-                  </TabPane>
-                  <TabPane tabId="files" className="fade show">
-                    <div className="col-md-12">
-                      <PatientFiles />
-                    </div>
-                  </TabPane>
                   <TabPane tabId="evolucion" className="fade show">
                     <div className="col-md-12">
                       <PatientEvolution />

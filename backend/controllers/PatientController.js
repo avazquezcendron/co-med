@@ -490,8 +490,6 @@ class PatientController extends BaseController {
       nutritionalBackgroud: null,
       allergiesInfo: null,
       drugsInfo: null,
-      laboratoryExams: [],
-      studyExams: [],
       visits: [],
     };
     if (!user.isAdmin) {
