@@ -141,7 +141,8 @@ const Calender = ({ history }) => {
       !stillEvent.extendedProps.doctor ||
       !stillEvent.extendedProps.patient ||
       stillEvent.extendedProps.appointmentType === 'sobreturno' ||
-      movingEvent.extendedProps.appointmentType === 'sobreturno'
+      movingEvent.extendedProps.appointmentType === 'sobreturno' || 
+      stillEvent.extendedProps.isCancelled
     )
       return true;
 
