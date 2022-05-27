@@ -50,15 +50,16 @@ appointmentSchema.virtual('isCancelled').get(function () {
 });
 
 appointmentSchema.virtual('isActive').get(function () {
-  moment.locale('es') 
-  if (!moment(this.start).isBefore(moment().subtract(2, 'h')) && this.status === 'active') {
+  const startAux = new Date(this.start.getTime());
+  if (!moment(startAux.setHours(startAux.getHours() + 3)).isBefore(moment().subtract(2, 'h')) && this.status === 'active') {
     return true;
   }
   return false;
 });
 
 appointmentSchema.virtual('isExpired').get(function () {
-  if (moment(this.start).isBefore(moment().subtract(2, 'h')) && this.status === 'active') {
+  const startAux = new Date(this.start.getTime());
+  if (moment(startAux.setHours(startAux.getHours() + 3)).isBefore(moment().subtract(2, 'h')) && this.status === 'active') {
     return true;
   }
   return false;

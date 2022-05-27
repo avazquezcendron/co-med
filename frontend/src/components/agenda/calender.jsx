@@ -102,7 +102,7 @@ const Calender = ({ history }) => {
   }, [appointmentConfig]);
 
   const handleNewAppointment = (calenderData) => {
-    if (selectAllow(calenderData)) {
+    if (selectAllowHover(calenderData)) {
       dispatch(
         setDataAppointmentForm({
           start: calenderData?.start,
@@ -123,7 +123,7 @@ const Calender = ({ history }) => {
   };
 
   const selectAllowHover = (selectInfo) => {
-    if (moment(selectInfo.startStr).isBefore(moment())) {
+    if (moment(selectInfo.startStr.replace('Z','')).isBefore(moment())) {
       return false;
     }
     return true;
@@ -164,7 +164,7 @@ const Calender = ({ history }) => {
 
   const handleEventDrop = (info) => {
     if (
-      selectAllow(info.event) &&
+      selectAllowHover(info.event) &&
       (info.event.extendedProps.isActive || info.event.extendedProps.isExpired)
     ) {
       SweetAlert.fire({
