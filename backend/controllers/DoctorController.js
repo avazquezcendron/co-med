@@ -121,7 +121,7 @@ class DoctorController extends BaseController {
 
   async getSessions(req, res, next) {
     const appointmentsConfig = await AppointmentConfig.find({});
-
+    moment.locale('es');
     if (appointmentsConfig.length === 0)
       return res
         .status(200)

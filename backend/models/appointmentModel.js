@@ -50,6 +50,7 @@ appointmentSchema.virtual('isCancelled').get(function () {
 });
 
 appointmentSchema.virtual('isActive').get(function () {
+  moment.locale('es') 
   if (!moment(this.start).isBefore(moment().subtract(2, 'h')) && this.status === 'active') {
     return true;
   }

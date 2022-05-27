@@ -28,6 +28,7 @@ const Calender = ({ history }) => {
   function useQuery() {
     return new URLSearchParams(useLocation().search);
   }
+  moment.locale('es');
   const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   const query = useQuery();
   const filter = query.get('filter');
@@ -120,6 +121,13 @@ const Calender = ({ history }) => {
     }
     return true;
   };
+
+  const selectAllowHover = (selectInfo) => {
+    if (moment(selectInfo.startStr).isBefore(moment())) {
+      return false;
+    }
+    return true;
+  }
 
   const handleAppointmentClick = (eventClick) => {
     if (eventClick.event.id) {
@@ -493,7 +501,7 @@ const Calender = ({ history }) => {
                       eventDrop={handleEventDrop}
                       eventResize={handleEventDrop}
                       selectable={true}
-                      selectAllow={selectAllow}
+                      selectAllow={selectAllowHover}
                       selectConstraint={'businessHours'}
                       selectMirror={true}
                       select={handleNewAppointment}
