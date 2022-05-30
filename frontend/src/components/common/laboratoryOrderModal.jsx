@@ -46,7 +46,11 @@ const LaboratoryOrderModalComponent = (props) => {
         reverseButtons: true,
       }).then((result) => {
         if (result.value) {
-          props.handleSave && props.handleSave({ ...data, laboratories: laboratoryOrder.laboratories});
+          props.handleSave &&
+            props.handleSave({
+              ...data,
+              laboratories: laboratoryOrder.laboratories,
+            });
         }
       });
     } else {
@@ -56,12 +60,19 @@ const LaboratoryOrderModalComponent = (props) => {
 
   const handleLaboratyCheck = (lab, checked) => {
     if (checked) {
-      setlaboratoryOrder({ ...laboratoryOrder, laboratories: [...laboratoryOrder.laboratories, lab] });  
+      setlaboratoryOrder({
+        ...laboratoryOrder,
+        laboratories: [...laboratoryOrder.laboratories, lab],
+      });
     } else {
-      setlaboratoryOrder({ ...laboratoryOrder, laboratories: laboratoryOrder.laboratories.filter(x => x.id !== lab.id) });
+      setlaboratoryOrder({
+        ...laboratoryOrder,
+        laboratories: laboratoryOrder.laboratories.filter(
+          (x) => x.id !== lab.id
+        ),
+      });
     }
-    
-  }
+  };
 
   return (
     <Modal isOpen={props.modal} toggle={props.modalToggle} size="lg">
@@ -200,32 +211,36 @@ const LaboratoryOrderModalComponent = (props) => {
               <hr className="mt-4 mb-4" />
               <h6>{'Laboratorios (variables)'}</h6>
               <div className="form-group row">
-                <div className="col-md-10">
+                <div className="col-md-12">
                   <div className="row">
                     <label className="col-md-12 col-form-label" htmlFor="drug">
                       {''}
                     </label>
                     <div className="col-md-12">
-                      {laboratoryTypes.length > 0 &&
-                        laboratoryTypes.map((lab, index) => (
-                        <Fragment key={index}>
-                            <input
-                              className="checkbox_animated"
-                              defaultChecked={false}
-                              name={`laboratories`}
-                              onChange={(e) => handleLaboratyCheck(lab, e.target.checked)}
-                              id={`laboratoryType${index}`}
-                              type="checkbox"
-                              ref={register({ required: false })}
-                            />
-                            <label
-                              className="mb-1 mr-2"
-                              htmlFor={`laboratoryType${index}`}
-                            >
-                              {lab.description}
-                            </label>
-                          </Fragment>
-                        ))}
+                      <div className="row">
+                        {laboratoryTypes.length > 0 &&
+                          laboratoryTypes.map((lab, index) => (
+                            <div key={index} className="col-md-3 mb-3">
+                              <input
+                                className="checkbox_animated"
+                                defaultChecked={false}
+                                name={`laboratories`}
+                                onChange={(e) =>
+                                  handleLaboratyCheck(lab, e.target.checked)
+                                }
+                                id={`laboratoryType${index}`}
+                                type="checkbox"
+                                ref={register({ required: false })}
+                              />
+                              <label
+                                className="mb-1 mr-2"
+                                htmlFor={`laboratoryType${index}`}
+                              >
+                                {lab.description}
+                              </label>
+                            </div>
+                          ))}
+                      </div>
                       <span style={{ color: 'red' }}>
                         {errors.laboratories && 'Ingrese un valor.'}
                       </span>
@@ -400,9 +415,11 @@ class LaboratoryOrderPrintPreview extends Component {
             <h5>Indicaciones</h5>
             <p>{laboratoryOrderInfo.indications}</p>
             <h5>Laboratorios solicitados</h5>
-              {laboratoryOrderInfo.laboratories.map(
-              (x, index) => <p key={index} className="m-0">(*) {x.description}</p>
-              )}
+            {laboratoryOrderInfo.laboratories.map((x, index) => (
+              <p key={index} className="m-0">
+                (*) {x.description}
+              </p>
+            ))}
           </div>
         </div>
         <div

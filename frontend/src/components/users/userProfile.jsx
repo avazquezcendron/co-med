@@ -468,7 +468,7 @@ const UserProfile = (props) => {
                               'doctor',
                             ]}
                             selected={user.roles}
-                            disabled={mode === 'browse'}
+                            disabled={mode === 'browse' || (!loggedUser.user.isAdmin && !loggedUser.user.isReceptionist)}
                             onChange={handleRolesChange}
                           />
                           <span style={{ color: 'red' }}>
