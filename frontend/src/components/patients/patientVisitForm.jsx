@@ -199,7 +199,7 @@ const PatientVisitForm = (props) => {
                 <div className="form-group row">
                   <label
                     className="col-md-2 col-form-label"
-                    htmlFor="diagnosis"
+                    htmlFor="reason"
                   >
                     {''}
                   </label>
@@ -225,7 +225,60 @@ const PatientVisitForm = (props) => {
                     </span>
                   </div>
                 </div>
-                <h6>{'Síntomas'}</h6>
+                <h6>{'Enfermedad actual'}</h6>
+                <div className="form-group row">
+                  <label
+                    className="col-md-2 col-form-label"
+                    htmlFor="currentDisease"
+                  >
+                    {''}
+                  </label>
+                  <div className="col-md-12">
+                    <input
+                      className="form-control"
+                      id="currentDisease"
+                      type="text"
+                      name="currentDisease"
+                      defaultValue={visit.currentDisease}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            currentDisease: e.target.value,
+                          })
+                        )
+                      }
+                      ref={register({ required: false })}
+                    />
+                  </div>
+                </div>
+                <h6>{'Antecedentes de EA'}</h6>
+                <div className="form-group row">
+                  <label className="col-md-2 col-form-label" htmlFor="eABackground">
+                    {''}
+                  </label>
+                  <div className="col-md-12">
+                    <textarea
+                      className="form-control"
+                      id="eABackground"
+                      rows="5"
+                      spellCheck="false"
+                      name="eABackground"
+                      defaultValue={visit.eABackground}
+                      onBlur={(e) =>
+                        dispatch(
+                          patientInitializeVisitForm({
+                            ...visit,
+                            eABackground: e.target.value,
+                          })
+                        )
+                      }
+                      ref={register({ required: false })}
+                    />
+                  </div>
+                </div>
+                <hr className="mt-4 mb-4" />
+                <h6>{'Signos y Síntomas'}</h6>
                 <div className="form-group row">
                   <label className="col-md-2 col-form-label" htmlFor="symptom">
                     {''}
@@ -246,7 +299,7 @@ const PatientVisitForm = (props) => {
                           })
                         )
                       }
-                      ref={register({ required: true })}
+                      ref={register({ required: false })}
                     />
                     <span style={{ color: 'red' }}>
                       {errors.symptom && 'Ingrese un valor.'}
@@ -254,7 +307,7 @@ const PatientVisitForm = (props) => {
                   </div>
                 </div>
                 <hr className="mt-4 mb-4" />
-                <h6>{'Diagnóstico'}</h6>
+                <h6>{'Sospecha diagnóstica/sindromización'}</h6>
                 <div className="form-group row">
                   <label
                     className="col-md-2 col-form-label"
@@ -278,42 +331,10 @@ const PatientVisitForm = (props) => {
                           })
                         )
                       }
-                      ref={register({ required: true })}
-                    />
-                    <span style={{ color: 'red' }}>
-                      {errors.diagnosis && 'Ingrese un valor.'}
-                    </span>
-                  </div>
-                </div>
-                <hr className="mt-4 mb-4" />
-                <h6>{'Evaluación'}</h6>
-                <div className="form-group row">
-                  <label
-                    className="col-md-2 col-form-label"
-                    htmlFor="evaluation"
-                  >
-                    {''}
-                  </label>
-                  <div className="col-md-12">
-                    <textarea
-                      className="form-control"
-                      id="evaluation"
-                      rows="5"
-                      spellCheck="false"
-                      name="evaluation"
-                      defaultValue={visit.evaluation}
-                      onBlur={(e) =>
-                        dispatch(
-                          patientInitializeVisitForm({
-                            ...visit,
-                            evaluation: e.target.value,
-                          })
-                        )
-                      }
                       ref={register({ required: false })}
                     />
                     <span style={{ color: 'red' }}>
-                      {errors.evaluation && 'Ingrese un valor.'}
+                      {errors.diagnosis && 'Ingrese un valor.'}
                     </span>
                   </div>
                 </div>

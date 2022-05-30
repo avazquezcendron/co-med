@@ -36,9 +36,11 @@ const laboratoryOrderSchema = mongoose.Schema(
 const visitSchema = mongoose.Schema(
   {
     reason: { type: String, required: true },
+    currentDisease: { type: String },
+    eABackground: { type: String },
     notes: { type: String, required: false },
-    diagnosis: { type: String, required: true },
-    symptom: { type: String, required: true },
+    diagnosis: { type: String, required: false },
+    symptom: { type: String, required: false },
     evaluation: { type: String, required: false },
     indications: { type: String, required: false },
     firstVisit: { type: Boolean, default: false },
