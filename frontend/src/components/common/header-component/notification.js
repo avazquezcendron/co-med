@@ -31,7 +31,7 @@ const Notifications = (props) => {
           const childKey = childSnapshot.key;
           const childData = childSnapshot.val();
           if (childData?.description) {
-            notificationsUpdated.push(childData);
+            notificationsUpdated.unshift(childData);
           }
         });
         setNotifications(notificationsUpdated);
@@ -50,7 +50,9 @@ const Notifications = (props) => {
 
   return (
     <Fragment>
-      <div>
+      <div
+        className="custom-scrollbar"
+      >
         {newNotifications && (
           <span
             className="p-0 badge-pill badge-danger text-center"
@@ -67,7 +69,8 @@ const Notifications = (props) => {
           </span>
         )}
         {newNotifications && <span className="dot bg-danger"></span>}
-        <ul className="notification-dropdown onhover-show-div p-0 text-muted">
+        <ul className="notification-dropdown onhover-show-div p-0 text-muted" 
+        style={{ maxHeight: 600, overflowY: 'scroll' }}>
           <li>
             {'Notificaciones'}{' '}
             {notificationsCount > 0 && (
