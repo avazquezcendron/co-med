@@ -13,7 +13,7 @@ class PrescriptionPrintPreview extends Component {
             <div className="text-muted text-center">
               <small className="f-w-900 f-14">
                 {prescriptionInfo.doctor?.biologicalSex === 'm'
-                  ? 'Dr. '  + prescriptionInfo.doctor?.fullName
+                  ? 'Dr. ' + prescriptionInfo.doctor?.fullName
                   : 'Dra. ' + prescriptionInfo.doctor?.fullName}
               </small>
               <br />
@@ -141,8 +141,8 @@ class PrescriptionPrintPreview extends Component {
                 <table className="table table-sm">
                   <thead>
                     <tr>
-                      <th scope="col"></th>
-                      <th scope="col">{'Fármaco'}</th>
+                      <th scope="col">{'Droga'}</th>
+                      <th scope="col">{'Nombre Comercial'}</th>
                       <th scope="col" className="text-center">
                         {'Cantidad'}
                       </th>
@@ -152,9 +152,7 @@ class PrescriptionPrintPreview extends Component {
                   <tbody>
                     {prescriptionDrugsList.map((pDrug, index) => (
                       <tr key={index}>
-                        <th scope="row">
-                          <i className="icofont icofont-pills"></i>
-                        </th>
+                        <td>{pDrug.drug?.drugName}</td>
                         <td>
                           {pDrug.drug?.description +
                             ' (' +

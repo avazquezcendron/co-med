@@ -3,6 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col } from 'reactstrap';
 import DataTable from 'react-data-table-component';
 import { PlusCircle } from 'react-feather';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { toast } from 'react-toastify';
 import SweetAlert from 'sweetalert2';
 
 import Breadcrumb from '../common/breadcrumb';
@@ -127,6 +129,17 @@ const PrescriptionList = (props) => {
     modalToggle();
   };
 
+  const getPrescriptionTextForClipboard = (row) => {
+    return `
+Paciente: ${row.healthRecord.patient.fullName}, 
+Diagnóstico: ${row.diagnosis}, 
+Indicaciones Generales: ${row.indications}, 
+Fármacos: ${row.drugs ?.map((x) => `
+  * (${x.drug.drugName}) ${x.drug.description} - Composición: ${x.drug.composition} - ${x.drug.format} - Indicaciones: ${x.indications}`)}, 
+Indicado por: ${row.doctor.fullName}
+`;
+  };
+
   const columnsConfig = [
     {
       cell: () => <i className="icofont icofont-prescription text-muted" />,
@@ -175,11 +188,23 @@ const PrescriptionList = (props) => {
       cell: (row, index, column, id) => (
         <Fragment>
           <span>
-            {' '}
-            <i
-              className="fa fa-copy mr-4 text-muted"
-              title="Copiar prescripción"
-            ></i>
+            {row.healthRecord.patient && (
+              <CopyToClipboard
+                text={'' + getPrescriptionTextForClipboard(row)}
+                onCopy={(text, result) => {
+                  if (result) {
+                    toast.success('Prescripción copiada al portapapeles.', {
+                      position: toast.POSITION.BOTTOM_RIGHT,
+                    });
+                  }
+                }}
+              >
+                <i
+                  className="fa fa-copy mr-4 text-muted"
+                  title="Copiar prescripción"
+                ></i>
+              </CopyToClipboard>
+            )}
           </span>
           <span>
             <ComponentToPrintWrapper>

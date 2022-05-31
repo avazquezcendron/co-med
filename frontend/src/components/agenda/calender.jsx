@@ -456,7 +456,7 @@ const Calender = ({ history }) => {
                         filter === 'todayAppointments'
                           ? 'listDay'
                           : filter === 'currentMonth'
-                          ? 'dayGridMonth'
+                          ? 'listMonth'
                           : 'timeGridWeek'
                       }
                       themeSystem="standar"

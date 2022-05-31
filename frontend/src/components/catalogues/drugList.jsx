@@ -107,8 +107,8 @@ const DrugList = (props) => {
         title: 'Atención',
         text:
           (currentDrug.id
-            ? 'Se actualizará el fármaco con descripción '
-            : 'Se dará de alta un nuevo fármaco con descripción ') +
+            ? 'Se actualizará el fármaco '
+            : 'Se dará de alta un nuevo fármaco: ') +
           '"' +
           data.description +
           '".',
@@ -191,7 +191,13 @@ const DrugList = (props) => {
       },
     },
     {
-      name: 'Descripción',
+      name: 'Droga',
+      selector: 'drugName',
+      sortable: true,
+      left: true,
+    },
+    {
+      name: 'Nombre Comercial',
       selector: 'description',
       sortable: true,
       left: true,
@@ -317,9 +323,28 @@ const DrugList = (props) => {
                     <div className="form-group row">
                       <label
                         className="col-md-12 col-form-label"
+                        htmlFor="drugName"
+                      >
+                        {'Droga'}
+                      </label>
+                      <div className="col-md-12">
+                        <input
+                          className="form-control"
+                          name="drugName"
+                          id="drugName"
+                          defaultValue={currentDrug.drugName}
+                          type="text"
+                          ref={register({ required: true })}
+                        />
+                        <span style={{ color: 'red' }}>
+                          {errors.drugName && 'Ingrese un valor.'}
+                        </span>
+                      </div>
+                      <label
+                        className="col-md-12 col-form-label"
                         htmlFor="description"
                       >
-                        {'Descripción'}
+                        {'Nombre Comercial'}
                       </label>
                       <div className="col-md-12">
                         <input

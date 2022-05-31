@@ -29,6 +29,7 @@ const PatientBackground = (props) => {
 
   const [alergias, setAlergias] = useState([]);
   const [medicamentosActivos, setmedicamentosActivos] = useState([]);
+  const [selectedDrug, setSelectedDrug] = useState(null);
   const [drugs, setDrugs] = useState([]);
   const [isAlergias, setisAlergias] = useState(false);
   const [isMedicamentos, setisMedicamentos] = useState(false);
@@ -255,7 +256,6 @@ const PatientBackground = (props) => {
                   <div className="col-md-12">
                     <Typeahead
                       id="drugs"
-                      // labelKey={(option) => `${option.description} (Composición: ${option.composition}, ${option.format})`}
                       labelKey="description"
                       emptyLabel="No se encontraron resultados..."
                       multiple
@@ -263,7 +263,6 @@ const PatientBackground = (props) => {
                       newSelectionPrefix="Agregar nuevo medicamento: "
                       options={drugs}
                       disabled={mode === 'browse'}
-                      // selected={drugs.length > 0 ? drugs.filter((x) => x.description === doctor.description) : null}
                       selected={medicamentosActivos}
                       onChange={(selected) => setmedicamentosActivos(selected)}
                       renderToken={(option, props, index) => (
@@ -271,10 +270,11 @@ const PatientBackground = (props) => {
                           key={index}
                           onRemove={props.onRemove}
                           option={option}
-                          disabled={mode === 'browse'}
+                          readOnly={mode === 'browse'}
                         >
                           <span
                             id={`drug${index}`}
+                            onClick={() => setSelectedDrug(option)}
                           >{`${option.description}`}</span>
                           <UncontrolledTooltip
                             placement="top"
@@ -295,12 +295,22 @@ const PatientBackground = (props) => {
                           ,
                           <div>
                             <small className="text-muted">
+                              Droga: {option.drugName},{' '}
                               Composición: {option.composition}, {option.format}
                             </small>
                           </div>
                         </Fragment>
                       )}
                     />
+                    <div>
+                        {selectedDrug && (
+                          <small className="text-muted">
+                            <b>Droga:</b> {selectedDrug.drugName}.{' '}
+                            <b>Composición:</b> {selectedDrug.composition}.{' '}
+                            <b>Formato:</b> {selectedDrug.format}
+                          </small>
+                        )}
+                      </div>
                   </div>
                   <label
                     className="col-md-12 col-form-label"

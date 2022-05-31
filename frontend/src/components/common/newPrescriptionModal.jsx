@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody, UncontrolledTooltip } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { useForm } from 'react-hook-form';
 import SweetAlert from 'sweetalert2';
 import { useSelector } from 'react-redux';
@@ -59,7 +59,7 @@ const NewPrescriptionModalComponent = (props) => {
       if (loggedUser.user.isDoctor) {
         setDoctor(loggedUser.user.doctor);
         setDoctors([loggedUser.user.doctor]);
-      }      
+      }
     }
     setprescriptionDrugs([]);
     setQuantity(0);
@@ -89,7 +89,7 @@ const NewPrescriptionModalComponent = (props) => {
   const handleDoctorChange = (selected) => {
     let doctor = selected.length > 0 ? selected[0] : {};
     setDoctor(doctor);
-    setprescription({...prescription, doctor: doctor});
+    setprescription({ ...prescription, doctor: doctor });
   };
 
   const handleSearch = (filter) => {
@@ -234,7 +234,11 @@ const NewPrescriptionModalComponent = (props) => {
       size="lg"
     >
       <ModalHeader toggle={props.prescriptionModalToggle}>
-        {prescription.id ? `Prescripción generada el dia ${new Date(prescription.createdAt).toLocaleDateString('es')}` : 'Nueva Prescripción'}
+        {prescription.id
+          ? `Prescripción generada el dia ${new Date(
+              prescription.createdAt
+            ).toLocaleDateString('es')}`
+          : 'Nueva Prescripción'}
       </ModalHeader>
       <ModalBody>
         <div className="card badge badge-light m-l-20 m-r-20">
@@ -282,8 +286,9 @@ const NewPrescriptionModalComponent = (props) => {
                     <b>
                       {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord?.patient?.healthInsurances[0]
-                            .healthInsuranceCompany?.description
+                        ? prescription.healthRecord?.patient
+                            ?.healthInsurances[0].healthInsuranceCompany
+                            ?.description
                         : ''}
                     </b>
                   </p>
@@ -298,8 +303,8 @@ const NewPrescriptionModalComponent = (props) => {
                     <b>
                       {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord?.patient?.healthInsurances[0]
-                            .plan.code
+                        ? prescription.healthRecord?.patient
+                            ?.healthInsurances[0].plan.code
                         : ''}
                     </b>
                   </p>
@@ -314,8 +319,8 @@ const NewPrescriptionModalComponent = (props) => {
                     <b>
                       {prescription.healthRecord?.patient?.healthInsurances
                         ?.length > 0
-                        ? prescription.healthRecord?.patient?.healthInsurances[0]
-                            .cardNumber
+                        ? prescription.healthRecord?.patient
+                            ?.healthInsurances[0].cardNumber
                         : ''}
                     </b>
                   </p>
@@ -475,20 +480,12 @@ const NewPrescriptionModalComponent = (props) => {
                           <Token
                             key={index}
                             onRemove={props.onRemove}
+                            readOnly={prescription.id}
                             option={option}
                           >
                             <span
                               id={`prescriptionDrug${index}`}
                             >{`${option.description}`}</span>
-                            <UncontrolledTooltip
-                              placement="top"
-                              target={`prescriptionDrug${index}`}
-                            >
-                              <h6>Composición:</h6>
-                              {option.composition}
-                              <h6>Formato:</h6>
-                              {option.format}
-                            </UncontrolledTooltip>
                           </Token>
                         )}
                         renderMenuItemChildren={(option, props) => (
@@ -499,6 +496,7 @@ const NewPrescriptionModalComponent = (props) => {
                             ,
                             <div>
                               <small className="text-muted">
+                                Droga: {option.drugName},{' '}
                                 Composición: {option.composition},{' '}
                                 {option.format}
                               </small>
@@ -509,6 +507,15 @@ const NewPrescriptionModalComponent = (props) => {
                       <span style={{ color: 'red' }}>
                         {errors.drug && 'Ingrese un valor.'}
                       </span>
+                      <div>
+                        {prescriptionDrugs.length > 0 && (
+                          <small className="text-muted">
+                            <b>Droga:</b> {prescriptionDrugs[0].drugName}.{' '}
+                            <b>Composición:</b> {prescriptionDrugs[0].composition}.{' '}
+                            <b>Formato:</b> {prescriptionDrugs[0].format}
+                          </small>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -599,7 +606,7 @@ const NewPrescriptionModalComponent = (props) => {
                       <th></th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody style={{ cursor: 'pointer' }}>
                     {prescriptionDrugsList.length > 0
                       ? prescriptionDrugsList.map((pDrug, index) => (
                           <tr
