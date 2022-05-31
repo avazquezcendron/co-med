@@ -42,6 +42,7 @@ const Calender = ({ history }) => {
   const [businessHours, setbusinessHours] = useState([]);
   const [filterSidebar, setFilterSidebar] = useState(true);
   const [sidebaron, setSidebaron] = useState(true);
+  const [reloadAppointments, setReloadAppointments] = useState(false);
 
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
@@ -99,7 +100,7 @@ const Calender = ({ history }) => {
         appointmentService.getBussinesHoursBySlot(appointmentConfig)
       );
     }
-  }, [appointmentConfig]);
+  }, [appointmentConfig, reloadAppointments]);
 
   const handleNewAppointment = (calenderData) => {
     if (selectAllow(calenderData)) {
@@ -122,13 +123,6 @@ const Calender = ({ history }) => {
     return true;
   };
 
-  const selectAllowHover = (selectInfo) => {
-    if (moment(selectInfo.startStr.replace('Z','')).isBefore(moment())) {
-      return false;
-    }
-    return true;
-  }
-
   const handleAppointmentClick = (eventClick) => {
     if (eventClick.event.id) {
       dispatch(
@@ -149,7 +143,7 @@ const Calender = ({ history }) => {
       !stillEvent.extendedProps.doctor ||
       !stillEvent.extendedProps.patient ||
       stillEvent.extendedProps.appointmentType === 'sobreturno' ||
-      movingEvent.extendedProps.appointmentType === 'sobreturno' || 
+      movingEvent.extendedProps.appointmentType === 'sobreturno' ||
       stillEvent.extendedProps.isCancelled
     )
       return true;
@@ -214,8 +208,16 @@ const Calender = ({ history }) => {
     let bgColor = info.el.style.backgroundColor;
     let txtColor = info.el.style.color;
     let txtDecoration = info.el.style.textDecoration;
-    let title = `Paciente ${info.event.extendedProps.patient?.fullName} (${info.event.extendedProps.patient?.healthInsurances?.length > 0 ? info.event.extendedProps.patient?.healthInsurances[0].healthInsuranceCompany
-        .description : 'particular'}) - ${info.event.extendedProps.doctor?.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${info.event.extendedProps.doctor?.fullName} | ${info.event.extendedProps.mode}`;
+    let title = info.event.extendedProps.patient ? `Paciente ${info.event.extendedProps.patient?.fullName} (${
+      info.event.extendedProps.patient?.healthInsurances?.length > 0
+        ? info.event.extendedProps.patient?.healthInsurances[0]
+            .healthInsuranceCompany.description
+        : 'particular'
+    }) - ${
+      info.event.extendedProps.doctor?.biologicalSex === 'm' ? 'Dr. ' : 'Dra. '
+    }${info.event.extendedProps.doctor?.fullName} | ${
+      info.event.extendedProps.mode
+    }` : '';
 
     const isListView = ['listDay', 'listWeek', 'listMonth'].includes(
       info.view.type
@@ -386,7 +388,7 @@ const Calender = ({ history }) => {
                   <div className="pull-right">
                     <button
                       type="button"
-                      className="btn btn-primary ml-4"
+                      className="btn btn-primary ml-2"
                       onClick={handleNewAppointment}
                     >
                       <i className="fa fa-plus mr-2"></i>
@@ -460,8 +462,16 @@ const Calender = ({ history }) => {
                       themeSystem="standar"
                       locale={esLocale}
                       // timeZone="America/Argentina/Buenos_Aires"
+                      customButtons={{
+                        reloadCalendar: {
+                          text: 'Recargar Turnos',
+                          click: function () {
+                            setReloadAppointments(!reloadAppointments);
+                          },
+                        },
+                      }}
                       headerToolbar={{
-                        left: 'prev,next today',
+                        left: 'prev,next today reloadCalendar',
                         center: 'title',
                         right:
                           'dayGridMonth,timeGridWeek,timeGridDay listDay listWeek listMonth',
@@ -471,11 +481,22 @@ const Calender = ({ history }) => {
                         listWeek: { buttonText: 'Agenda semanal' },
                         listMonth: { buttonText: 'Agenda mensual' },
                       }}
-                      weekends={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions.filter(x => x.daysOfWeek[0] === 1 || x.daysOfWeek[6] === 1).length > 0 : true}
+                      weekends={
+                        appointmentConfig?.sessions?.length > 0
+                          ? appointmentConfig.sessions.filter(
+                              (x) =>
+                                x.daysOfWeek[0] === 1 || x.daysOfWeek[6] === 1
+                            ).length > 0
+                          : true
+                      }
                       businessHours={businessHours}
                       slotDuration={slotDuration}
                       slotLabelInterval={slotDuration}
-                      slotMinTime={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions[0].startTime : '08:00:00'}
+                      slotMinTime={
+                        appointmentConfig?.sessions?.length > 0
+                          ? appointmentConfig.sessions[0].startTime
+                          : '08:00:00'
+                      }
                       // slotMaxTime={appointmentConfig?.sessions?.length > 0 ? appointmentConfig.sessions[1].endTime : '22:00:00'}
                       //   slotMaxTime={'22:00:00'}
                       nowIndicator={true}

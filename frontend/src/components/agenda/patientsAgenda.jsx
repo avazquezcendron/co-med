@@ -28,6 +28,7 @@ const PatientsAgenda = (props) => {
   // const [yesterdayAppointments, setYesterdayAppointments] = useState([]);
   const [tomorrowAppointments, setTomorrowAppointments] = useState([]);
   const [appointmentsFiltered, setAppointmentsFiltered] = useState([]);
+  const [reloadAppointments, setReloadAppointments] = useState(false);
 
   const [appointmentModal, setAppointmentModal] = useState(false);
   const appointmentModalToggle = () => {
@@ -36,7 +37,7 @@ const PatientsAgenda = (props) => {
 
   useEffect(() => {
     dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
-  }, [dispatch]);
+  }, [dispatch, reloadAppointments]);
 
   useEffect(() => {
     if (status === LOADED) {
@@ -465,8 +466,18 @@ const PatientsAgenda = (props) => {
               <div className="card">
                 <div className="card-header">
                   <div className="row">
-                    <div className="col-md-10">
+                    <div className="col-md-8">
                       <h5>{'Próximos Turnos'}</h5>
+                    </div>
+                    <div className="col-md-2">
+                      <a
+                        href="#javascript"
+                        className="ml-4 pull-right pt-1"
+                        onClick={() => setReloadAppointments(!reloadAppointments)}
+                        title="Recargar turnos"
+                      >
+                        <h4><i className="icon-reload"></i></h4>
+                      </a>
                     </div>
                     <div className="col-md-2">
                       <div className="select2-drpdwn-project select-options">

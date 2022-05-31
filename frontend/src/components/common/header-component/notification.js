@@ -53,7 +53,7 @@ const Notifications = (props) => {
       <div>
         {newNotifications && (
           <span
-            class="p-0 badge-pill badge-danger text-center"
+            className="p-0 badge-pill badge-danger text-center"
             style={{
               position: 'absolute',
               right: 10,
