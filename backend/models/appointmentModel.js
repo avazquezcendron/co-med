@@ -16,7 +16,7 @@ const appointmentSchema = mongoose.Schema(
     },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      required: false,
       ref: 'Patient',
     },
     status: {
@@ -38,7 +38,7 @@ appointmentSchema.set('toJSON', {
 appointmentSchema.virtual('title').get(function () {
   // return `Paciente ${this.patient.fullName} (${this.patient.healthInsurances?.length > 0 ? this.patient.healthInsurances[0].healthInsuranceCompany
   //   .description : 'particular'}) - ${this.doctor.biologicalSex === 'm' ? 'Dr. '  : 'Dra. '}${this.doctor.fullName} | ${this.mode}`;
-  return this.patient.fullName;
+  return this.patient ? this.patient.fullName : this.appointmentType === 'bloqueo' ? `AGENDA BLOQUEADA: ${this.description}` : '';
 });
 
 appointmentSchema.virtual('isDone').get(function () {
@@ -61,6 +61,10 @@ appointmentSchema.virtual('isExpired').get(function () {
     return true;
   }
   return false;
+});
+
+appointmentSchema.virtual('isLocked').get(function () {
+  return this.appointmentType === 'bloqueo';
 });
 
 const Appointment = mongoose.model('Appointment', appointmentSchema);

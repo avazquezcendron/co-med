@@ -121,7 +121,8 @@ const Default = (props) => {
   // }, []);
 
   useEffect(() => {
-    if (appointmentsStatus === SUCCEEDED) dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
+    if (appointmentsStatus === SUCCEEDED)
+      dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
   }, [appointmentsStatus]);
 
   useEffect(() => {
@@ -129,13 +130,13 @@ const Default = (props) => {
       const _currentDayAppointments = appointments.filter(
         (x) =>
           new Date(x.start).toLocaleDateString() ===
-            dateNow.toLocaleDateString() && !x.isExpired
+            dateNow.toLocaleDateString() && !x.isExpired && !x.isLocked
       );
 
       setCurrentMonthAppointments(
         appointments.filter(
           (x) =>
-            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired
+            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired && !x.isLocked
         )
       );
       setCurrentDayAppointments(_currentDayAppointments);
@@ -144,7 +145,7 @@ const Default = (props) => {
         appointments.filter(
           (x) =>
             new Date(x.start).toLocaleDateString() ===
-              dateNow.toLocaleDateString() && !x.isExpired
+              dateNow.toLocaleDateString() && !x.isExpired && !x.isLocked
         )
       );
 
@@ -154,7 +155,7 @@ const Default = (props) => {
             new Date(x.start).getFullYear() === dateNow.getFullYear() &&
             new Date(x.start).getMonth() === dateNow.getMonth() &&
             new Date(x.start).getDate() === dateNow.getDate() + 1 &&
-            !x.isExpired
+            !x.isExpired && !x.isLocked
         )
       );
 
@@ -405,17 +406,25 @@ const Default = (props) => {
                       loader={<div>{'Cargando...'}</div>}
                       data={[
                         ['Género', 'Porcentaje'],
-                        ['Cisgénero', patients.filter(x => x.gender === 'cisgenero').length],
-                        ['Transgénero', patients.filter(x => x.gender === 'transgenero').length],
-                        ['No-binario', patients.filter(x => x.gender === 'no-binario').length],
+                        [
+                          'Cisgénero',
+                          patients.filter((x) => x.gender === 'cisgenero')
+                            .length,
+                        ],
+                        [
+                          'Transgénero',
+                          patients.filter((x) => x.gender === 'transgenero')
+                            .length,
+                        ],
+                        [
+                          'No-binario',
+                          patients.filter((x) => x.gender === 'no-binario')
+                            .length,
+                        ],
                       ]}
                       options={{
                         title: '',
-                        colors: [
-                          '#1ea6ec',
-                          '#22af47',
-                          '#6c757d',
-                        ],
+                        colors: ['#1ea6ec', '#22af47', '#6c757d'],
                         // sliceVisibilityThreshold: 0.2, // 20%
                       }}
                       // rootProps={{ 'data-testid': '0' }}
@@ -437,10 +446,18 @@ const Default = (props) => {
                       loader={<div>{'Cargando'}</div>}
                       data={[
                         ['Rango Etáreo', 'Cantidad de Pacientes'],
-                        ['0-10', patients.filter(x => x.age < 11).length],
-                        ['11-20', patients.filter(x => x.age > 10 && x.age < 21).length],
-                        ['21-40', patients.filter(x => x.age > 20 && x.age < 41).length],
-                        ['+40', patients.filter(x => x.age > 40).length],
+                        ['0-10', patients.filter((x) => x.age < 11).length],
+                        [
+                          '11-20',
+                          patients.filter((x) => x.age > 10 && x.age < 21)
+                            .length,
+                        ],
+                        [
+                          '21-40',
+                          patients.filter((x) => x.age > 20 && x.age < 41)
+                            .length,
+                        ],
+                        ['+40', patients.filter((x) => x.age > 40).length],
                       ]}
                       options={{
                         title: '',
@@ -538,9 +555,23 @@ const Default = (props) => {
                       ) : (
                         ''
                       )}
-                      <div key={index} className={`media ${appointment.appointmentType === 'sobreturno' ? 'b-r-warning border-4' : appointment.isCancelled ? 'b-r-danger border-4' : ''} ${appointment.isDone ? 'b-r-success border-4' : ''} `}
-                      title={`${appointment.appointmentType === 'sobreturno' ? 'SOBRETURNO' : 'TURNO'} ${appointment.isCancelled ? 'CANCELADO' : ''}${appointment.isDone ? 'FINALIZADO' : ''}${appointment.isActive ? 'ACTIVO' : ''}`}
-                      >                        
+                      <div
+                        key={index}
+                        className={`media ${
+                          appointment.appointmentType === 'sobreturno'
+                            ? 'b-r-warning border-4'
+                            : appointment.isCancelled
+                            ? 'b-r-danger border-4'
+                            : ''
+                        } ${appointment.isDone ? 'b-r-success border-4' : ''} `}
+                        title={`${
+                          appointment.appointmentType === 'sobreturno'
+                            ? 'SOBRETURNO'
+                            : 'TURNO'
+                        } ${appointment.isCancelled ? 'CANCELADO' : ''}${
+                          appointment.isDone ? 'FINALIZADO' : ''
+                        }${appointment.isActive ? 'ACTIVO' : ''}`}
+                      >
                         <h6>
                           <i className="icofont icofont-clock-time"></i>{' '}
                           {new Date(appointment.start).toLocaleTimeString(
@@ -554,26 +585,34 @@ const Default = (props) => {
                           )}
                         </h6>
                         <div className="media-body">
-                          <span className="f-18 p-r-10">
-                            {appointment.patient.fullName}
-                          </span>
-                          <span
-                            className="f-16 p-l-10 text-muted"
-                            style={{ borderLeft: '2px solid #999' }}
-                          >
-                            <i
-                              className={`mr-1 fa fa-${
-                                appointment.patient.biologicalSex === 'm'
-                                  ? 'male'
-                                  : 'female'
-                              }`}
-                            >
-                              {' '}
-                            </i>
-                            {appointment.patient.age
-                              ? appointment.patient.age + ' años'
-                              : ''}
-                          </span>
+                          {appointment.appointmentType !== 'bloqueo' ? (
+                            <Fragment>
+                              <span className="f-18 p-r-10">
+                                {appointment.patient?.fullName}
+                              </span>
+                              <span
+                                className="f-16 p-l-10 text-muted"
+                                style={{ borderLeft: '2px solid #999' }}
+                              >
+                                <i
+                                  className={`mr-1 fa fa-${
+                                    appointment.patient?.biologicalSex === 'm'
+                                      ? 'male'
+                                      : 'female'
+                                  }`}
+                                >
+                                  {' '}
+                                </i>
+                                {appointment.patient?.age
+                                  ? appointment.patient.age + ' años'
+                                  : ''}
+                              </span>
+                            </Fragment>
+                          ) : (
+                            <span className="f-18 p-r-10">
+                              Agenda Bloqueada
+                            </span>
+                          )}
                           <p className="f-12">
                             <i className="icofont icofont-doctor-alt"></i>{' '}
                             {appointment.doctor.fullName} |{' '}

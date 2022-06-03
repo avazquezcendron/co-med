@@ -25,7 +25,7 @@ const AppointmentModalComponent = (props) => {
     SweetAlert.fire({
       title: 'Atención',
       text: appointment.isActive
-        ? 'El turno será cancelado. Desea continuar?'
+        ? appointment.isLocked ? 'El bloqueo de agenda será cancelado. Desea continuar?' : 'El turno será cancelado. Desea continuar?'
         : 'El turno pasará a estar activo nuevamente. Desea continuar?',
       icon: 'warning',
       showCancelButton: true,
@@ -118,7 +118,7 @@ const AppointmentModalComponent = (props) => {
                   onClick={() => handleChangeStatusAppointment('cancelled')}
                 >
                   <i className="fa fa-times mr-2"></i>
-                  {'Cancelar Turno'}
+                  {`Cancelar ${appointment.appointmentType !== 'bloqueo' ? 'Turno' : 'Bloqueo de Agenda'}`}
                 </button>
                 <button
                   type="button"
@@ -129,7 +129,7 @@ const AppointmentModalComponent = (props) => {
                   {'Editar'}
                 </button>
                 {loggedUser.user.isDoctor &&
-                  loggedUser.user.doctor.id === appointment.doctor.id && (
+                  loggedUser.user.doctor.id === appointment.doctor.id && !appointment.isLocked && (
                     <button
                       type="button"
                       className="btn btn-success ml-1 pull-right"

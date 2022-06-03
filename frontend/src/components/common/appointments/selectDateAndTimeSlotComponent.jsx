@@ -28,13 +28,19 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
     appointment.start ? appointment.start : new Date()
   );
 
+  useEffect(() => {
+    if (appointment.appointmentType === 'bloqueo' && appointment.end && appointment.start) {
+      jumpToStep(3);
+    }
+  }, []);
+
   const [appointmentsSessions, setAppointmentsSessions] = useState([]);
   useEffect(() => {
     doctorService
       .getDoctorSessions(appointment.doctor.id, startDate, loggedUser)
       .then((sessions) => {
         let drSessions = [];
-        if (appointment.appointmentType !== 'turno') {
+        if (appointment.appointmentType === 'sobreturno') {
           drSessions = sessions.map((x) => {
             return {
               ...x,
@@ -106,13 +112,13 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
               0
             )
           ),
-          end: new Date(
+          end: appointment.appointmentType !== 'bloqueo' ? new Date(
             startDate.setHours(
               new Date(selectedSlot.endTime).getHours(),
               new Date(selectedSlot.endTime).getMinutes(),
               0
             )
-          ),
+          ) : appointment.end,
         })
       );
       return true;

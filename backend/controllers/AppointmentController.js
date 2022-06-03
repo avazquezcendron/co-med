@@ -87,13 +87,15 @@ class AppointmentController extends BaseController {
    * @return {Object} res The response object
    */
   async create(req, res, next) {
-    const doctor = await Doctor.findById(req.body.doctor.id).populate({
-      path: 'appointments',
-    }).populate({
-      path: 'user',
-    });
+    const doctor = await Doctor.findById(req.body.doctor.id)
+      .populate({
+        path: 'appointments',
+      })
+      .populate({
+        path: 'user',
+      });
     if (
-      req.body.appointmentType === 'turno' &&
+      req.body.appointmentType !== 'sobreturno' &&
       !this._checkDoctorAvailability(doctor, req.body.start)
     ) {
       return res
@@ -102,41 +104,39 @@ class AppointmentController extends BaseController {
     }
 
     const appointment = new this._model(req.body);
-    const patient = await Patient.findById(appointment.patient._id).populate({
-      path: 'healthInsurances.healthInsuranceCompany',
-    });
     const savedappointment = await appointment.save();
-    // patient.appointments.push(savedappointment._id);
-    // await patient.save();
     doctor.appointments.push(savedappointment._id);
     await doctor.save();
-    req.params = {
-      ...req.params,
-      id: savedappointment._id,
-    };
-
-    const appointmentData = { ...req.body, doctor: doctor, patient: patient };
-    if (patient.email) {
-      sendMail(
-        patient.email,
-        `Co-Med | Nuevo Turno día ${new Date(appointment.start).toLocaleString(
-          'es',
-          {
+    if (appointment.patient) {
+      const patient = await Patient.findById(appointment.patient._id).populate({
+        path: 'healthInsurances.healthInsuranceCompany',
+      });
+      const appointmentData = { ...req.body, doctor: doctor, patient: patient };
+      if (patient.email) {
+        sendMail(
+          patient.email,
+          `Co-Med | Nuevo Turno día ${new Date(
+            appointment.start
+          ).toLocaleString('es', {
             year: 'numeric',
             month: 'numeric',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
             hour12: false,
-          }
-        )} hs`,
-        'html',
-        'newAppointment',
-        appointmentData
-      );
+          })} hs`,
+          'html',
+          'newAppointment',
+          appointmentData
+        );
+      }
+
+      notifyNewAppointment(appointmentData);
     }
-    
-    notifyNewAppointment(appointmentData);
+    req.params = {
+      ...req.params,
+      id: savedappointment._id,
+    };
     return this.getById(req, res, next);
   }
 
@@ -155,7 +155,7 @@ class AppointmentController extends BaseController {
       path: 'appointments',
     });
     if (
-      req.body.appointmentType === 'turno' &&
+      req.body.appointmentType !== 'sobreturno' &&
       !this._checkDoctorAvailability(doctor, req.body.start, req.params.id)
     ) {
       return res
@@ -169,11 +169,20 @@ class AppointmentController extends BaseController {
         return res
           .status(409)
           .json(
-            'El turno ha sido modificado en otra transacción. Debe recargar la página de turnos.'
+            `El ${appointment.appointmentType === 'bloqueo' ? 'bloqueo de agenda' : 'turno'} ha sido modificado en otra transacción. Debe recargar la página de turnos.`
           );
       }
 
-      if (appointment.doctor._id.toString() !== req.body.doctor.id.toString()) {
+      if (appointment.appointmentType === 'bloqueo' && req.body.status === 'cancelled') {
+        const oldDoctor = await Doctor.findById(appointment.doctor._id);
+        oldDoctor.appointments = oldDoctor.appointments.filter(
+          (x) => !x._id.equals(appointment._id)
+        );
+        oldDoctor.save();
+
+        return this.delete(req, res, next);
+
+      } else if (appointment.doctor._id.toString() !== req.body.doctor.id.toString()) {
         doctor.appointments.push(appointment._id);
         doctor.save();
 
@@ -192,6 +201,21 @@ class AppointmentController extends BaseController {
       return this.getById(req, res, next);
     } else {
       return res.status(404).json('Turno no encontrado.');
+    }
+  }
+
+  async inactivate(req, res, next) {
+    let model = await this._model.findById(req.params.id);
+    if (model) {
+      if (model.appointmentType === 'bloqueo') {
+        return this.delete(req, res, next);
+      } else {
+        model.status = 'inactive';
+        const updatedModel = await model.save();
+        return res.status(200).json(updatedModel);
+      }      
+    } else {
+      return res.status(404).json('Registro no encontrado.');
     }
   }
 

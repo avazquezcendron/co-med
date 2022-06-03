@@ -141,7 +141,8 @@ const Calender = ({ history }) => {
   const handleEventOverlap = (stillEvent, movingEvent) => {
     if (
       !stillEvent.extendedProps.doctor ||
-      !stillEvent.extendedProps.patient ||
+      (!stillEvent.extendedProps.patient &&
+        !stillEvent.extendedProps.isLocked) ||
       stillEvent.extendedProps.appointmentType === 'sobreturno' ||
       movingEvent.extendedProps.appointmentType === 'sobreturno' ||
       stillEvent.extendedProps.isCancelled
@@ -151,8 +152,12 @@ const Calender = ({ history }) => {
     return (
       movingEvent.extendedProps.doctor.id !==
         stillEvent.extendedProps.doctor.id &&
-      movingEvent.extendedProps.patient.id !==
-        stillEvent.extendedProps.patient.id
+      movingEvent.extendedProps.patient?.id !==
+        stillEvent.extendedProps.patient?.id &&
+      (!stillEvent.extendedProps.isLocked ||
+        (stillEvent.extendedProps.isLocked &&
+          movingEvent.extendedProps.doctor.id !==
+            stillEvent.extendedProps.doctor.id))
     );
   };
 
@@ -206,18 +211,26 @@ const Calender = ({ history }) => {
 
   const handleCalendarEventMount = (info) => {
     let bgColor = info.el.style.backgroundColor;
+    let background = info.el.style.background;
     let txtColor = info.el.style.color;
     let txtDecoration = info.el.style.textDecoration;
-    let title = info.event.extendedProps.patient ? `Paciente ${info.event.extendedProps.patient?.fullName} (${
-      info.event.extendedProps.patient?.healthInsurances?.length > 0
-        ? info.event.extendedProps.patient?.healthInsurances[0]
-            .healthInsuranceCompany.description
-        : 'particular'
-    }) - ${
-      info.event.extendedProps.doctor?.biologicalSex === 'm' ? 'Dr. ' : 'Dra. '
-    }${info.event.extendedProps.doctor?.fullName} | ${
-      info.event.extendedProps.mode
-    }` : '';
+    let textAlign = info.el.style.textAlign;
+    let fontStyle = info.el.style.fontStyle;
+    let fontSize = info.el.style.fontSize;
+    let title = info.event.extendedProps.patient
+      ? `Paciente ${info.event.extendedProps.patient?.fullName} (${
+          info.event.extendedProps.patient?.healthInsurances?.length > 0
+            ? info.event.extendedProps.patient?.healthInsurances[0]
+                .healthInsuranceCompany.description
+            : 'particular'
+        }) - ${
+          info.event.extendedProps.doctor?.biologicalSex === 'm'
+            ? 'Dr. '
+            : 'Dra. '
+        }${info.event.extendedProps.doctor?.fullName} | ${
+          info.event.extendedProps.mode
+        }`
+      : '';
 
     const isListView = ['listDay', 'listWeek', 'listMonth'].includes(
       info.view.type
@@ -228,6 +241,27 @@ const Calender = ({ history }) => {
       bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
       txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
       title = 'SOBRETURNO. ' + title;
+    } else if (info.event.extendedProps.appointmentType === 'bloqueo') {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'darkgray';
+      background =
+        'repeating-linear-gradient( 45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px )';
+      txtColor = isListView || dayGridMonthView ? 'white' : 'white';
+      textAlign = isListView || dayGridMonthView ? textAlign : 'center';
+      fontStyle = 'italic';
+      fontSize = 'medium';
+      title = `(${new Date(info.event.start).toLocaleTimeString('es', {
+        // timeZone: 'UTC',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      })} - ${new Date(info.event.end).toLocaleTimeString('es', {
+        // timeZone: 'UTC',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+      })}) AGENDA BLOQUEADA: ${
+        info.event.extendedProps.description
+      } | Dr./Dra. ${info.event.extendedProps.doctor?.fullName}`;
     } else {
       if (info.event.extendedProps.isExpired) {
         bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
@@ -264,9 +298,13 @@ const Calender = ({ history }) => {
 
     // Row styles
     info.el.style.fontWeight = 'bold';
+    info.el.style.background = background;
     info.el.style.backgroundColor = bgColor;
     info.el.style.color = txtColor;
     info.el.style.textDecoration = txtDecoration;
+    info.el.style.textAlign = textAlign;
+    info.el.style.fontStyle = fontStyle;
+    info.el.style.fontSize = fontSize;
     info.el.title = title;
   };
 

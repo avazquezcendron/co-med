@@ -45,11 +45,11 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       setPatients([appointment.patient]);
       setPatient(appointment.patient);
     }
-  }, [appointment])
+  }, [appointment]);
 
   useImperativeHandle(ref, () => ({
     isValidated() {
-      if (!patient.id) {
+      if (!patient.id && type !== 'bloqueo') {
         setError('patient', {});
         return false;
       } else {
@@ -57,7 +57,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       }
       dispatch(
         setDataAppointmentForm({
-          patient: patient,
+          patient: type !== 'bloqueo' ? patient : null,
           appointmentType: type,
           mode: mode,
           description: description,
@@ -74,8 +74,8 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
       setError('patient', {});
     } else {
       clearErrors('patient');
-      if (patient.tags?.length > 0){
-        setDescription(patient.tags.map(x => x.name).join('. '));
+      if (patient.tags?.length > 0) {
+        setDescription(patient.tags.map((x) => x.name).join('. '));
       }
     }
   };
@@ -88,7 +88,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
     });
   };
 
-// Bypass client-side filtering by returning `true`. Results are already
+  // Bypass client-side filtering by returning `true`. Results are already
   // filtered by the search endpoint, so no need to do it again.
   const filterBy = () => true;
 
@@ -96,51 +96,56 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
     <Fragment>
       <Form className="form-bookmark needs-validation">
         <div className="form-row m-50">
-          <p className="text-muted f-12 col-md-12">
-            Ingrese el nombre, DNI o Número de Historia Clínica para buscar al paciente. Si no lo encuentra,
-            haga click{' '}
-            <a href="#javascript" id="popoverNewPatient">
-              aquí
-            </a>{' '}
-            para ingresar un nuevo paciente al sistema.
-          </p>
-          <FormGroup className="col-md-6">
-            <Label>{'Paciente'} </Label>
-            <AsyncTypeahead
-              id="patient"
-              name="patient"
-              options={patients}
-              isLoading={isLoading}
-              labelKey={(option) => option.fullName}
-              filterBy={filterBy}
-              minLength={3}
-              onSearch={handleSearch}
-              clearButton
-              disabled={!appointment.new}
-              onChange={(selected) => handlePatientChange(selected)}
-              selected={
-                patients.length > 0
-                  ? patients.filter((x) => x.id === patient.id)
-                  : null
-              }
-              innerRef={register('patient', { required: true })}
-              renderMenuItemChildren={(option, props) => (
-                <Fragment>
-                  <Highlighter search={props.text}>
-                    {option.fullName}
-                  </Highlighter>
-                  <div className="mt-1">
-                    <small className="text-muted">
-                      Nro. HC: <b>{option.healthRecord?.healthRecordNumber}</b>
-                    </small>
-                  </div>
-                </Fragment>
-              )}
-            />
-            <span style={{ color: 'red' }}>
-              {errors.patient && 'Debe ingresar el paciente'}
-            </span>
-          </FormGroup>
+          {type !== 'bloqueo' && (
+            <Fragment>
+              <p className="text-muted f-12 col-md-12">
+                Ingrese el nombre, DNI o Número de Historia Clínica para buscar
+                al paciente. Si no lo encuentra, haga click{' '}
+                <a href="#javascript" id="popoverNewPatient">
+                  aquí
+                </a>{' '}
+                para ingresar un nuevo paciente al sistema.
+              </p>
+              <FormGroup className="col-md-6">
+                <Label>{'Paciente'} </Label>
+                <AsyncTypeahead
+                  id="patient"
+                  name="patient"
+                  options={patients}
+                  isLoading={isLoading}
+                  labelKey={(option) => option.fullName}
+                  filterBy={filterBy}
+                  minLength={3}
+                  onSearch={handleSearch}
+                  clearButton
+                  disabled={!appointment.new}
+                  onChange={(selected) => handlePatientChange(selected)}
+                  selected={
+                    patients.length > 0
+                      ? patients.filter((x) => x.id === patient.id)
+                      : null
+                  }
+                  innerRef={register('patient', { required: true })}
+                  renderMenuItemChildren={(option, props) => (
+                    <Fragment>
+                      <Highlighter search={props.text}>
+                        {option.fullName}
+                      </Highlighter>
+                      <div className="mt-1">
+                        <small className="text-muted">
+                          Nro. HC:{' '}
+                          <b>{option.healthRecord?.healthRecordNumber}</b>
+                        </small>
+                      </div>
+                    </Fragment>
+                  )}
+                />
+                <span style={{ color: 'red' }}>
+                  {errors.patient && 'Debe ingresar el paciente'}
+                </span>
+              </FormGroup>
+            </Fragment>
+          )}
           <FormGroup className="col-md-12 mt-4">
             <Label>{'Tipo de Turno'}</Label>
             <div className="row">
@@ -172,38 +177,57 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
                     ></Input>
                     <Label htmlFor="turnoSobreturno2">{'Sobreturno'}</Label>
                   </div>
+                  <div className="col-md-12 radio radio-primary ml-4 mt-2">
+                    <Input
+                      id="turnoSobreturno3"
+                      className="js-example-disabled-results"
+                      name="turnoSobreturno"
+                      type="radio"
+                      value="bloqueo"
+                      checked={type === 'bloqueo'}
+                      onChange={(e) => setType(e.target.value)}
+                      innerRef={register({ required: true })}
+                    ></Input>
+                    <Label htmlFor="turnoSobreturno3">
+                      {'Bloqueo de Agenda'}
+                    </Label>
+                  </div>
                 </div>
               </div>
               <div className="col-md-6">
-                <div className="row">
-                  <div className="col-md-12 radio radio-primary ">
-                    <Input
-                      id="tipoTurno1"
-                      className="js-example-disabled-results"
-                      name="tipoTurno"
-                      type="radio"
-                      value="presencial"
-                      innerRef={register({ required: true })}
-                      onChange={(e) => setMode(e.target.value)}
-                      checked={mode === 'presencial'}
-                    ></Input>
-                    <Label htmlFor="tipoTurno1">{'Consulta Presencial'}</Label>
+                {type !== 'bloqueo' && (
+                  <div className="row">
+                    <div className="col-md-12 radio radio-primary ">
+                      <Input
+                        id="tipoTurno1"
+                        className="js-example-disabled-results"
+                        name="tipoTurno"
+                        type="radio"
+                        value="presencial"
+                        innerRef={register({ required: true })}
+                        onChange={(e) => setMode(e.target.value)}
+                        checked={mode === 'presencial'}
+                      ></Input>
+                      <Label htmlFor="tipoTurno1">
+                        {'Consulta Presencial'}
+                      </Label>
+                    </div>
+                    <div className="col-md-12 radio radio-primary mt-2">
+                      <Input
+                        id="tipoTurno2"
+                        className="js-example-disabled-results"
+                        name="tipoTurno"
+                        type="radio"
+                        value="videoconsulta"
+                        checked={mode === 'videoconsulta'}
+                        innerRef={register({ required: true })}
+                        onChange={(e) => setMode(e.target.value)}
+                        disabled
+                      ></Input>
+                      <Label htmlFor="tipoTurno2">{'Videoconsulta'}</Label>
+                    </div>
                   </div>
-                  <div className="col-md-12 radio radio-primary mt-2">
-                    <Input
-                      id="tipoTurno2"
-                      className="js-example-disabled-results"
-                      name="tipoTurno"
-                      type="radio"
-                      value="videoconsulta"
-                      checked={mode === 'videoconsulta'}
-                      innerRef={register({ required: true })}
-                      onChange={(e) => setMode(e.target.value)}
-                      disabled
-                    ></Input>
-                    <Label htmlFor="tipoTurno2">{'Videoconsulta'}</Label>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </FormGroup>
@@ -223,25 +247,27 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
           </FormGroup>
         </div>
       </Form>
-      <Popover
-        placement="right"
-        isOpen={popover}
-        target={'popoverNewPatient'}
-        toggle={popoverNewPatientToggle}
-        data-html="true"
-      >
-        <PopoverHeader>
-          {'Nuevo Paciente'}
-          <span className="pull-right">
-            <a href="#javaScript" onClick={popoverNewPatientToggle}>
-              <i className="icofont icofont-close text-muted"></i>
-            </a>
-          </span>
-        </PopoverHeader>
-        <PopoverBody>
-          <PatientQuickAdd modalToggle={popoverNewPatientToggle}/>
-        </PopoverBody>
-      </Popover>
+      {type !== 'bloqueo' && (
+        <Popover
+          placement="right"
+          isOpen={popover}
+          target={'popoverNewPatient'}
+          toggle={popoverNewPatientToggle}
+          data-html="true"
+        >
+          <PopoverHeader>
+            {'Nuevo Paciente'}
+            <span className="pull-right">
+              <a href="#javaScript" onClick={popoverNewPatientToggle}>
+                <i className="icofont icofont-close text-muted"></i>
+              </a>
+            </span>
+          </PopoverHeader>
+          <PopoverBody>
+            <PatientQuickAdd modalToggle={popoverNewPatientToggle} />
+          </PopoverBody>
+        </Popover>
+      )}
     </Fragment>
   );
 });

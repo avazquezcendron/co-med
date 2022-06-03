@@ -44,12 +44,12 @@ const PatientsAgenda = (props) => {
       const _currentDayAppointments = appointments.filter(
         (x) =>
           new Date(x.start).toLocaleDateString() ===
-            dateNow.toLocaleDateString() && !x.isExpired
+            dateNow.toLocaleDateString() && !x.isExpired && !x.isLocked
       );
       setCurrentMonthAppointments(
         appointments.filter(
           (x) =>
-            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired
+            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired && !x.isLocked
         )
       );
       setCurrentDayAppointments(_currentDayAppointments);
@@ -68,7 +68,7 @@ const PatientsAgenda = (props) => {
             new Date(x.start).getFullYear() === dateNow.getFullYear() &&
             new Date(x.start).getMonth() === dateNow.getMonth() &&
             new Date(x.start).getDate() === dateNow.getDate() + 1 &&
-            !x.isExpired
+            !x.isExpired && !x.isLocked
         )
       );
       setAppointmentsFiltered(_currentDayAppointments);
@@ -281,17 +281,17 @@ const PatientsAgenda = (props) => {
               })}
             </h6>
             <div className="media-body">
-              <span className="f-18 p-r-10">{row.patient.fullName}</span>
+              <span className="f-18 p-r-10">{row.patient?.fullName}</span>
               <span
                 className="f-16 p-l-10 text-muted"
                 style={{ borderLeft: '2px solid #999' }}
               >
                 <i
                   className={`mr-1 fa fa-${
-                    row.patient.biologicalSex === 'm' ? 'male' : 'female'
+                    row.patient?.biologicalSex === 'm' ? 'male' : 'female'
                   }`}
                 ></i>
-                {row.patient.age ? row.patient.age + ' años' : ''}
+                {row.patient?.age ? row.patient.age + ' años' : ''}
               </span>
               {/* <span
                 className="p-l-10 p-r-10 text-muted"
@@ -326,7 +326,7 @@ const PatientsAgenda = (props) => {
         <div>
           <span className="p-r-10 text-muted">
             <i className="fa fa-medkit mr-1"> </i>
-            {' ' + row.patient.healthInsurances?.length > 0
+            {' ' + row.patient?.healthInsurances?.length > 0
               ? row.patient.healthInsurances[0].healthInsuranceCompany
                   .description
               : ''}
@@ -337,8 +337,8 @@ const PatientsAgenda = (props) => {
           >
             {'Nro. de Credencial '}
             <strong>
-              {row.patient.healthInsurances?.length > 0
-                ? row.patient.healthInsurances[0].cardNumber
+              {row.patient?.healthInsurances?.length > 0
+                ? row.patient?.healthInsurances[0].cardNumber
                 : ''}
             </strong>
           </span>
