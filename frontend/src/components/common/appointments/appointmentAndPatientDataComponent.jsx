@@ -36,6 +36,16 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   const [type, setType] = useState(appointment.appointmentType || 'turno');
   const [mode, setMode] = useState(appointment.mode || 'presencial');
   const [description, setDescription] = useState(appointment.description || '');
+  const [paymentType, setPaymentType] = useState(
+    appointment.paymentType || 'consulta'
+  );
+  const [paymentMethod, setPaymentMethod] = useState(
+    appointment.paymentMethod || 'efectivo'
+  );
+  const [paymentAmount, setPaymentAmount] = useState(
+    appointment.paymentAmount || '0'
+  );
+  const [patientTags, setPatientTags] = useState('');
 
   const [popover, setPopover] = useState(false);
   const popoverNewPatientToggle = () => setPopover(!popover);
@@ -44,6 +54,7 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
     if (appointment.patient) {
       setPatients([appointment.patient]);
       setPatient(appointment.patient);
+      setPatientTags(appointment.patient.tags.map((x) => x.name).join('. '));
     }
   }, [appointment]);
 
@@ -61,6 +72,9 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
           appointmentType: type,
           mode: mode,
           description: description,
+          paymentType: paymentType,
+          paymentMethod: paymentMethod,
+          paymentAmount: paymentAmount,
         })
       );
       return true;
@@ -72,10 +86,13 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
     setPatient(patient);
     if (selected.length <= 0) {
       setError('patient', {});
+      setPatientTags('');
     } else {
       clearErrors('patient');
       if (patient.tags?.length > 0) {
-        setDescription(patient.tags.map((x) => x.name).join('. '));
+        setPatientTags(patient.tags.map((x) => x.name).join('. '));
+      } else {
+        setPatientTags('');
       }
     }
   };
@@ -91,6 +108,14 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
   // Bypass client-side filtering by returning `true`. Results are already
   // filtered by the search endpoint, so no need to do it again.
   const filterBy = () => true;
+
+  const handlePaymentTypeChange = (value) => {
+    setPaymentType(value);
+    if (value === 'no-paga') {
+      setPaymentMethod('');
+      setPaymentAmount(0);
+    }
+  };
 
   return (
     <Fragment>
@@ -140,9 +165,82 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
                     </Fragment>
                   )}
                 />
+                {patientTags && (
+                  <div>
+                    <small className="text-muted">
+                      <b>Tags: </b> {patientTags}
+                    </small>
+                  </div>
+                )}
                 <span style={{ color: 'red' }}>
                   {errors.patient && 'Debe ingresar el paciente'}
                 </span>
+              </FormGroup>
+              <FormGroup className="col-md-12 mt-4">
+                <div className="row">
+                  <div className="col-md-3 mr-4">
+                    <div className="select2-drpdwn-project select-options">
+                      <Label>{'Tipo de Cobro'}</Label>
+                      <select
+                        className="form-control"
+                        id="paymentType"
+                        name="paymentType"
+                        value={paymentType}
+                        onChange={(e) =>
+                          handlePaymentTypeChange(e.target.value)
+                        }
+                        ref={register({ required: false })}
+                      >
+                        <option value="consulta">{'Consulta'}</option>
+                        <option value="no-paga">{'No Paga'}</option>
+                        <option value="coseguro">{'Coseguro'}</option>
+                      </select>
+                    </div>
+                  </div>
+                  {paymentType !== 'no-paga' && (
+                    <Fragment>
+                      <div className="col-md-3 mr-4">
+                        <div className="select2-drpdwn-project select-options">
+                          <Label>{'Forma de Pago'}</Label>
+                          <select
+                            className="form-control"
+                            id="paymentMethod"
+                            name="paymentMethod"
+                            value={paymentMethod}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            ref={register({ required: false })}
+                          >
+                            <option value="efectivo">{'Efectivo'}</option>
+                            <option value="transferencia">
+                              {'Transferencia'}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <div className="col-md-3">
+                        <div className="select2-drpdwn-project select-options">
+                          <Label>{'Importe'}</Label>
+                          <Input
+                            className="form-control"
+                            value={paymentAmount}
+                            onChange={(e) => setPaymentAmount(e.target.value)}
+                            id="paymentAmount"
+                            name="paymentAmount"
+                            type="number"
+                            innerRef={register({ required: false })}
+                            style={{
+                              height: 24,
+                              borderBottomColor: '#0288d1',
+                              borderBottomStyle: 'solid',
+                              border: 'none',
+                              borderRadius: 0,
+                            }}
+                          ></Input>
+                        </div>
+                      </div>
+                    </Fragment>
+                  )}
+                </div>
               </FormGroup>
             </Fragment>
           )}

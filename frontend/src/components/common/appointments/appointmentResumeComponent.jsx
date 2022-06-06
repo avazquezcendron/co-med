@@ -168,6 +168,23 @@ const AppointmentResumeComponent = (props) => {
           </div>
           <div className="row m-2 ml-5">
             <div className=" col col-md-3 m-t-20">
+              <i className="icofont icofont-cur-dollar"></i>{' '}
+              <span className="f-w-600">Cobro</span>
+            </div>
+            <div className="col col-md-9 m-t-20">
+              <p>
+                {(appointment.paymentType === 'consulta'
+                  ? 'Consulta - ' + appointment.paymentMethod + ' - $' + appointment.paymentAmount 
+                  : appointment.paymentType === 'coseguro'
+                  ? 'Coseguro - ' + appointment.paymentMethod + ' - $' + appointment.paymentAmount 
+                  : 'No Paga')}
+              </p>
+            </div>
+            <div className="col"></div>
+            <div className="col"></div>
+          </div>
+          <div className="row m-2 ml-5">
+            <div className=" col col-md-3 m-t-20">
               <i className="icofont icofont-tag"></i>{' '}
               <span className="f-w-600">Tipo</span>
             </div>
