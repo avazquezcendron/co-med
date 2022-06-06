@@ -130,13 +130,13 @@ const Default = (props) => {
       const _currentDayAppointments = appointments.filter(
         (x) =>
           new Date(x.start).toLocaleDateString() ===
-            dateNow.toLocaleDateString() && !x.isExpired && !x.isLocked
+            dateNow.toLocaleDateString() && x.isActive && !x.isLocked
       );
 
       setCurrentMonthAppointments(
         appointments.filter(
           (x) =>
-            new Date(x.start).getMonth() === dateNow.getMonth() && !x.isExpired && !x.isLocked
+            new Date(x.start).getMonth() === dateNow.getMonth() && x.isActive && !x.isLocked
         )
       );
       setCurrentDayAppointments(_currentDayAppointments);
@@ -145,7 +145,7 @@ const Default = (props) => {
         appointments.filter(
           (x) =>
             new Date(x.start).toLocaleDateString() ===
-              dateNow.toLocaleDateString() && !x.isExpired && !x.isLocked
+              dateNow.toLocaleDateString() && !x.isLocked
         )
       );
 
@@ -155,7 +155,7 @@ const Default = (props) => {
             new Date(x.start).getFullYear() === dateNow.getFullYear() &&
             new Date(x.start).getMonth() === dateNow.getMonth() &&
             new Date(x.start).getDate() === dateNow.getDate() + 1 &&
-            !x.isExpired && !x.isLocked
+            x.isActive && !x.isLocked
         )
       );
 

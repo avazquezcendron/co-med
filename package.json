@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/avazquezcendron/co-med#readme",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "dotenv": "^16.0.0",

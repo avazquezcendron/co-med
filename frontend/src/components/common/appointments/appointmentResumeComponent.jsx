@@ -158,7 +158,8 @@ const AppointmentResumeComponent = (props) => {
                     appointment.patient.healthInsurances[0].plan.code +
                     ')' +
                     ' | Nro. de Credencial ' +
-                    appointment.patient.healthInsurances[0].cardNumber
+                    (appointment.patient.healthInsurances[0].cardNumber ||
+                      ' - ')
                   : ' - '}
               </p>
             </div>
