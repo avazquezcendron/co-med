@@ -238,9 +238,20 @@ const Calender = ({ history }) => {
     const dayGridMonthView = info.view.type === 'dayGridMonth';
 
     if (info.event.extendedProps.appointmentType === 'sobreturno') {
-      bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
-      txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
-      title = 'SOBRETURNO. ' + title;
+      if (info.event.extendedProps.isCancelled) {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'red';
+        txtColor = isListView || dayGridMonthView ? 'red' : 'white';
+        txtDecoration = 'line-through';
+        title = 'SOBRETURNO CANCELADO. ' + title;
+      } else if (info.event.extendedProps.isDone) {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
+        txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
+        title = 'SOBRETURNO FINALIZADO. ' + title;
+      } else {
+        bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
+        txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
+        title = 'SOBRETURNO. ' + title;
+      }
     } else if (info.event.extendedProps.appointmentType === 'bloqueo') {
       bgColor = isListView || dayGridMonthView ? bgColor : 'darkgray';
       background =

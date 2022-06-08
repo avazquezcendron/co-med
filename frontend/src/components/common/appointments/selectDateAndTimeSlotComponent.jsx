@@ -52,17 +52,21 @@ const SelectDateAndTimeSlotComponent = forwardRef(({ jumpToStep }, ref) => {
         } else {
           drSessions = sessions;
         }
-        setAppointmentsSessions(drSessions);
         const startTime = moment(appointment.start);
         if (startTime) {
           drSessions.forEach((session) => {
             const activeSlot = session.slots.filter((slot) =>
               moment(slot.startTime).isSame(startTime)
             );
-            if (activeSlot && activeSlot.length > 0)
+            if (activeSlot && activeSlot.length > 0) {
               setSelectedSlot(activeSlot[0]);
+              if (appointment.id) {
+                activeSlot[0].available = true;
+              }
+            }            
           });
         }
+        setAppointmentsSessions(drSessions);
       });
   }, [startDate]);
 

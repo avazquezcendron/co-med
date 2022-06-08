@@ -169,11 +169,18 @@ class AppointmentController extends BaseController {
         return res
           .status(409)
           .json(
-            `El ${appointment.appointmentType === 'bloqueo' ? 'bloqueo de agenda' : 'turno'} ha sido modificado en otra transacción. Debe recargar la página de turnos.`
+            `El ${
+              appointment.appointmentType === 'bloqueo'
+                ? 'bloqueo de agenda'
+                : 'turno'
+            } ha sido modificado en otra transacción. Debe recargar la página de turnos.`
           );
       }
 
-      if (appointment.appointmentType === 'bloqueo' && req.body.status === 'cancelled') {
+      if (
+        appointment.appointmentType === 'bloqueo' &&
+        req.body.status === 'cancelled'
+      ) {
         const oldDoctor = await Doctor.findById(appointment.doctor._id);
         oldDoctor.appointments = oldDoctor.appointments.filter(
           (x) => !x._id.equals(appointment._id)
@@ -181,8 +188,9 @@ class AppointmentController extends BaseController {
         oldDoctor.save();
 
         return this.delete(req, res, next);
-
-      } else if (appointment.doctor._id.toString() !== req.body.doctor.id.toString()) {
+      } else if (
+        appointment.doctor._id.toString() !== req.body.doctor.id.toString()
+      ) {
         doctor.appointments.push(appointment._id);
         doctor.save();
 
@@ -213,7 +221,7 @@ class AppointmentController extends BaseController {
         model.status = 'inactive';
         const updatedModel = await model.save();
         return res.status(200).json(updatedModel);
-      }      
+      }
     } else {
       return res.status(404).json('Registro no encontrado.');
     }
@@ -224,6 +232,7 @@ class AppointmentController extends BaseController {
       (docAppointment) =>
         docAppointment._id.toString() !== appointmentId?.toString() &&
         docAppointment.isActive &&
+        docAppointment.appointmentType !== 'sobreturno' &&
         moment(appointmentStart).isBetween(
           docAppointment.start,
           docAppointment.end,

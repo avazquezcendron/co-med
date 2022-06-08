@@ -275,21 +275,23 @@ const AppointmentAndPatientDataComponent = forwardRef(({ jumpToStep }, ref) => {
                     ></Input>
                     <Label htmlFor="turnoSobreturno2">{'Sobreturno'}</Label>
                   </div>
-                  <div className="col-md-12 radio radio-primary ml-4 mt-2">
-                    <Input
-                      id="turnoSobreturno3"
-                      className="js-example-disabled-results"
-                      name="turnoSobreturno"
-                      type="radio"
-                      value="bloqueo"
-                      checked={type === 'bloqueo'}
-                      onChange={(e) => setType(e.target.value)}
-                      innerRef={register({ required: true })}
-                    ></Input>
-                    <Label htmlFor="turnoSobreturno3">
-                      {'Bloqueo de Agenda'}
-                    </Label>
-                  </div>
+                  {appointment.end && appointment.start && !appointment.patient && (
+                    <div className="col-md-12 radio radio-primary ml-4 mt-2">
+                      <Input
+                        id="turnoSobreturno3"
+                        className="js-example-disabled-results"
+                        name="turnoSobreturno"
+                        type="radio"
+                        value="bloqueo"
+                        checked={type === 'bloqueo'}
+                        onChange={(e) => setType(e.target.value)}
+                        innerRef={register({ required: true })}
+                      ></Input>
+                      <Label htmlFor="turnoSobreturno3">
+                        {'Bloqueo de Agenda'}
+                      </Label>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="col-md-6">

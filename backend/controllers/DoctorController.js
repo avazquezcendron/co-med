@@ -213,6 +213,7 @@ class DoctorController extends BaseController {
               doctorAppointments.filter(
                 (appointment) =>
                   appointment.isActive &&
+                  appointment.appointmentType !== 'sobreturno' &&
                   moment(_startSlot).isBetween(
                     appointment.start,
                     appointment.end,

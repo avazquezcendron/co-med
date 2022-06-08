@@ -90,10 +90,6 @@ const AppointmentConfirmComponent = (props) => {
           dispatch(saveAppointmentWatcher(appointmentData));
           dispatch(clearAppointmentForm());
           props.modalToggle();
-        } else {
-          toast.error('Se canceló el alta del turno.', {
-            position: toast.POSITION.BOTTOM_RIGHT,
-          });
         }
       });
     }
