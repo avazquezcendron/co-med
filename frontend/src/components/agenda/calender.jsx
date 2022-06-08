@@ -237,22 +237,7 @@ const Calender = ({ history }) => {
     );
     const dayGridMonthView = info.view.type === 'dayGridMonth';
 
-    if (info.event.extendedProps.appointmentType === 'sobreturno') {
-      if (info.event.extendedProps.isCancelled) {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'red';
-        txtColor = isListView || dayGridMonthView ? 'red' : 'white';
-        txtDecoration = 'line-through';
-        title = 'SOBRETURNO CANCELADO. ' + title;
-      } else if (info.event.extendedProps.isDone) {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
-        txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
-        title = 'SOBRETURNO FINALIZADO. ' + title;
-      } else {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
-        txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
-        title = 'SOBRETURNO. ' + title;
-      }
-    } else if (info.event.extendedProps.appointmentType === 'bloqueo') {
+    if (info.event.extendedProps.appointmentType === 'bloqueo') {
       bgColor = isListView || dayGridMonthView ? bgColor : 'darkgray';
       background =
         'repeating-linear-gradient( 45deg, #606dbc, #606dbc 10px, #465298 10px, #465298 20px )';
@@ -273,23 +258,40 @@ const Calender = ({ history }) => {
       })}) AGENDA BLOQUEADA: ${
         info.event.extendedProps.description
       } | Dr./Dra. ${info.event.extendedProps.doctor?.fullName}`;
+    } else if (info.event.extendedProps.isExpired) {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
+      txtColor = isListView || dayGridMonthView ? 'gray' : 'white';
+      title =
+        (info.event.extendedProps.appointmentType === 'sobreturno'
+          ? 'SOBRE'
+          : '') +
+        'TURNO EXPIRADO. ' +
+        title;
+    } else if (info.event.extendedProps.isCancelled) {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'red';
+      txtColor = isListView || dayGridMonthView ? 'red' : 'white';
+      title =
+        (info.event.extendedProps.appointmentType === 'sobreturno'
+          ? 'SOBRE'
+          : '') +
+        'TURNO CANCELADO. ' +
+        title;
+      txtDecoration = 'line-through';
+    } else if (info.event.extendedProps.isDone) {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
+      txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
+      title =
+        (info.event.extendedProps.appointmentType === 'sobreturno'
+          ? 'SOBRE'
+          : '') +
+        'TURNO FINALIZADO. ' +
+        title;
+    } else if (info.event.extendedProps.appointmentType === 'sobreturno') {
+      bgColor = isListView || dayGridMonthView ? bgColor : 'orange';
+      txtColor = isListView || dayGridMonthView ? 'orange' : 'white';
+      title = 'SOBRETURNO ACTIVO. ' + title;
     } else {
-      if (info.event.extendedProps.isExpired) {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'gray';
-        txtColor = isListView || dayGridMonthView ? 'gray' : 'white';
-        title = 'TURNO EXPIRADO. ' + title;
-      } else if (info.event.extendedProps.isCancelled) {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'red';
-        txtColor = isListView || dayGridMonthView ? 'red' : 'white';
-        title = 'TURNO CANCELADO. ' + title;
-        txtDecoration = 'line-through';
-      } else if (info.event.extendedProps.isDone) {
-        bgColor = isListView || dayGridMonthView ? bgColor : 'lightgreen';
-        txtColor = isListView || dayGridMonthView ? 'lightgreen' : 'white';
-        title = 'TURNO FINALIZADO. ' + title;
-      } else {
-        title = title ? 'TURNO ACTIVO. ' + title : '';
-      }
+      title = title ? 'TURNO ACTIVO. ' + title : '';
     }
 
     if (isListView) {
@@ -484,18 +486,18 @@ const Calender = ({ history }) => {
                       <i className="fa fa-circle text-primary"></i> Turno Activo
                     </span>
                     <span className="mr-2">
-                      <i className="fa fa-circle text-danger"></i> Turno
+                      <i className="fa fa-circle text-danger"></i> Turno/Sobreturno
                       Cancelado
                     </span>
                     <span className="mr-2">
-                      <i className="fa fa-circle text-success"></i> Turno
+                      <i className="fa fa-circle text-success"></i> Turno/Sobreturno
                       Finalizado
                     </span>
                     <span className="mr-2">
-                      <i className="fa fa-circle text-muted"></i> Turno Expirado
+                      <i className="fa fa-circle text-muted"></i> Turno/Sobreturno Expirado
                     </span>
                     <span className="mr-2">
-                      <i className="fa fa-circle text-warning"></i> Sobreturno
+                      <i className="fa fa-circle text-warning"></i> Sobreturno Activo
                     </span>
                     {/* </mark> */}
                   </p>
