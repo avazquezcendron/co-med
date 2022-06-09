@@ -301,7 +301,7 @@ const PatientCard = (props) => {
                     <div className="col-md-12 m-b-10">
                       <p>
                         {patient.healthInsurances?.length > 0
-                          ? patient.healthInsurances[0].admissionDate
+                          ? (patient.healthInsurances[0].admissionDate ? new Date(patient.healthInsurances[0].admissionDate).toLocaleDateString() : '-')
                           : '-'}
                       </p>
                     </div>

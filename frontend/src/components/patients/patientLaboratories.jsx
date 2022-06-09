@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, Collapse } from 'reactstrap';
 import { useLocation, useParams } from 'react-router-dom';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,6 +11,8 @@ import Dropzone from 'react-dropzone-uploader';
 import { toast } from 'react-toastify';
 import ReactToPrint from 'react-to-print';
 import { getDownloadURL } from 'firebase/storage';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import es from 'date-fns/locale/es';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -24,6 +26,7 @@ function useQuery() {
 }
 
 const PatientLaboratories = (props) => {
+  registerLocale('es', es);
   const { patient, status } = useSelector((store) => store.Patient);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
@@ -56,6 +59,7 @@ const PatientLaboratories = (props) => {
   const [laboratories, setLaboratories] = useState([]);
   const [laboratoryExams, setLaboratoryExams] = useState([]);
   const [statusUpdate, setStatusUpdate] = useState(false);
+  const [isLaboratoriesVariables, setIsLaboratoriesVariables] = useState(false);
 
   const [laboratoryTypes, setLaboratoryTypes] = useState([]);
   useEffect(() => {
@@ -84,7 +88,8 @@ const PatientLaboratories = (props) => {
     {
       name: 'Fecha',
       width: '100px',
-      selector: (row) => new Date(row.createdAt).toLocaleDateString('es'),
+      selector: (row) =>
+        new Date(row.date || row.createdAt).toLocaleDateString('es'),
       sortable: true,
       left: true,
     },
@@ -140,6 +145,7 @@ const PatientLaboratories = (props) => {
 
           const laboratoryExamData = {
             laboratories: laboratories,
+            date: laboratoryExamDate,
             files: addedFiles,
           };
           await patientService
@@ -155,7 +161,7 @@ const PatientLaboratories = (props) => {
 
   const handleRowClick = (row, event) => {
     setLaboratories(row.laboratories);
-    setLaboratoryExamDate(row.createdAt);
+    setLaboratoryExamDate(row.date || row.createdAt);
     setFiles(row.files);
     setModalEdit(false);
     modalToggle();
@@ -304,85 +310,120 @@ const PatientLaboratories = (props) => {
                     onSubmit={handleSubmit(handleSubmitForm)}
                   >
                     <div className="card-body">
-                      <h6>{'Laboratorios'}</h6>
-                      <div className="form-group row">
-                        <div className="col-md-12">
-                          <div className="row mt-2 mb-2">
-                            <div className="col-md-6">
-                              <div className="row  mt-2 mb-2">
-                                <div className="col-md-6">Variable</div>
-                                <div className="col-md-3 text-center">
-                                  Valor
-                                </div>
-                              </div>
-                            </div>
-                            <div className="col-md-6">
-                              <div className="row  mt-2 mb-2">
-                                <div className="col-md-6">Variable</div>
-                                <div className="col-md-3 text-center">
-                                  Valor
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="row mt-2 mb-2">
-                            {laboratoryTypes.length > 0 &&
-                              laboratoryTypes.map((lab, index) => (
-                                <div key={lab.id} className="col-md-6">
-                                  <div className="row  mt-2 mb-2">
-                                    <div className="col-md-6">
-                                      <input
-                                        className="checkbox_animated"
-                                        defaultChecked={laboratories
-                                          .map((x) => x.laboratoryType.id)
-                                          .includes(lab.id)}
-                                        name={`laboratories`}
-                                        onChange={(e) =>
-                                          handleLaboratyCheck(
-                                            lab,
-                                            e.target.checked
-                                          )
-                                        }
-                                        id={`lT${lab.id}`}
-                                        type="checkbox"
-                                        disabled={!modalEdit}
-                                        ref={register({ required: false })}
-                                      />
-                                      <label
-                                        className="mb-1 mr-2"
-                                        htmlFor={`lT${lab.id}`}
-                                      >
-                                        {lab.description}
-                                      </label>
-                                    </div>
-                                    <div className="col-md-3">
-                                      <input
-                                        className="form-control"
-                                        name={`lT${lab.id}_value`}
-                                        id={`lT${lab.id}_value`}
-                                        defaultValue={
-                                          laboratories
-                                            .filter(
-                                              (x) =>
-                                                x.laboratoryType.id === lab.id
-                                            )
-                                            .map((x) => x.value) || 0
-                                        }
-                                        onChange={(e) =>
-                                          handleLaboratoryValueChange(
-                                            lab,
-                                            e.target.value
-                                          )
-                                        }
-                                        type="text"
-                                        disabled={!modalEdit}
-                                        ref={register({ required: false })}
-                                      />
-                                    </div>
-                                    <div className="col-md-3"></div>
+                      <h6
+                        onClick={() =>
+                          setIsLaboratoriesVariables(!isLaboratoriesVariables)
+                        }
+                      >
+                        {'Laboratorios'}
+                        <span className="ml-2">
+                            <i className={`fa fa-chevron-${isLaboratoriesVariables ? 'up' : 'down'} toggle-data`}></i>
+                        </span>
+                      </h6>
+                      <Collapse isOpen={isLaboratoriesVariables}>
+                        <div className="form-group row">
+                          <div className="col-md-12">
+                            <div className="row mt-2 mb-2">
+                              <div className="col-md-6">
+                                <div className="row  mt-2 mb-2">
+                                  <div className="col-md-6">Variable</div>
+                                  <div className="col-md-3 text-center">
+                                    Valor
                                   </div>
                                 </div>
-                              ))}
+                              </div>
+                              <div className="col-md-6">
+                                <div className="row  mt-2 mb-2">
+                                  <div className="col-md-6">Variable</div>
+                                  <div className="col-md-3 text-center">
+                                    Valor
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="row mt-2 mb-2">
+                              {laboratoryTypes.length > 0 &&
+                                laboratoryTypes.map((lab, index) => (
+                                  <div key={lab.id} className="col-md-6">
+                                    <div className="row  mt-2 mb-2">
+                                      <div className="col-md-6">
+                                        <input
+                                          className="checkbox_animated"
+                                          defaultChecked={laboratories
+                                            .map((x) => x.laboratoryType.id)
+                                            .includes(lab.id)}
+                                          name={`laboratories`}
+                                          onChange={(e) =>
+                                            handleLaboratyCheck(
+                                              lab,
+                                              e.target.checked
+                                            )
+                                          }
+                                          id={`lT${lab.id}`}
+                                          type="checkbox"
+                                          disabled={!modalEdit}
+                                          ref={register({ required: false })}
+                                        />
+                                        <label
+                                          className="mb-1 mr-2"
+                                          htmlFor={`lT${lab.id}`}
+                                        >
+                                          {lab.description}
+                                        </label>
+                                      </div>
+                                      <div className="col-md-3">
+                                        <input
+                                          className="form-control"
+                                          name={`lT${lab.id}_value`}
+                                          id={`lT${lab.id}_value`}
+                                          defaultValue={
+                                            laboratories
+                                              .filter(
+                                                (x) =>
+                                                  x.laboratoryType.id === lab.id
+                                              )
+                                              .map((x) => x.value) || 0
+                                          }
+                                          onChange={(e) =>
+                                            handleLaboratoryValueChange(
+                                              lab,
+                                              e.target.value
+                                            )
+                                          }
+                                          type="text"
+                                          disabled={!modalEdit}
+                                          ref={register({ required: false })}
+                                        />
+                                      </div>
+                                      <div className="col-md-3"></div>
+                                    </div>
+                                  </div>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
+                      </Collapse>
+                      <h6 className="mt-4">{'Fecha de Realización'}</h6>
+                      <div className="form-group row">
+                        <div className="col-md-4">
+                          <div
+                            className="datepicker-here"
+                            data-language="es"
+                            id="date"
+                          >
+                            <DatePicker
+                              className="form-control digits"
+                              placeholderText="dd/MM/yyyy"
+                              selected={
+                                laboratoryExamDate
+                                  ? new Date(laboratoryExamDate)
+                                  : null
+                              }
+                              locale="es"
+                              dateFormat="dd/MM/yyyy"
+                              onChange={(date) => setLaboratoryExamDate(date)}
+                              disabled={!modalEdit}
+                            />
                           </div>
                         </div>
                       </div>

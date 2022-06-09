@@ -93,7 +93,7 @@ const Header = () => {
                 <SearchHeader />
               </li>
               <li>
-                <a onClick={goFull} className="text-dark" href="#!">
+                <a onClick={goFull} className="text-dark" href="#!" title="Ver en pantalla completa">
                   <Maximize />
                 </a>
               </li>

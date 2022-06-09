@@ -4,7 +4,8 @@ import fileSchema from './fileSchema.js';
 
 const studyExamSchema = mongoose.Schema(
   {
-    files: [ fileSchema ],
+    files: [fileSchema],
+    date: { type: Date },
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

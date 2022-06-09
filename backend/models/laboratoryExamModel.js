@@ -5,6 +5,7 @@ import fileSchema from './fileSchema.js';
 const laboratoryExamSchema = mongoose.Schema(
   {
     files: [ fileSchema ],
+    date: { type: Date },
     laboratories: [
       {
         value: { type: String, required: true },

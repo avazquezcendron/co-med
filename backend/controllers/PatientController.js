@@ -392,7 +392,7 @@ class PatientController extends BaseController {
 
       let filterDates = {};
       if (startDate && endDate) {
-        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+        filterDates = { date: { $gte: startDate, $lte: endDate } };
       }
 
       const finalFilter = {
@@ -401,7 +401,7 @@ class PatientController extends BaseController {
       };
 
       const laboratoryExams = await LaboratoryExam.find(finalFilter)
-        .sort({ createdAt: 'desc' })
+        .sort({ date: 'desc' })
         .populate({
           path: 'laboratories',
           populate: { path: 'laboratoryType' },
@@ -443,7 +443,7 @@ class PatientController extends BaseController {
 
       let filterDates = {};
       if (startDate && endDate) {
-        filterDates = { createdAt: { $gte: startDate, $lte: endDate } };
+        filterDates = { date: { $gte: startDate, $lte: endDate } };
       }
 
       const finalFilter = {
@@ -452,7 +452,7 @@ class PatientController extends BaseController {
       };
 
       const studyExams = await StudyExam.find(finalFilter)
-        .sort({ createdAt: 'desc' })
+        .sort({ date: 'desc' })
         .populate({
           path: 'studyType',
         });

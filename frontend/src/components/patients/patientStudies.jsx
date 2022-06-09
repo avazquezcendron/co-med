@@ -11,6 +11,8 @@ import Dropzone from 'react-dropzone-uploader';
 import { toast } from 'react-toastify';
 import ReactToPrint from 'react-to-print';
 import { getDownloadURL } from 'firebase/storage';
+import DatePicker, { registerLocale } from 'react-datepicker';
+import es from 'date-fns/locale/es';
 
 import { SUCCEEDED, LOADED, FAILED, LOADING } from '../../redux/statusTypes';
 import Loader from '../common/loader';
@@ -24,6 +26,7 @@ function useQuery() {
 }
 
 const PatientStudies = (props) => {
+  registerLocale('es', es);
   const { patient, status } = useSelector((store) => store.Patient);
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
@@ -83,7 +86,7 @@ const PatientStudies = (props) => {
   const columnsConfigStudy = [
     {
       name: 'Fecha',
-      selector: (row) => new Date(row.createdAt).toLocaleDateString('es'),
+      selector: (row) => new Date(row.date || row.createdAt).toLocaleDateString('es'),
       sortable: true,
       left: true,
     },
@@ -132,6 +135,7 @@ const PatientStudies = (props) => {
 
           const studyExamData = {
             studyType: studyExam.studyType,
+            date: studyExam.date,
             files: addedFiles,
           };
           await patientService
@@ -258,7 +262,7 @@ const PatientStudies = (props) => {
               <ModalHeader toggle={modalToggle}>
                 {!modalEdit
                   ? `Estudio Complementario realizado el día ${new Date(
-                      studyExam?.createdAt
+                    studyExam?.date || studyExam?.createdAt
                     ).toLocaleDateString('es')} | Paciente 
                 ${patient.fullName}`
                   : 'Nuevo Estudio Complementario'}
@@ -270,17 +274,11 @@ const PatientStudies = (props) => {
                     onSubmit={handleSubmit(handleSubmitForm)}
                   >
                     <div className="card-body">
-                      <h6>{'Tipo de Estudio'}</h6>
                       <div className="form-group row">
                         <div className="col-md-4">
                           <div className="row">
-                            <label
-                              className="col-md-12 col-form-label"
-                              htmlFor="drug"
-                            >
-                              {''}
-                            </label>
                             <div className="col-md-12">
+                              <h6>{'Tipo de Estudio'}</h6>
                               <select
                                 className="form-control"
                                 name="studyType"
@@ -308,6 +306,33 @@ const PatientStudies = (props) => {
                               <span style={{ color: 'red' }}>
                                 {errors.studyType && 'Ingrese un valor.'}
                               </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-md-4 offset-md-2">
+                          <div className="row">
+                            <div className="col-md-12">
+                              <h6>{'Fecha de Realización'}</h6>
+                              <div
+                                className="datepicker-here"
+                                data-language="es"
+                                id="date"
+                              >
+                                <DatePicker
+                                  className="form-control digits"
+                                  placeholderText="dd/MM/yyyy"
+                                  selected={studyExam?.date ? new Date(studyExam?.date) : (!modalEdit ? new Date(studyExam.createdAt) : null)}
+                                  locale="es"
+                                  dateFormat="dd/MM/yyyy"
+                                  onChange={(date) =>
+                                    setStudyExam({
+                                      ...studyExam,
+                                      date: date,
+                                    })
+                                  }
+                                  disabled={!modalEdit}
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
