@@ -2,7 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
 import { TabContent, TabPane, Collapse } from 'reactstrap';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import PatientPersonalData from './patientPersonalData';
 import PatientBackground from './patientBackground';
@@ -13,6 +13,7 @@ import PatientFiles from './patientFiles';
 import PatientEvolution from './patientEvolution';
 import PatientNotes from './patientNotes';
 import { SUCCEEDED, LOADED, FAILED } from '../../redux/statusTypes';
+import { SET_RIGHT_SIDEBAR_ENTITY } from '../../redux/right-sidebar/reducer';
 import Loader from '../common/loader';
 
 function useQuery() {
@@ -27,8 +28,10 @@ const PatientHealthRecord = (props) => {
   const { status: visitStatus } = useSelector((store) => store.Visit);
   const { patient, status } = useSelector((store) => store.Patient);
 
+  const dispatch = useDispatch();
+
   const [dataTab, setdataTab] = useState('datos');
-  const [isHealthRecord, setisHealthRecord] = useState(true);
+  const [isHealthRecord, setisHealthRecord] = useState(true);  
 
   useEffect(() => {
     setisHealthRecord(visitStatus !== LOADED);
@@ -36,6 +39,10 @@ const PatientHealthRecord = (props) => {
       // dispatch(patientInitialize());
     };
   }, [visitStatus]);
+
+  function showPatientHRHistory() {
+    dispatch({ type: SET_RIGHT_SIDEBAR_ENTITY, payload: 'healthRecordHistory' })
+  }
 
   return (
     <Fragment>
@@ -50,9 +57,17 @@ const PatientHealthRecord = (props) => {
                   patient.healthRecord?.healthRecordNumber}
                 <a
                   href="#javascript"
-                  className="icofont icofont-maximize ml-2"
+                  className="icofont icofont-maximize text-info ml-2 pl-2 b-l-dark border-2"
                   title="Expandir"
                   onClick={() => props.handleHrExpanded()}
+                >
+                  {''}
+                </a>
+                <a
+                  href="#javascript"
+                  className="icofont icofont-history text-warning ml-2"
+                  title="Ver historial de modificaciones"
+                  onClick={() => showPatientHRHistory()}
                 >
                   {''}
                 </a>

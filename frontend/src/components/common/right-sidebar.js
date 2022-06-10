@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
 import Todo from '../applications/todo-app/todo';
+import PatientHealthRecordHistory from '../patients/patientHealthRecordHistory';
+import { SET_RIGHT_SIDEBAR_ENTITY } from '../../redux/right-sidebar/reducer';
 
 const RightSidebar = () => {
+  const { entity } = useSelector((store) => store.RightSidebar);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (entity) {
+      document.querySelector('.right-sidebar').classList.add('show');
+    } else {
+      document.querySelector('.right-sidebar').classList.remove('show');
+    }
+  }, [entity]);
+
+  const closeSideBar = () => {
+    dispatch({ type: SET_RIGHT_SIDEBAR_ENTITY, payload: '' });
+  };
   return (
     <div>
       <div className="right-sidebar " id="right_side_bar">
@@ -18,13 +36,17 @@ const RightSidebar = () => {
           <span
             className="pull-right mt-2"
             style={{ cursor: 'pointer' }}
-            onClick={() =>
-              document.querySelector('.right-sidebar').classList.remove('show')
-            }
+            onClick={() => closeSideBar()}
           >
             <i className="fa fa-times mr-2 text-muted"></i>
           </span>
-          <Todo />
+          {entity === 'todo' ? (
+            <Todo />
+          ) : entity === 'healthRecordHistory' ? (
+            <PatientHealthRecordHistory />
+          ) : (
+            ''
+          )}
         </div>
         {/* <div className="container p-0">
                         <div className="modal-header p-l-20 p-r-20">

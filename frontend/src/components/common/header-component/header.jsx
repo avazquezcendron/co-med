@@ -1,9 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import logo from '../../../assets/images/logo-secundario.png';
-// import Language from './language';
-import UserMenu from './userMenu';
-import Notification from './notification';
-import SearchHeader from './searchHeader';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   AlignLeft,
@@ -12,11 +8,20 @@ import {
   FileText,
   MoreHorizontal,
 } from 'react-feather';
+
+import logo from '../../../assets/images/logo-secundario.png';
+// import Language from './language';
+import UserMenu from './userMenu';
+import Notification from './notification';
+import SearchHeader from './searchHeader';
 // import {EN} from '../../../constant'
+import { SET_RIGHT_SIDEBAR_ENTITY } from '../../../redux/right-sidebar/reducer';
 
 const Header = () => {
+  
+  const dispatch = useDispatch();
+
   const [sidebar, setSidebar] = useState(false);
-  const [rightSidebar, setRightSidebar] = useState(true);
   const [headerbar, setHeaderbar] = useState(true);
 
   const openCloseSidebar = () => {
@@ -32,13 +37,7 @@ const Header = () => {
   };
 
   function showRightSidebar() {
-    if (rightSidebar) {
-      setRightSidebar(!rightSidebar);
-      document.querySelector('.right-sidebar').classList.add('show');
-    } else {
-      setRightSidebar(!rightSidebar);
-      document.querySelector('.right-sidebar').classList.remove('show');
-    }
+    dispatch({ type: SET_RIGHT_SIDEBAR_ENTITY, payload: 'todo' });
   }
 
   //full screen function

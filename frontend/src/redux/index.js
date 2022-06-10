@@ -14,6 +14,7 @@ import { AppointmentsReducer, AppointmentFormReducer } from './appointments/redu
 import { UserLoginReducer, UsersReducer } from './user/reducer';
 import { PatientsReducer, PatientReducer, VisitsReducer, VisitReducer } from './patients/reducer';
 import { DoctorsReducer, DoctorReducer } from './doctors/reducer';
+import { RightSidebarReducer } from './right-sidebar/reducer';
 
 const reducers = combineReducers({
     TodoApp,
@@ -27,7 +28,8 @@ const reducers = combineReducers({
     Visit: VisitReducer,
     Doctors: DoctorsReducer,
     Doctor: DoctorReducer,
-    Customizer
+    Customizer,
+    RightSidebar: RightSidebarReducer 
     // EmailApp,
     // ChatApp,
     // Product: Ecommerce,

@@ -40,18 +40,18 @@ const AppointmentResumeComponent = (props) => {
               <Fragment>
                 <a
                   href="#javascript"
-                  className="pull-right ml-4"
+                  className="pull-right text-success ml-4"
                   title="Enviar por WhatsApp"
                   style={{ display: displayClassIconPrint }}
                   onClick={() => whatsappService.sendMessage(appointment)}
                 >
-                  <i className="fa fa-whatsapp text-success"></i>
+                  <i className="fa fa-whatsapp"></i>
                 </a>
                 <ReactToPrint
                   trigger={() => (
                     <a
                       href="#javascript"
-                      className="pull-right"
+                      className="pull-right text-info"
                       title="Imprimir turno"
                       style={{ display: displayClassIconPrint }}
                     >

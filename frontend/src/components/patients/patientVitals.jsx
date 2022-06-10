@@ -563,6 +563,7 @@ const PatientVitals = (props) => {
                     <div className="text-center">
                       <a
                         href="#javascript"
+                        className="text-info"
                         onClick={() => setViewMore(!viewMore)}
                       >
                         {viewMore ? '...ver menos' : '...ver más'}
