@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import ReactToPrint from 'react-to-print';
 
 import logo from '../../../assets/images/logo-principal-gris.png';
+import * as whatsappService from '../../../services/whatsapp.service';
 
 const AppointmentResumeComponent = (props) => {
   const appointment = useSelector((store) => store.AppointmentForm);
@@ -36,21 +37,32 @@ const AppointmentResumeComponent = (props) => {
             !appointment.new &&
             !appointment.edit &&
             appointment.appointmentType !== 'bloqueo' && (
-              <ReactToPrint
-                trigger={() => (
-                  <a
-                    href="#javascript"
-                    className="pull-right"
-                    title="Imprimir turno"
-                    style={{ display: displayClassIconPrint }}
-                  >
-                    <i className="fa fa-print"></i>
-                  </a>
-                )}
-                onBeforeGetContent={() => handlePrintClick('', 'none')}
-                onAfterPrint={() => handlePrintClick('none', '')}
-                content={() => componentRef.current}
-              />
+              <Fragment>
+                <a
+                  href="#javascript"
+                  className="pull-right ml-4"
+                  title="Enviar por WhatsApp"
+                  style={{ display: displayClassIconPrint }}
+                  onClick={() => whatsappService.sendMessage(appointment)}
+                >
+                  <i className="fa fa-whatsapp text-success"></i>
+                </a>
+                <ReactToPrint
+                  trigger={() => (
+                    <a
+                      href="#javascript"
+                      className="pull-right"
+                      title="Imprimir turno"
+                      style={{ display: displayClassIconPrint }}
+                    >
+                      <i className="fa fa-print"></i>
+                    </a>
+                  )}
+                  onBeforeGetContent={() => handlePrintClick('', 'none')}
+                  onAfterPrint={() => handlePrintClick('none', '')}
+                  content={() => componentRef.current}
+                />
+              </Fragment>
             )}
         </h4>
         <div className="col col-md-3">
@@ -173,11 +185,17 @@ const AppointmentResumeComponent = (props) => {
             </div>
             <div className="col col-md-9 m-t-20">
               <p>
-                {(appointment.paymentType === 'consulta'
-                  ? 'Consulta - ' + appointment.paymentMethod + ' - $' + appointment.paymentAmount 
+                {appointment.paymentType === 'consulta'
+                  ? 'Consulta - ' +
+                    appointment.paymentMethod +
+                    ' - $' +
+                    appointment.paymentAmount
                   : appointment.paymentType === 'coseguro'
-                  ? 'Coseguro - ' + appointment.paymentMethod + ' - $' + appointment.paymentAmount 
-                  : 'No Paga')}
+                  ? 'Coseguro - ' +
+                    appointment.paymentMethod +
+                    ' - $' +
+                    appointment.paymentAmount
+                  : 'No Paga'}
               </p>
             </div>
             <div className="col"></div>
