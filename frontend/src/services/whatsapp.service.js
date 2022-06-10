@@ -1,9 +1,9 @@
 export const sendMessage = (appointment) => {
   const patient = appointment.patient;
-//   if (patient?.phoneNumber) {
-    const to = '542966536853'// + patient.phoneNumber;
+  if (patient?.phoneNumber) {
+    const to = '54' + patient.phoneNumber;
     const number = to.replace(/[^\w\s]/gi, '').replace(/ /g, '');
-    const message = `Hola ${patient.firstName}, te comunicamos que hemos agendado un turno para el día ${new Date(
+    const message = `${patient.firstName}, tu turno es el día ${new Date(
       appointment.start
     ).toLocaleString('es', {
       weekday: 'long',
@@ -24,5 +24,5 @@ Co-Med | Consultorios Médicos San Julián`;
 
     let windowFeatures = "popup";
     window.open(url, 'Enviar Notificación de Turno', windowFeatures);
-//   }
+  }
 };
