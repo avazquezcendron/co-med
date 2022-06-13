@@ -235,7 +235,7 @@ const PatientCard = (props) => {
                       <span className="f-w-600">Género Percibido</span>
                     </div>
                     <div className="col-md-12 m-b-10">
-                      <p>{patient.gender || '-'}</p>
+                      <p>{patient.gender === 'm' ? 'Masculino' : patient.gender === 'f' ? 'Femenino' : 'No-binario'}</p>
                     </div>
                     <div className="col-md-12">
                       <i className="icofont icofont-social-google-map mr-1"></i>

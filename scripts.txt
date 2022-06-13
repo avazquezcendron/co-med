@@ -1,0 +1,10 @@
+db.patients.updateMany({gender: 'cisgenero'}, [{$set: {gender: "$biologicalSex"}}])
+
+db.patients.updateMany({gender: 'transgenero'}, [
+{ $set: { gender: { $switch: {
+                           branches: [
+                               { case: { $eq: [ "$biologicalSex", 'm' ] }, then: "f" },
+                               { case: { $eq: [ "$biologicalSex", 'f' ] }, then: "m" }
+                           ],
+                           default: "m"
+     }}}} ])

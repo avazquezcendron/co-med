@@ -402,8 +402,8 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                         name="gender"
                         ref={register({ required: true })}
                       >
-                        <option value="cisgenero">{'Cisgénero'}</option>
-                        <option value="transgenero">{'Transgénero'}</option>
+                        <option value="m">{'Masculino'}</option>
+                        <option value="f">{'Femenino'}</option>
                         <option value="no-binario">{'No-binario'}</option>
                       </select>
                       <span style={{ color: 'red' }}>

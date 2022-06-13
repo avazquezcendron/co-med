@@ -407,13 +407,13 @@ const Default = (props) => {
                       data={[
                         ['Género', 'Porcentaje'],
                         [
-                          'Cisgénero',
-                          patients.filter((x) => x.gender === 'cisgenero')
+                          'Masculino',
+                          patients.filter((x) => x.gender === 'm')
                             .length,
                         ],
                         [
-                          'Transgénero',
-                          patients.filter((x) => x.gender === 'transgenero')
+                          'Femenino',
+                          patients.filter((x) => x.gender === 'f')
                             .length,
                         ],
                         [
