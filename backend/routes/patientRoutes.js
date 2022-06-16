@@ -50,4 +50,8 @@ router
   .route('/:id/activate')
   .get(checkUserAuth, asyncHandler(patientController.activate))
 
+router
+  .route('/:id/healthRecordHistory')
+  .get(checkUserAuth, asyncHandler(patientController.getHealthRecordHistory))
+
 export default router

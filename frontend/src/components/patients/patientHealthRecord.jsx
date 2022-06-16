@@ -31,7 +31,7 @@ const PatientHealthRecord = (props) => {
   const dispatch = useDispatch();
 
   const [dataTab, setdataTab] = useState('datos');
-  const [isHealthRecord, setisHealthRecord] = useState(true);  
+  const [isHealthRecord, setisHealthRecord] = useState(true);
 
   useEffect(() => {
     setisHealthRecord(visitStatus !== LOADED);
@@ -41,7 +41,10 @@ const PatientHealthRecord = (props) => {
   }, [visitStatus]);
 
   function showPatientHRHistory() {
-    dispatch({ type: SET_RIGHT_SIDEBAR_ENTITY, payload: 'healthRecordHistory' })
+    dispatch({
+      type: SET_RIGHT_SIDEBAR_ENTITY,
+      payload: 'healthRecordHistory',
+    });
   }
 
   return (
@@ -63,14 +66,16 @@ const PatientHealthRecord = (props) => {
                 >
                   {''}
                 </a>
-                <a
-                  href="#javascript"
-                  className="icofont icofont-history text-warning ml-2"
-                  title="Ver historial de modificaciones"
-                  onClick={() => showPatientHRHistory()}
-                >
-                  {''}
-                </a>
+                {loggedUser.user.isAdmin && (
+                  <a
+                    href="#javascript"
+                    className="icofont icofont-history text-warning ml-2"
+                    title="Ver historial de modificaciones"
+                    onClick={() => showPatientHRHistory()}
+                  >
+                    {''}
+                  </a>
+                )}
               </h4>
             </div>
             <div className="col-md-3">

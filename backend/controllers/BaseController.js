@@ -10,6 +10,7 @@ class BaseController {
     }
     this._model = model;
     this.getAll = this.getAll.bind(this);
+    this.getAllPaginated = this.getAllPaginated.bind(this);
     this.getById = this.getById.bind(this);
     this.create = this.create.bind(this);
     this.update = this.update.bind(this);
@@ -31,12 +32,43 @@ class BaseController {
   async getAll(req, res, next) {
     const status = req.query.status;
     if (status) {
-      const models = await this._model.find({status: status});
+      const models = await this._model.find({ status: status });
       res.status(200).json(models);
     } else {
       const models = await this._model.find({});
       res.status(200).json(models);
-    }    
+    }
+  }
+
+  /**
+   * @desc   Get All <model> with pagination
+   * @route  GET /api/<model>
+   * @access Private
+   *
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {function} next The callback to the next program handler
+   * @return {Object} res The response object
+   */
+  async getAllPaginated(req, res, next) {
+    const { page = 1, limit = 10 } = req.query;
+    const count = await this._model.countDocuments();
+    const totalPages = Math.ceil(count / limit);
+    if (page <= totalPages) {
+      const models = await this._model
+        .find({})
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+      res
+        .status(200)
+        .json({
+          models,
+          totalPages: totalPages,
+          currentPage: page,
+        });
+    } else {
+      res.status(200).json("No se encontraron registros.");
+    }
   }
 
   /**
@@ -73,7 +105,7 @@ class BaseController {
     const savedModel = await createModel.save();
     req.params = {
       ...req.params,
-      id: savedModel._id
+      id: savedModel._id,
     };
     return this.getById(req, res, next);
   }
@@ -92,7 +124,11 @@ class BaseController {
     let model = await this._model.findById(req.params.id);
     if (model) {
       if (model.__v !== req.body.__v) {
-        return res.status(409).json('El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.');
+        return res
+          .status(409)
+          .json(
+            'El Registro ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
+          );
       }
 
       for (const [key, value] of Object.entries(req.body)) {
@@ -104,7 +140,7 @@ class BaseController {
       return res.status(404).json('Registro no encontrado.');
     }
   }
-  
+
   /**
    * @desc   Delete <model>
    * @route  DELETE /api/<model>/:id
@@ -134,15 +170,15 @@ class BaseController {
     let model = await this._model.findById(req.params.id);
 
     if (model) {
-        model.status = 'inactive';
+      model.status = 'inactive';
       const updatedModel = await model.save();
       return res.status(200).json(updatedModel);
     } else {
       return res.status(404).json('Registro no encontrado.');
     }
   }
-    
-    /**
+
+  /**
    * @desc   Activate <model>
    * @route  GET /api/<model>/:id/activate
    * @access Private
@@ -156,15 +192,13 @@ class BaseController {
     let model = await this._model.findById(req.params.id);
 
     if (model) {
-        model.status = 'active';
+      model.status = 'active';
       const updatedModel = await model.save();
       return res.status(200).json(updatedModel);
     } else {
       return res.status(404).json('Registro no encontrado.');
     }
   }
-
-  
 }
 
 export default BaseController;

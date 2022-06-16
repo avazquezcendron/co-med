@@ -341,3 +341,16 @@ export const saveStudy = async (patient, studyExamData, loggedUser) => {
   });
   return data;
 };
+
+export const getHealthRecordHistory = async ({ patientId, page, limit, filter }, loggedUser) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { data } = await axios.get(
+    `${process.env.PUBLIC_URL}/api/patient/${patientId}/healthRecordHistory?page=${page}&limit=${limit}&filter=${filter}`,
+    config
+  );
+  return data;
+};

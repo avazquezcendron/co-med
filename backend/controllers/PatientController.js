@@ -6,6 +6,8 @@ import Visit from '../models/visitModel.js';
 import StudyExam from '../models/studyExamModel.js';
 import LaboratoryExam from '../models/laboratoryExamModel.js';
 import Doctor from '../models/doctorModel.js';
+import HealthRecordHistory from '../models/healthRecordHistoryModel.js';
+import DiffPatcher from 'jsondiffpatch';
 
 class PatientController extends BaseController {
   constructor() {
@@ -23,6 +25,8 @@ class PatientController extends BaseController {
     this.createLaboratoryExam = this.createLaboratoryExam.bind(this);
     this.getStudyExams = this.getStudyExams.bind(this);
     this.createStudyExam = this.createStudyExam.bind(this);
+    this.getHealthRecordHistory = this.getHealthRecordHistory.bind(this);
+    this._generateHRHistory = this._generateHRHistory.bind(this);
   }
 
   /**
@@ -69,7 +73,7 @@ class PatientController extends BaseController {
 
     const patients = await this._model
       .find(finalFilter)
-      .collation({locale: "es" })
+      .collation({ locale: 'es' })
       .sort({ firstName: 'asc' })
       .populate({
         path: 'tags',
@@ -222,7 +226,10 @@ class PatientController extends BaseController {
             'El Paciente ha sido modificado en otra transacción. Debe recargar la página para ver los cambios.'
           );
       }
-      const healthRecord = await HealthRecord.findById(req.body.id);
+      const healthRecord = await HealthRecord.findById(req.body.id).populate({
+        path: 'drugsInfo.drugs',
+      });
+
       if (healthRecord.__v !== req.body.__v) {
         return res
           .status(409)
@@ -230,10 +237,54 @@ class PatientController extends BaseController {
             'La Historia Clínica del Paciente ha sido modificada en otra transacción. Debe recargar la página para ver los cambios.'
           );
       }
+
+      const hrOld = JSON.parse(
+        JSON.stringify({
+          pathologicalBackground: healthRecord.pathologicalBackground,
+          noPathologicalBackground: healthRecord.noPathologicalBackground,
+          allergiesInfo: healthRecord.allergiesInfo,
+          drugsInfo: healthRecord.drugsInfo,
+          files: healthRecord.files,
+          hereditaryBackground: healthRecord.hereditaryBackground,
+          notes: healthRecord.notes,
+          nutritionalBackgroud: healthRecord.nutritionalBackgroud,
+          psychiatricBackgroud: healthRecord.psychiatricBackgroud,
+          vitalsAndMetrics: healthRecord.vitalsAndMetrics,
+        })
+      );
+
       for (const [key, value] of Object.entries(req.body)) {
         healthRecord[key] = value;
       }
+
       await healthRecord.save();
+
+      const hrSaved = await HealthRecord.findById(req.body.id).populate({
+        path: 'drugsInfo.drugs',
+      });
+
+      const hrNew = JSON.parse(
+        JSON.stringify({
+          pathologicalBackground: hrSaved.pathologicalBackground,
+          noPathologicalBackground: hrSaved.noPathologicalBackground,
+          allergiesInfo: hrSaved.allergiesInfo,
+          drugsInfo: hrSaved.drugsInfo,
+          files: hrSaved.files,
+          hereditaryBackground: hrSaved.hereditaryBackground,
+          notes: hrSaved.notes,
+          nutritionalBackgroud: hrSaved.nutritionalBackgroud,
+          psychiatricBackgroud: hrSaved.psychiatricBackgroud,
+          vitalsAndMetrics: hrSaved.vitalsAndMetrics,
+        })
+      );
+
+      await this._generateHRHistory(
+        healthRecord,
+        req.user.username,
+        hrOld,
+        hrNew
+      );
+
       return this.getById(req, res, next);
     } else {
       return res.status(404).json('Paciente inexistente.');
@@ -421,15 +472,44 @@ class PatientController extends BaseController {
   async createLaboratoryExam(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      // const healthRecord = await HealthRecord.findById(
-      //   patient.healthRecord._id
-      // );
-      const laboratoryExam = new LaboratoryExam(req.body);
-      laboratoryExam.healthRecord = patient.healthRecord._id;
-      await laboratoryExam.save();
-      // healthRecord.laboratoryExams.push(laboratoryExam);
-      // await healthRecord.save();
-      return this.getById(req, res, next);
+      try {
+        const laboratoryExam = new LaboratoryExam(req.body);
+        laboratoryExam.healthRecord = patient.healthRecord._id;
+        await laboratoryExam.save();
+
+        const hrHistory = new HealthRecordHistory({
+          healthRecord: patient.healthRecord,
+          username: req.user.username,
+          diff: {
+            old: { laboratoryExams: { value: 'N/D' } },
+            new: {
+              laboratoryExams: {
+                value: `Se agregó un nuevo examen de laboratorio.
+                - Laboratorios: ${req.body.laboratories
+                  .map(
+                    (x) =>
+                      `Variable: ${x.laboratoryType.description} -> Valor: ${x.value}`
+                  )
+                  .join('; ')}.
+                - Fecha de Realización: ${
+                  req.body.date
+                    ? new Date(req.body.date).toLocaleDateString('es')
+                    : new Date().toLocaleDateString('es')
+                }.
+                - Archivos subidos: ${laboratoryExam.files.length}`,
+              },
+            },
+            diff: {
+              laboratoryExams: 'Se agregó un nuevo examen de laboratorio.',
+            },
+          },
+        });
+        await hrHistory.save();
+
+        return this.getById(req, res, next);
+      } catch (error) {
+        console.error(`Error: ${error.message}`.red.underline.bold);
+      }
     } else {
       return res.status(404).json('Paciente inexistente.');
     }
@@ -471,10 +551,72 @@ class PatientController extends BaseController {
   async createStudyExam(req, res, next) {
     const patient = await this._model.findById(req.params.id);
     if (patient) {
-      const studyExam = new StudyExam(req.body);
-      studyExam.healthRecord = patient.healthRecord._id;
-      await studyExam.save();
-      return this.getById(req, res, next);
+      try {
+        const studyExam = new StudyExam(req.body);
+        studyExam.healthRecord = patient.healthRecord._id;
+        await studyExam.save();
+
+        const hrHistory = new HealthRecordHistory({
+          healthRecord: patient.healthRecord,
+          username: req.user.username,
+          diff: {
+            old: { studyExams: { value: 'N/D' } },
+            new: {
+              studyExams: {
+                value: `Se agregó un nuevo estudio complementario. 
+                - Tipo de Estudio: ${req.body.studyType.description}.
+                - Fecha de Realización: ${
+                  req.body.date
+                    ? new Date(req.body.date).toLocaleDateString('es')
+                    : new Date().toLocaleDateString('es')
+                }.
+                - Archivos subidos: ${studyExam.files.length}`,
+              },
+            },
+            diff: { studyExams: 'Se agregó un nuevo estudio complementario.' },
+          },
+        });
+        await hrHistory.save();
+        return this.getById(req, res, next);
+      } catch (error) {
+        console.error(`Error: ${error.message}`.red.underline.bold);
+      }
+    } else {
+      return res.status(404).json('Paciente inexistente.');
+    }
+  }
+
+  async getHealthRecordHistory(req, res, next) {
+    const patient = await this._model.findById(req.params.id);
+    if (patient) {
+      const { page = 1, limit = 10, filter = '' } = req.query;
+      const filterBy = {
+        healthRecord: patient.healthRecord._id,
+      };
+      if (filter) {
+        const rgx = (pattern) => new RegExp(`.*${pattern}.*`, 'i');
+        const searchRgx = rgx(filter);
+        filterBy.username = { $regex: searchRgx };
+      }
+      const count = await HealthRecordHistory.countDocuments(filterBy);
+      const totalPages = Math.ceil(count / limit);      
+      if (page <= totalPages) {
+        const models = await HealthRecordHistory.find(filterBy)
+          .limit(limit * 1)
+          .skip((page - 1) * limit)
+          .sort({ createdAt: 'desc' });
+        res.status(200).json({
+          hrHistoryList: models,
+          totalPages: totalPages,
+          currentPage: page,
+        });
+      } else {
+        res.status(200).json({
+          hrHistoryList: [],
+          totalPages: totalPages,
+          currentPage: page,
+        });
+      }
     } else {
       return res.status(404).json('Paciente inexistente.');
     }
@@ -503,6 +645,91 @@ class PatientController extends BaseController {
       // }
     }
     return patient;
+  }
+
+  async _generateHRHistory(healthRecord, username, hrOld, hrNew) {
+    try {
+      const jsonDiff = DiffPatcher.create({});
+      const diff = jsonDiff.diff(hrOld, hrNew);
+      if (diff) {
+        let diffOld = {};
+        let diffNew = {};
+        for (const [key, value] of Object.entries(diff)) {
+          if (key === 'files') {
+            diffOld[key] = {
+              value:
+                hrOld.files?.length > 0
+                  ? hrOld.files.map((x) => x.name).join(', ')
+                  : 'N/D',
+            };
+            diffNew[key] = {
+              value:
+                hrNew.files?.length > 0
+                  ? hrNew.files.map((x) => x.name).join(', ')
+                  : 'N/D',
+            };
+          } else if (key === 'vitalsAndMetrics') {
+            diffOld[key] =
+              hrOld.vitalsAndMetrics?.length > 0
+                ? hrOld.vitalsAndMetrics[hrOld.vitalsAndMetrics.length - 1]
+                : { value: 'N/D' };
+            diffNew[key] =
+              hrNew.vitalsAndMetrics?.length > 0
+                ? hrNew.vitalsAndMetrics[hrNew.vitalsAndMetrics.length - 1]
+                : { value: 'N/D' };
+            if (diffOld[key]._id) {
+              delete diffOld[key]._id;
+            }
+            if (diffOld[key].date) {
+              delete diffOld[key].date;
+            }
+
+            if (diffNew[key]._id) {
+              delete diffNew[key]._id;
+            }
+            if (diffNew[key].date) {
+              delete diffNew[key].date;
+            }
+          } else if (typeof value === 'object' && !Array.isArray(value)) {
+            if (key === 'drugsInfo') {
+              diffOld[key] = {
+                drugs: hrOld.drugsInfo.drugs
+                  .map((x) => x.description)
+                  .join(', '),
+                extraComments: hrOld.drugsInfo.extraComments,
+              };
+              diffNew[key] = {
+                drugs: hrNew.drugsInfo.drugs
+                  .map((x) => x.description)
+                  .join(', '),
+                extraComments: hrNew.drugsInfo.extraComments,
+              };
+            } else {
+              for (const [key2, value2] of Object.entries(value)) {
+                diffOld[key] = { ...diffOld[key], [key2]: hrOld[key][key2] };
+                diffNew[key] = { ...diffNew[key], [key2]: hrNew[key][key2] };
+              }
+            }
+          } else {
+            diffOld[key] = { value: hrOld[key] };
+            diffNew[key] = { value: hrNew[key] };
+          }
+        }
+
+        const hrHistory = new HealthRecordHistory({
+          healthRecord: healthRecord,
+          username: username,
+          diff: {
+            old: diffOld,
+            new: diffNew,
+            diff: diff,
+          },
+        });
+        await hrHistory.save();
+      }
+    } catch (error) {
+      console.error(`Error: ${error.message}`.red.underline.bold);
+    }
   }
 }
 

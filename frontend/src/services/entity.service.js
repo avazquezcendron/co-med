@@ -11,6 +11,17 @@ export const getAll = async (entity, loggedUser, status = '') => {
   return data;
 };
 
+export const getAllPaginated = async (entity, loggedUser, paginationData) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${loggedUser?.token}`,
+    },
+  };
+  const { page, limit } = paginationData;
+  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}/getAllPaginated?page=${page}&limit=${limit}`, config);
+  return data;
+};
+
 export const getById = async (entity, id, loggedUser) => {
   try {
     const config = {

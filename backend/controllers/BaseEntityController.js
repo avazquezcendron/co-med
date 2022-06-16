@@ -6,6 +6,7 @@ import Tag from '../models/tagModel.js';
 import LaboratoryType from '../models/laboratoryTypeModel.js';
 import ClinicData from '../models/clinicDataModel.js';
 import EmailSettigs from '../models/emailSettingsModel.js';
+import HealthRecordHistory from '../models/healthRecordHistoryModel.js';
 
 class BaseEntityController extends BaseController {
   constructor() {
@@ -18,8 +19,8 @@ class BaseEntityController extends BaseController {
     this._modelsDic.set('laboratoryType', LaboratoryType);
     this._modelsDic.set('clinicData', ClinicData);
     this._modelsDic.set('emailSettigs', EmailSettigs);
+    this._modelsDic.set('healthRecordHistory', HealthRecordHistory);
   }
-
 
   /**
    * @desc   Get All <model>
@@ -34,10 +35,29 @@ class BaseEntityController extends BaseController {
   async getAll(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.getAll(req, res, next);  
+      return super.getAll(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
-    }    
+      return res.status(404).json('Invalid route.');
+    }
+  }
+
+  /**
+   * @desc   Get All <model> with pagination
+   * @route  GET /api/<model>
+   * @access Private
+   *
+   * @param {Object} req The request object
+   * @param {Object} res The response object
+   * @param {function} next The callback to the next program handler
+   * @return {Object} res The response object
+   */
+  async getAllPaginated(req, res, next) {
+    if (this._modelsDic.has(req.params.entity)) {
+      super._model = this._modelsDic.get(req.params.entity);
+      return super.getAllPaginated(req, res, next);
+    } else {
+      return res.status(404).json('Invalid route.');
+    }
   }
 
   /**
@@ -50,13 +70,13 @@ class BaseEntityController extends BaseController {
    * @param {function} next The callback to the next program handler
    * @return {Object} res The response object
    */
-   async getById(req, res, next) {
+  async getById(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.getById(req, res, next);  
+      return super.getById(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
-    }    
+      return res.status(404).json('Invalid route.');
+    }
   }
 
   /**
@@ -72,10 +92,10 @@ class BaseEntityController extends BaseController {
   async create(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.create(req, res, next);  
+      return super.create(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
-    } 
+      return res.status(404).json('Invalid route.');
+    }
   }
 
   /**
@@ -91,10 +111,10 @@ class BaseEntityController extends BaseController {
   async update(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.update(req, res, next);  
+      return super.update(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
-    } 
+      return res.status(404).json('Invalid route.');
+    }
   }
 
   /**
@@ -110,13 +130,13 @@ class BaseEntityController extends BaseController {
   async inactivate(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.inactivate(req, res, next);  
+      return super.inactivate(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
+      return res.status(404).json('Invalid route.');
     }
   }
-    
-    /**
+
+  /**
    * @desc   Activate <model>
    * @route  GET /api/<model>/:id/activate
    * @access Private
@@ -129,18 +149,18 @@ class BaseEntityController extends BaseController {
   async activate(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.activate(req, res, next);  
+      return super.activate(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
+      return res.status(404).json('Invalid route.');
     }
   }
 
   async delete(req, res, next) {
     if (this._modelsDic.has(req.params.entity)) {
       super._model = this._modelsDic.get(req.params.entity);
-      return super.delete(req, res, next);  
+      return super.delete(req, res, next);
     } else {
-      return res.status(404).json("Invalid route.");
+      return res.status(404).json('Invalid route.');
     }
   }
 }

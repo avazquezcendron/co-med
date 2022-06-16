@@ -101,7 +101,7 @@ const PatientFiles = (props) => {
 
     var desertRef = firebase_app
     .storage()
-    .ref(`${patient.fullName}/archivos/${file.name}`);
+    .ref(`pacientes/${patient.fullName}/archivos/${file.name}`);
 
     desertRef
       .delete()
