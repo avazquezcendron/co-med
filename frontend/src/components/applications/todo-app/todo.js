@@ -53,7 +53,7 @@ const Todo = (props) => {
 
     getAllUsers(loggedUser).then((res) => setUsers(res.data));
 
-    return () => off(notasRef);
+    // return () => off(notasRef);
   }, []);
 
   const addNewTask = () => {

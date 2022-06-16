@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -8,6 +8,7 @@ import {
   FileText,
   MoreHorizontal,
 } from 'react-feather';
+import { getDatabase, ref, onValue } from 'firebase/database';
 
 import logo from '../../../assets/images/logo-secundario.png';
 // import Language from './language';
@@ -16,13 +17,33 @@ import Notification from './notification';
 import SearchHeader from './searchHeader';
 // import {EN} from '../../../constant'
 import { SET_RIGHT_SIDEBAR_ENTITY } from '../../../redux/right-sidebar/reducer';
+import { firebase_app } from '../../../data/config';
 
 const Header = () => {
-  
+  const { loggedUser } = useSelector((store) => store.UserLogin);
+
   const dispatch = useDispatch();
 
   const [sidebar, setSidebar] = useState(false);
   const [headerbar, setHeaderbar] = useState(true);
+  const [incompletedNotesCount, setIncompletedNotesCount] = useState(0);
+
+  useEffect(() => {
+    if (loggedUser.user?.id) {
+      const database = getDatabase(firebase_app);
+      const notasRef = ref(database, `notas/${loggedUser.user.username}`);
+      onValue(notasRef, (snapshot) => {
+        let incompletedNotesCount = 0;
+        snapshot.forEach((childSnapshot) => {
+          const childData = childSnapshot.val();
+          if (!childData.completed) {
+            incompletedNotesCount++;
+          }
+        });
+        setIncompletedNotesCount(incompletedNotesCount);
+      });
+    }
+  }, []);
 
   const openCloseSidebar = () => {
     if (sidebar) {
@@ -92,7 +113,12 @@ const Header = () => {
                 <SearchHeader />
               </li>
               <li>
-                <a onClick={goFull} className="text-dark" href="#!" title="Ver en pantalla completa">
+                <a
+                  onClick={goFull}
+                  className="text-dark"
+                  href="#!"
+                  title="Ver en pantalla completa"
+                >
                   <Maximize />
                 </a>
               </li>
@@ -103,9 +129,25 @@ const Header = () => {
               </li> */}
               <li className="onhover-dropdown">
                 <a href="#javascript" onClick={showRightSidebar} title="Notas">
-                  <FileText />
+                  <FileText />                  
                 </a>
-              </li>
+                {incompletedNotesCount > 0 && (
+                  <span
+                      className="p-0 badge-pill badge-danger text-center"
+                      style={{
+                        position: 'absolute',
+                        right: 10,
+                        bottom: 20,
+                        width: 12,
+                        height: 12,
+                        fontSize: 'x-small',
+                      }}
+                    >
+                      {incompletedNotesCount}
+                    </span>
+                  )}
+                  {incompletedNotesCount > 0 && <span className="dot bg-danger"></span>}
+              </li>                
               <li className="onhover-dropdown">
                 <Bell />
                 <Notification />
