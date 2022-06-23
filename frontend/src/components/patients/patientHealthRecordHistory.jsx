@@ -188,6 +188,9 @@ const PatientHealthRecordHistory = (props) => {
               <p className="ml-4 mb-0 text-muted">
                 Paciente dado de alta en Co-Med
               </p>
+              {/* <p className="ml-4 mb-0 text-muted">
+                Realizada por: <em>taypity</em>
+              </p> */}
             </div>
           </div>
           <hr />

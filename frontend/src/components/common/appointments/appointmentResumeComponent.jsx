@@ -1,6 +1,7 @@
 import React, { Fragment, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import ReactToPrint from 'react-to-print';
+import { Link } from 'react-router-dom';
 
 import logo from '../../../assets/images/logo-principal-gris.png';
 import * as whatsappService from '../../../services/whatsapp.service';
@@ -135,7 +136,19 @@ const AppointmentResumeComponent = (props) => {
               <span className="f-w-600">Paciente</span>
             </div>
             <div className="col col-md-9 m-t-20">
-              <p>{appointment.patient ? appointment.patient.fullName : ''}</p>
+              <p>
+                {appointment.patient ? (
+                  <Link
+                    className="txt-info"
+                    title="Ver perfil del paciente"
+                    to={`${process.env.PUBLIC_URL}/patient/${appointment.patient.id}?mode=browse`}
+                  >
+                    {appointment.patient.fullName}
+                  </Link>
+                ) : (
+                  ''
+                )}
+              </p>
             </div>
             <div className="col"></div>
             <div className="col"></div>
