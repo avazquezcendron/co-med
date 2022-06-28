@@ -86,7 +86,8 @@ const PatientStudies = (props) => {
   const columnsConfigStudy = [
     {
       name: 'Fecha',
-      selector: (row) => new Date(row.date || row.createdAt).toLocaleDateString('es'),
+      selector: (row) =>
+        new Date(row.date || row.createdAt).toLocaleDateString('es'),
       sortable: true,
       left: true,
     },
@@ -105,7 +106,7 @@ const PatientStudies = (props) => {
   ];
 
   const handleSubmitForm = (data) => {
-    if (files.length === 0) {
+    if (files.length === 0 && !studyExam.link) {
       setError('studies', {});
     } else {
       clearErrors('studies');
@@ -136,6 +137,7 @@ const PatientStudies = (props) => {
           const studyExamData = {
             studyType: studyExam.studyType,
             date: studyExam.date,
+            link: studyExam.link,
             files: addedFiles,
           };
           await patientService
@@ -262,7 +264,7 @@ const PatientStudies = (props) => {
               <ModalHeader toggle={modalToggle}>
                 {!modalEdit
                   ? `Estudio Complementario realizado el día ${new Date(
-                    studyExam?.date || studyExam?.createdAt
+                      studyExam?.date || studyExam?.createdAt
                     ).toLocaleDateString('es')} | Paciente 
                 ${patient.fullName}`
                   : 'Nuevo Estudio Complementario'}
@@ -321,7 +323,13 @@ const PatientStudies = (props) => {
                                 <DatePicker
                                   className="form-control digits"
                                   placeholderText="dd/MM/yyyy"
-                                  selected={studyExam?.date ? new Date(studyExam?.date) : (!modalEdit ? new Date(studyExam.createdAt) : null)}
+                                  selected={
+                                    studyExam?.date
+                                      ? new Date(studyExam?.date)
+                                      : !modalEdit
+                                      ? new Date(studyExam.createdAt)
+                                      : null
+                                  }
                                   locale="es"
                                   dateFormat="dd/MM/yyyy"
                                   onChange={(date) =>
@@ -333,6 +341,35 @@ const PatientStudies = (props) => {
                                   disabled={!modalEdit}
                                 />
                               </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <div className="col-md-6">
+                          <div className="row">
+                            <div className="col-md-12">
+                              <h6 className="mb-0">{'Link'}</h6>
+                              <small>
+                                * para visualización del estudio en sistema
+                                externo.
+                              </small>
+                              {studyExam?.link && <a href={studyExam?.link} target="_blank" rel="noreferrer" className="text-info ml-2 f-18" title="Ver estudio"><i className="fa fa-eye"></i></a>}
+                              <input
+                                className="form-control"
+                                id="studyLink"
+                                type="url"
+                                name="link"
+                                disabled={!modalEdit}
+                                value={studyExam?.link}
+                                onChange={(e) =>
+                                  setStudyExam({
+                                    ...studyExam,
+                                    link: e.target.value,
+                                  })
+                                }
+                                ref={register({ required: false })}
+                              />                              
                             </div>
                           </div>
                         </div>

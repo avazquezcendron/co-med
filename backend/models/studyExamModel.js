@@ -6,6 +6,7 @@ const studyExamSchema = mongoose.Schema(
   {
     files: [fileSchema],
     date: { type: Date },
+    link: String,
     studyType: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
