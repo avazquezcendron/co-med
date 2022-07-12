@@ -508,7 +508,7 @@ const PatientStudies = (props) => {
               centered
             >
               <ModalHeader toggle={modalPreviewFileToggle}>
-                Examen de Laboratorio "{filePreview.name}" | Paciente{' '}
+                Estudio Complementario "{filePreview.name}" | Paciente{' '}
                 {patient.fullName}
               </ModalHeader>
               <ModalBody>

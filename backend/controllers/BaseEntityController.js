@@ -7,6 +7,8 @@ import LaboratoryType from '../models/laboratoryTypeModel.js';
 import ClinicData from '../models/clinicDataModel.js';
 import EmailSettigs from '../models/emailSettingsModel.js';
 import HealthRecordHistory from '../models/healthRecordHistoryModel.js';
+import Nurse from '../models/nurseModel.js';
+import Service from '../models/serviceModel.js';
 
 class BaseEntityController extends BaseController {
   constructor() {
@@ -20,6 +22,8 @@ class BaseEntityController extends BaseController {
     this._modelsDic.set('clinicData', ClinicData);
     this._modelsDic.set('emailSettigs', EmailSettigs);
     this._modelsDic.set('healthRecordHistory', HealthRecordHistory);
+    this._modelsDic.set('nurse', Nurse);
+    this._modelsDic.set('service', Service);
   }
 
   /**

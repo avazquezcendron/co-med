@@ -39,6 +39,11 @@ import DoctorProfile from './components/doctors/doctorProfile';
 import PatientList from './components/patients/patientList';
 import PatientProfile from './components/patients/patientProfile';
 
+// Nursing
+import NurseList from './components/nursing/nurseList';
+import NurseProfile from './components/nursing/nurseProfile';
+import NursingService from './components/nursing/nursingService';
+
 // Agenda
 import Appointments from './components/agenda/appointments';
 
@@ -48,6 +53,7 @@ import LaboratoryTypeList from './components/catalogues/laboratoryTypeList';
 import StudyTypeList from './components/catalogues/studyTypeList';
 import TagList from './components/catalogues/tagList';
 import HealthInsuranceList from './components/catalogues/healthInsuranceList';
+import ServiceList from './components/catalogues/serviceList';
 
 import PrescriptionList from './components/prescriptions/prescriptionList';
 
@@ -138,11 +144,16 @@ const Root = () => {
                                             <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
                                             <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />
 
+                                            <Route exact path={`${process.env.PUBLIC_URL}/nursing/nurse`} component={NurseList} />
+                                            <Route path={`${process.env.PUBLIC_URL}/nursing/nurse/:id`} component={NurseProfile} />
+                                            <Route path={`${process.env.PUBLIC_URL}/nursing/service`} component={NursingService} />
+
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/drug`} component={DrugList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/laboratoryType`} component={LaboratoryTypeList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/tag`} component={TagList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/healthInsurance`} component={HealthInsuranceList} />
+                                            <Route exact path={`${process.env.PUBLIC_URL}/catalogues/service`} component={ServiceList} />
                                             
                                             <Route exact path={`${process.env.PUBLIC_URL}/prescription`} component={PrescriptionList} />
 

@@ -2,7 +2,7 @@ import {
     Home,
     Clipboard,
     Users,
-    Settings,FileText, Calendar, Briefcase
+    Settings,FileText, Calendar, Briefcase, Feather
 } from 'react-feather';
 
 export const MENUITEMS = [
@@ -14,6 +14,12 @@ export const MENUITEMS = [
     },
     {
         title: 'Doctores', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor', onlyAdminAndRecep: true
+    },
+    {
+        title: 'Enfermería', icon: Feather, type: 'sub', active: false, bookmark: false, onlyAdminAndRecep: true, children: [
+            { path: '/nursing/nurse', type: 'link', title: 'Enfermeras' },
+            { path: '/nursing/service', type: 'link', title: 'Servicios' },
+        ]
     },
     {
         title: 'Turnos', path: '/agenda/appointments', icon: Calendar, type: 'link', active: false, bookmark: true
@@ -33,6 +39,7 @@ export const MENUITEMS = [
             { path: '/catalogues/healthInsurance', type: 'link', title: 'Obras Sociales' },
             { path: '/catalogues/studyType', type: 'link', title: 'Estudios compl.' },
             { path: '/catalogues/laboratoryType', type: 'link', title: 'Laboratorios (variables)' },
+            { path: '/catalogues/service', type: 'link', title: 'Servicios' },
             { path: '/catalogues/tag', type: 'link', title: 'Tags' },
         ]
     },

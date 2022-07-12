@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { UserPlus, Calendar, Clipboard, PlusCircle } from 'react-feather';
+import React, { useState, useEffect, Fragment } from 'react';
+import {
+  UserPlus,
+  Calendar,
+  Clipboard,
+  PlusCircle,
+  Feather,
+} from 'react-feather';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 
 import { MENUITEMS } from '../../components/common/sidebar-component/menu';
-import { patientInitialize, patientInitializeVisitForm, patientGetByIdWatcher } from '../../redux/patients/actions';
+import {
+  patientInitialize,
+  patientInitializeVisitForm,
+  patientGetByIdWatcher,
+} from '../../redux/patients/actions';
 import AppointmentModalComponent from './appointments/appointmentModalComponent';
 import SelectPatientModalComponent from './selectPatientModalComponent';
 import NewPrescriptionModalComponent from './newPrescriptionModal';
+import NewNursingServiceModal from '../nursing/newNursingServiceModal';
 import { setDataAppointmentForm } from '../../redux/appointments/actions';
 import * as prescriptionService from '../../services/prescription.service';
 
@@ -27,6 +38,15 @@ const Bookmark = () => {
   const [prescriptionModal, setprescriptionModal] = useState(false);
   const prescriptionModalToggle = () => {
     setprescriptionModal(!prescriptionModal);
+  };
+
+  const [currentService, setCurrentService] = useState({});
+  const [nursingServiceModal, setNursingServiceModal] = useState(false);
+  const nursingServiceModalToggle = (clearEntity, reloadData) => {
+    setNursingServiceModal(!nursingServiceModal);
+    if (clearEntity) {
+      setCurrentService({});
+    }
   };
 
   const [isNewVisit, setIsNewVisit] = useState(false);
@@ -198,7 +218,7 @@ const Bookmark = () => {
   };
 
   const startVisit = (patient) => {
-     const visitData = {
+    const visitData = {
       doctor: loggedUser.user.doctor,
       createdAt: new Date(),
       healthRecord: patient.healthRecord,
@@ -207,15 +227,13 @@ const Bookmark = () => {
       prescriptions: [],
     };
     dispatch(patientInitializeVisitForm(visitData));
-    history.push(
-      `${process.env.PUBLIC_URL}/patient/${patient.id}?mode=edit`
-    );
-  }
+    history.push(`${process.env.PUBLIC_URL}/patient/${patient.id}?mode=edit`);
+  };
 
   const newPrescription = (patient) => {
     dispatch(patientGetByIdWatcher(patient.id));
     prescriptionModalToggle();
-  }
+  };
 
   const handleSavePrescription = (prescription) => {
     if (prescription) {
@@ -228,6 +246,10 @@ const Bookmark = () => {
   const handleNewPrescriptionClick = () => {
     setIsNewPrescription(true);
     selectPatientModalToggle();
+  };
+
+  const handleNewNursingServiceClick = () => {
+    nursingServiceModalToggle();
   };
 
   const handleNewVisitClick = () => {
@@ -248,25 +270,45 @@ const Bookmark = () => {
           modalToggle={selectPatientModalToggle}
         />
         {prescriptionModal && (
-            <NewPrescriptionModalComponent
-              prescriptionModal={prescriptionModal}
-              prescriptionModalToggle={prescriptionModalToggle}
-              handleSavePrescription={handleSavePrescription}
-            />
-          )}
+          <NewPrescriptionModalComponent
+            prescriptionModal={prescriptionModal}
+            prescriptionModalToggle={prescriptionModalToggle}
+            handleSavePrescription={handleSavePrescription}
+          />
+        )}
+        {nursingServiceModal && (
+          <NewNursingServiceModal
+            modal={nursingServiceModal}
+            modalToggle={nursingServiceModalToggle}
+            currentService={currentService}
+            setCurrentService={setCurrentService}
+          />
+        )}
         <div className="bookmark pull-right">
           <ul>
             {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
-              <li>
-                <Link
-                  to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
-                  className="realname"
-                  onClick={handleNewPatientClick}
-                  title="Nuevo Paciente"
-                >
-                  <UserPlus />
-                </Link>
-              </li>
+              <Fragment>
+                <li>
+                  <Link
+                    to={`${process.env.PUBLIC_URL}/patient/0?mode=new`}
+                    className="realname"
+                    onClick={handleNewPatientClick}
+                    title="Nuevo Paciente"
+                  >
+                    <UserPlus />
+                  </Link>
+                </li>
+                <li>
+                  <a
+                href="#javascript"
+                    className="realname"
+                    onClick={handleNewNursingServiceClick}
+                    title="Nuevo Servicio de Enfermería"
+                  >
+                    <Feather />
+                  </a>
+                </li>
+              </Fragment>
             )}
             <li>
               <a
@@ -278,7 +320,7 @@ const Bookmark = () => {
                 <Clipboard />
               </a>
             </li>
-            {(loggedUser.user.isDoctor) && (
+            {loggedUser.user.isDoctor && (
               <li>
                 <a
                   href="#javascript"
