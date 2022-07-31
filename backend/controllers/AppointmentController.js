@@ -26,14 +26,35 @@ class AppointmentController extends BaseController {
    * @return {Object} res The response object
    */
   async getAll(req, res, next) {
-    let filterAppointments = {};
+    const today = new Date();
+    const month = today.getMonth() - 1;
+    const year = today.getFullYear();
+    let filterAppointments = {
+      $expr: {
+        $and: [
+          {
+            $gt: [{ $month: '$start' }, month],
+          },
+          {
+            $gte: [{ $year: '$start' }, year],
+          },
+        ],
+      },
+    };
+
+    let drFilter = null;
     if (!req.user.isAdmin && req.user.isDoctor) {
-      filterAppointments = { doctor: req.user.doctor?._id };
+      drFilter = { doctor: req.user.doctor?._id };
     } else {
       if (req.query.doctorId) {
-        filterAppointments = { doctor: req.query.doctorId };
+        drFilter = { doctor: req.query.doctorId };
       }
     }
+
+    if (drFilter) {
+      filterAppointments = { $and: [ filterAppointments, drFilter ]}
+    }
+
     const appointments = await this._model
       .find(filterAppointments)
       .populate({
@@ -112,26 +133,26 @@ class AppointmentController extends BaseController {
         path: 'healthInsurances.healthInsuranceCompany',
       });
       const appointmentData = { ...req.body, doctor: doctor, patient: patient };
-      if (patient.email) {
-        sendMail(
-          patient.email,
-          `Co-Med | Nuevo Turno día ${new Date(
-            appointment.start
-          ).toLocaleString('es', {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          })} hs`,
-          'html',
-          'newAppointment',
-          appointmentData
-        );
-      }
+      // if (patient.email) {
+      //   sendMail(
+      //     patient.email,
+      //     `Co-Med | Nuevo Turno día ${new Date(
+      //       appointment.start
+      //     ).toLocaleString('es', {
+      //       year: 'numeric',
+      //       month: 'numeric',
+      //       day: 'numeric',
+      //       hour: '2-digit',
+      //       minute: '2-digit',
+      //       hour12: false,
+      //     })} hs`,
+      //     'html',
+      //     'newAppointment',
+      //     appointmentData
+      //   );
+      // }
 
-      notifyNewAppointment(appointmentData);
+      // notifyNewAppointment(appointmentData);
     }
     req.params = {
       ...req.params,
