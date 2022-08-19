@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
+import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { useLocation, useParams } from 'react-router-dom';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import { Collapse } from 'reactstrap';
@@ -40,7 +41,15 @@ const PatientVisitHistory = (props) => {
   const { visit, status: visitStatus } = useSelector((store) => store.Visit);
   const dispatch = useDispatch();
 
+  const [currentVisit, setCurrentVisit] = useState({});
+
   const [isVisitHistory, setisVisitHistory] = useState(true);
+  const [isVisitNewForm, setisVisitNewForm] = useState(true);
+
+  const [modalVisit, setModalVisit] = useState(false);
+  const modalVisitToggle = () => {
+    setModalVisit(!modalVisit);
+  };
 
   const [startDate, setstartDate] = useState(null);
   const [endDate, setendDate] = useState(null);
@@ -54,6 +63,8 @@ const PatientVisitHistory = (props) => {
     ) {
       dispatch(patientGetVisitsWatcher(id));
     }
+
+    setisVisitHistory(visitStatus !== LOADED);
   }, [id, visitStatus]);
 
   useEffect(() => {
@@ -73,17 +84,22 @@ const PatientVisitHistory = (props) => {
     setendDate(date);
   };
 
+  const handleNewVisitClick = (e) => {
+    e.preventDefault();
+    let visitData = {};
+    visitData.doctor = loggedUser.user.doctor;
+    visitData.createdAt = new Date();
+    visitData.healthRecord = patient.healthRecord;
+    visitData.studyOrders = [];
+    visitData.laboratoryOrders = [];
+    visitData.prescriptions = [];
+    dispatch(patientInitializeVisitForm(visitData));
+  };
+
   const handleVisitClick = (e, visitData) => {
     e.preventDefault();
-    if (!visitData.id) {
-      visitData.doctor = loggedUser.user.doctor;
-      visitData.createdAt = new Date();
-      visitData.healthRecord = patient.healthRecord;
-      visitData.studyOrders = [];
-      visitData.laboratoryOrders = [];
-      visitData.prescriptions = [];
-    }
-    dispatch(patientInitializeVisitForm(visitData));
+    setCurrentVisit(visitData);
+    modalVisitToggle();
   };
 
   const handleApplyFilter = (e) => {
@@ -99,9 +115,7 @@ const PatientVisitHistory = (props) => {
   const handleClearFilter = () => {
     setstartDateApplied(null);
     setendDateApplied(null);
-    dispatch(
-      patientGetVisitsWatcher(id, null, null)
-    );
+    dispatch(patientGetVisitsWatcher(id, null, null));
   };
 
   return (
@@ -113,50 +127,29 @@ const PatientVisitHistory = (props) => {
       visitsStatus === FAILED ||
       visitStatus === FAILED ||
       (mode === 'new' && visitsStatus !== LOADING) ? (
-        <div className="card">
-          <div className="card-header">
-            <div className="row mb-2 ">
-              <div className="col-md-9">
-                <h4 className="card-title mb-0">
-                  {visitStatus === LOADED
-                    ? `${
-                        visit.id
-                          ? 'Detalle de consulta realizada el día'
-                          : 'Nueva consulta'
-                      } ${new Date(visit.createdAt).toLocaleDateString(
-                        'es-AR',
-                        {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        }
-                      )}  
-                      ${new Date(visit.createdAt).toLocaleTimeString('es', {
-                        // timeZone: 'UTC',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                        hour12: false,
-                      })} hs`
-                    : 'Historial de Consultas'}
-                </h4>
-              </div>
-              <div className="col-md-3">
-                <button
-                  className="btn btn-link pl-0 pull-right"
-                  onClick={() => setisVisitHistory(!isVisitHistory)}
-                  data-toggle="collapse"
-                  data-target="#collapseicon3"
-                  aria-expanded={isVisitHistory}
-                  aria-controls="collapseicon3"
-                >
-                  {''}
-                </button>
+        <Fragment>
+          <div className="card">
+            <div className="card-header">
+              <div className="row mb-2 ">
+                <div className="col-md-9">
+                  <h4 className="card-title mb-0">Historial de Consultas</h4>
+                </div>
+                <div className="col-md-3">
+                  <button
+                    className="btn btn-link pl-0 pull-right"
+                    onClick={() => setisVisitHistory(!isVisitHistory)}
+                    data-toggle="collapse"
+                    data-target="#collapseicon3"
+                    aria-expanded={isVisitHistory}
+                    aria-controls="collapseicon3"
+                  >
+                    {''}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-          <Collapse isOpen={isVisitHistory}>
-            {visitStatus !== LOADED ? (
+            <Collapse isOpen={isVisitHistory}>
+              {/* {visitStatus !== LOADED || true ? ( */}
               <div className="row">
                 <div className="col-md-3">
                   <div className=" xs-mt-search">
@@ -227,14 +220,14 @@ const PatientVisitHistory = (props) => {
                             </b>
                             "
                           </mark>
-                      <a
-                        href="#javascript"
-                        className="ml-2"
-                        title="Limpiar Filtro"
-                        onClick={handleClearFilter}
-                      >
-                        <i className="fa fa-times ml-1"></i>
-                      </a>
+                          <a
+                            href="#javascript"
+                            className="ml-2"
+                            title="Limpiar Filtro"
+                            onClick={handleClearFilter}
+                          >
+                            <i className="fa fa-times ml-1"></i>
+                          </a>
                         </p>
                       )}
                     </div>
@@ -244,21 +237,23 @@ const PatientVisitHistory = (props) => {
                   <div className="row">
                     {loggedUser.user.isDoctor && (
                       <div className="col-md-12">
-                        <button
-                          className="btn btn-primary pull-right m-4"
-                          onClick={(e) => handleVisitClick(e, {})}
-                        >
-                          {'Nueva Consulta'}
-                        </button>
+                        {visitStatus !== LOADED && (
+                          <button
+                            className="btn btn-primary pull-right m-4"
+                            onClick={(e) => handleNewVisitClick(e)}
+                          >
+                            {'Nueva Consulta'}
+                          </button>
+                        )}
                       </div>
                     )}
                     <div className="col-md-12">
                       <VerticalTimeline layout={'1-column'} className="m-b-30">
                         {visits.length > 0 ? (
-                          visits.map((visit, index) =>
-                            !visit.firstVisit ? (
+                          visits.map((_visit, index) =>
+                            !_visit.firstVisit ? (
                               <VerticalTimelineElement
-                                key={visit.id}
+                                key={_visit.id}
                                 className="vertical-timeline-element--work"
                                 animate={true}
                                 // date="25/01/2021 14:00 PM"
@@ -269,10 +264,10 @@ const PatientVisitHistory = (props) => {
                                     <div className="blog-details">
                                       <div className="blog-date digits">
                                         <span>
-                                          {new Date(visit.createdAt).getDate()}
+                                          {new Date(_visit.createdAt).getDate()}
                                         </span>{' '}
                                         {new Date(
-                                          visit.createdAt
+                                          _visit.createdAt
                                         ).toLocaleDateString('es-AR', {
                                           // timeZone: 'UTC',
                                           year: 'numeric',
@@ -280,7 +275,7 @@ const PatientVisitHistory = (props) => {
                                         })}
                                         ,{' '}
                                         {new Date(
-                                          visit.createdAt
+                                          _visit.createdAt
                                         ).toLocaleTimeString('es', {
                                           // timeZone: 'UTC',
                                           hour: 'numeric',
@@ -288,14 +283,14 @@ const PatientVisitHistory = (props) => {
                                           hour12: false,
                                         }) + 'hs'}
                                       </div>
-                                      <h6>{visit.reason} </h6>
+                                      <h6>{_visit.reason} </h6>
                                       <div className="blog-bottom-content">
                                         <ul className="blog-social">
                                           <li className="p-r-0">
-                                            {`Atendido por: ${visit.doctor.fullName}`}
+                                            {`Atendido por: ${_visit.doctor.fullName}`}
                                           </li>
                                           <li>
-                                            {`${visit.doctor.specialities.join(
+                                            {`${_visit.doctor.specialities.join(
                                               ', '
                                             )}`}
                                           </li>
@@ -307,7 +302,7 @@ const PatientVisitHistory = (props) => {
                                     <button
                                       className="btn btn-primary "
                                       onClick={(e) =>
-                                        handleVisitClick(e, visit)
+                                        handleVisitClick(e, _visit)
                                       }
                                     >
                                       <i className="fa fa-eye m-r-5"></i>
@@ -318,14 +313,14 @@ const PatientVisitHistory = (props) => {
                               </VerticalTimelineElement>
                             ) : (
                               <VerticalTimelineElement
-                                key={visit.id}
+                                key={_visit.id}
                                 iconStyle={{
                                   background: 'rgb(16, 204, 82)',
                                   color: '#fff',
                                 }}
                                 icon={
                                   <span
-                                    title={`Primera Consulta con ${visit.doctor.fullName}`}
+                                    title={`Primera Consulta con ${_visit.doctor.fullName}`}
                                   >
                                     <Star />
                                   </span>
@@ -336,17 +331,17 @@ const PatientVisitHistory = (props) => {
                                   <div className="ribbon ribbon-bookmark ribbon-vertical-right ribbon-success">
                                     <i
                                       className="icon-signal"
-                                      title={`Primera Consulta con ${visit.doctor.fullName}`}
+                                      title={`Primera Consulta con ${_visit.doctor.fullName}`}
                                     ></i>
                                   </div>
                                   <div className="col-md-8 ">
                                     <div className="blog-details">
                                       <div className="blog-date digits">
                                         <span>
-                                          {new Date(visit.createdAt).getDate()}
+                                          {new Date(_visit.createdAt).getDate()}
                                         </span>{' '}
                                         {new Date(
-                                          visit.createdAt
+                                          _visit.createdAt
                                         ).toLocaleDateString('es-AR', {
                                           // timeZone: 'UTC',
                                           year: 'numeric',
@@ -354,7 +349,7 @@ const PatientVisitHistory = (props) => {
                                         })}
                                         ,{' '}
                                         {new Date(
-                                          visit.createdAt
+                                          _visit.createdAt
                                         ).toLocaleTimeString('es', {
                                           // timeZone: 'UTC',
                                           hour: 'numeric',
@@ -362,14 +357,14 @@ const PatientVisitHistory = (props) => {
                                           hour12: false,
                                         }) + 'hs'}
                                       </div>
-                                      <h6>{visit.reason} </h6>
+                                      <h6>{_visit.reason} </h6>
                                       <div className="blog-bottom-content">
                                         <ul className="blog-social">
                                           <li>
-                                            {`Atendido por: ${visit.doctor.fullName}`}
+                                            {`Atendido por: ${_visit.doctor.fullName}`}
                                           </li>
                                           <li>
-                                            {`${visit.doctor.specialities.join(
+                                            {`${_visit.doctor.specialities.join(
                                               ', '
                                             )}`}
                                           </li>
@@ -381,7 +376,7 @@ const PatientVisitHistory = (props) => {
                                     <button
                                       className="btn btn-primary "
                                       onClick={(e) =>
-                                        handleVisitClick(e, visit)
+                                        handleVisitClick(e, _visit)
                                       }
                                     >
                                       <i className="fa fa-eye m-r-5"></i>
@@ -410,13 +405,76 @@ const PatientVisitHistory = (props) => {
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="card-body row">
-                <PatientVisitForm />
+            </Collapse>
+          </div>
+          {visitStatus === LOADED && !visit.id && (
+            <div className="card">
+              <div className="card-header">
+                <div className="row mb-2 ">
+                  <div className="col-md-9">
+                    <h4 className="card-title mb-0">
+                      {`${'Nueva consulta'} ${new Date(
+                        visit.createdAt
+                      ).toLocaleDateString('es-AR', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}  
+                      ${new Date(visit.createdAt).toLocaleTimeString('es', {
+                        // timeZone: 'UTC',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: false,
+                      })} hs`}
+                    </h4>
+                  </div>
+                  <div className="col-md-3">
+                    <button
+                      className="btn btn-link pl-0 pull-right"
+                      onClick={() => setisVisitNewForm(!isVisitNewForm)}
+                      data-toggle="collapse"
+                      data-target="#collapseicon3"
+                      aria-expanded={isVisitNewForm}
+                      aria-controls="collapseicon3"
+                    >
+                      {''}
+                    </button>
+                  </div>
+                </div>
               </div>
-            )}
-          </Collapse>
-        </div>
+              <Collapse isOpen={isVisitNewForm}>
+                <div className="card-body row">
+                  <PatientVisitForm />
+                </div>
+              </Collapse>
+            </div>
+          )}
+          <Modal
+            isOpen={modalVisit}
+            toggle={modalVisitToggle}
+            size="xl"
+            centered
+          >
+            <ModalHeader toggle={modalVisitToggle}>
+              {`Detalle de consulta realizada el día ${new Date(currentVisit.createdAt).toLocaleDateString('es-AR', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}  
+              ${new Date(currentVisit.createdAt).toLocaleTimeString('es', {
+                // timeZone: 'UTC',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: false,
+              })} hs`}
+            </ModalHeader>
+            <ModalBody>
+                <PatientVisitForm visit={currentVisit} modalToggle={modalVisitToggle}/>
+            </ModalBody>
+          </Modal>
+        </Fragment>
       ) : (
         <Loader show={true} />
       )}

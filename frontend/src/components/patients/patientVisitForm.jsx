@@ -29,11 +29,15 @@ const PatientVisitForm = (props) => {
   const { patient, status: patientStatus } = useSelector(
     (store) => store.Patient
   );
-  const { visit, status: visitStatus } = useSelector((store) => store.Visit);
+  const { visit: visitStore, status: visitStatus } = useSelector(
+    (store) => store.Visit
+  );
   const { loggedUser } = useSelector((store) => store.UserLogin);
   const dispatch = useDispatch();
 
   const { register, handleSubmit, setValue, errors } = useForm();
+
+  const [visit, setVisit] = useState({});
 
   const [dataTab, setdataTab] = useState('prescripciones');
   const [prescriptionModal, setprescriptionModal] = useState(false);
@@ -50,8 +54,16 @@ const PatientVisitForm = (props) => {
   };
 
   useEffect(() => {
+    if (props.visit) {
+      setVisit(props.visit);
+    } else {
+      setVisit(visitStore);
+    }
+
     return () => {
-      dispatch(patientResetVisitForm());
+      if (!props.visit) {
+        dispatch(patientResetVisitForm());
+      }
     };
   }, []);
 
@@ -108,7 +120,11 @@ const PatientVisitForm = (props) => {
   };
 
   const closeVisit = () => {
-    dispatch(patientResetVisitForm());
+    if (props.modalToggle) {
+      props.modalToggle();
+    } else {
+      dispatch(patientResetVisitForm());
+    }
   };
 
   const handleSavePrescription = (prescription) => {
@@ -143,7 +159,8 @@ const PatientVisitForm = (props) => {
       {visitStatus === LOADED ||
       visitStatus === SUCCEEDED ||
       visitStatus === FAILED ||
-      (mode === 'new' && visitStatus !== LOADING) ? (
+      (mode === 'new' && visitStatus !== LOADING) ||
+      props.visit ? (
         <Fragment>
           <div className="col-md-8 offset-md-2">
             <div className="row text-muted bg-light b-r-10 p-50 b-primary">
@@ -171,7 +188,7 @@ const PatientVisitForm = (props) => {
                     <i className="icofont icofont-doctor mr-1"></i>Atendido por
                   </span>
                   <span className="col-md-12 f-w-500">
-                    {visit.doctor.fullName}
+                    {visit.doctor?.fullName}
                   </span>
                 </div>
               </div>
@@ -182,7 +199,7 @@ const PatientVisitForm = (props) => {
                     Especialidades
                   </span>
                   <span className="col-md-12 f-w-500">
-                    {visit.doctor.specialities.join(', ')}
+                    {visit.doctor?.specialities.join(', ')}
                   </span>
                 </div>
               </div>
@@ -197,10 +214,7 @@ const PatientVisitForm = (props) => {
                 <hr className="mt-4 mb-4" />
                 <h6>{'Motivo'}</h6>
                 <div className="form-group row">
-                  <label
-                    className="col-md-2 col-form-label"
-                    htmlFor="reason"
-                  >
+                  <label className="col-md-2 col-form-label" htmlFor="reason">
                     {''}
                   </label>
                   <div className="col-md-12">
@@ -254,7 +268,10 @@ const PatientVisitForm = (props) => {
                 </div>
                 <h6>{'Antecedentes de EA'}</h6>
                 <div className="form-group row">
-                  <label className="col-md-2 col-form-label" htmlFor="eABackground">
+                  <label
+                    className="col-md-2 col-form-label"
+                    htmlFor="eABackground"
+                  >
                     {''}
                   </label>
                   <div className="col-md-12">
@@ -720,7 +737,7 @@ const PatientVisitForm = (props) => {
                   </div>
                 </TabPane>
               </TabContent>
-              <div className="card-footer pull-right m-t-40">
+              <div className="pull-right m-t-40">
                 <button
                   type="button"
                   className="btn btn-danger"
