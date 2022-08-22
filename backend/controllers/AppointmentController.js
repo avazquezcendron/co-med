@@ -59,6 +59,7 @@ class AppointmentController extends BaseController {
       .find(filterAppointments)
       .populate({
         path: 'doctor',
+        select: ['-appointments', '-visits', '-patients']
       })
       .populate({
         path: 'patient',
@@ -86,6 +87,7 @@ class AppointmentController extends BaseController {
       .findById(req.params.id)
       .populate({
         path: 'doctor',
+        select: ['-appointments', '-visits', '-patients']
       })
       .populate({
         path: 'patient',
@@ -152,7 +154,7 @@ class AppointmentController extends BaseController {
       //   );
       // }
 
-      // notifyNewAppointment(appointmentData);
+      notifyNewAppointment(appointmentData);
     }
     req.params = {
       ...req.params,

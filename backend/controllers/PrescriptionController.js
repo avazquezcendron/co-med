@@ -14,8 +14,17 @@ class PrescriptionController extends BaseController {
         .find(filter)
         .sort({ createdAt: 'desc' })
         .populate({ path: 'drugs', populate: { path: 'drug' } })
-        .populate({ path: 'doctor' })
-        .populate({ path: 'healthRecord', populate: { path: 'patient',   populate: { path: 'healthInsurances.healthInsuranceCompany' }} });
+        .populate({
+          path: 'doctor',
+          select: ['-appointments', '-visits', '-patients'],
+        })
+        .populate({
+          path: 'healthRecord',
+          populate: {
+            path: 'patient',
+            populate: { path: 'healthInsurances.healthInsuranceCompany' },
+          },
+        });
       res.status(200).json(models);
     }
   }
@@ -24,15 +33,13 @@ class PrescriptionController extends BaseController {
     const createModel = new this._model(req.body);
     const savedModel = await createModel.save();
 
-    const healthRecord = await HealthRecord.findById(
-      req.body.healthRecord._id
-    );
+    const healthRecord = await HealthRecord.findById(req.body.healthRecord._id);
     // healthRecord.prescriptions.push(savedModel);
     // await healthRecord.save();
 
     req.params = {
       ...req.params,
-      id: savedModel._id
+      id: savedModel._id,
     };
     return this.getById(req, res, next);
   }

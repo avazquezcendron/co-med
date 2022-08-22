@@ -35,6 +35,7 @@ class AppointmentConfigController extends BaseController {
         .find({ status: status, filterAppointmentsConfig })
         .populate({
           path: 'doctor',
+          select: ['-appointments', '-visits', '-patients']
         })
         .populate({
           path: 'sessions',
@@ -45,6 +46,7 @@ class AppointmentConfigController extends BaseController {
         .find(filterAppointmentsConfig)
         .populate({
           path: 'doctor',
+          select: ['-appointments', '-visits', '-patients']
         })
         .populate({
           path: 'sessions',
@@ -68,6 +70,7 @@ class AppointmentConfigController extends BaseController {
       .findById(req.params.id)
       .populate({
         path: 'doctor',
+        select: ['-appointments', '-visits', '-patients']
       })
       .populate({
         path: 'sessions',

@@ -119,7 +119,10 @@ class PatientController extends BaseController {
       .populate({
         path: 'nextAppointments',
         options: { sort: { createdAt: -1 } },
-        populate: { path: 'doctor' },
+        populate: {
+          path: 'doctor',
+          select: ['-appointments', '-visits', '-patients'],
+        },
       })
       .populate({
         path: 'healthInsurances.healthInsuranceCompany',
@@ -315,7 +318,10 @@ class PatientController extends BaseController {
 
       const visits = await Visit.find(finalFilter)
         .sort({ createdAt: 'desc' })
-        .populate({ path: 'doctor' })
+        .populate({
+          path: 'doctor',
+          select: ['-appointments', '-visits', '-patients'],
+        })
         .populate({ path: 'studyOrders', populate: { path: 'studyType' } })
         .populate({
           path: 'laboratoryOrders',
@@ -422,7 +428,10 @@ class PatientController extends BaseController {
       const prescriptions = await Prescription.find(finalFilter)
         .sort({ createdAt: 'desc' })
         .populate({ path: 'drugs', populate: { path: 'drug' } })
-        .populate({ path: 'doctor' });
+        .populate({
+          path: 'doctor',
+          select: ['-appointments', '-visits', '-patients'],
+        });
       if (prescriptions) {
         return res.status(200).json(prescriptions);
       } else {
@@ -599,7 +608,7 @@ class PatientController extends BaseController {
         filterBy.username = { $regex: searchRgx };
       }
       const count = await HealthRecordHistory.countDocuments(filterBy);
-      const totalPages = Math.ceil(count / limit);      
+      const totalPages = Math.ceil(count / limit);
       if (page <= totalPages) {
         const models = await HealthRecordHistory.find(filterBy)
           .limit(limit * 1)
