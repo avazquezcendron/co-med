@@ -83,12 +83,46 @@ const AppointmentQuickAddComponent = (props) => {
   }, []);
 
   const generateAppointment = () => {
-    if (!startDate || !selectedSlot?.startTime || !selectedSlot?.endTime || !patient || !doctor) {
+    let isValid = true;
+    if (!doctor?.id) {
+      setError('doctor', {});
+      isValid = false;
+    } else {
+      clearErrors('doctor');
+    }
+
+    if (!patient?.id) {
+      setError('patient', {});
+      isValid = false;
+    } else {
+      clearErrors('patient');
+    }
+
+    if (!startDate) {
+      setError('startDate', {});
+      isValid = false;
+    } else {
+      clearErrors('startDate');
+    }
+    if (!selectedSlot) {
+      setError('startTime', {});
+      isValid = false;
+    } else {
+      clearErrors('startTime');
+    }
+
+    if (!selectedSlot.available) {
+      setError('slotNotAvailable', {});
+      isValid = false;
+    } else {
+      clearErrors('slotNotAvailable');
+    }
+
+    if (!isValid) {
       toast.error('Faltan completar datos del turno.', {
         position: toast.POSITION.BOTTOM_RIGHT,
       });
     } else {
-
       const appointment = {
         doctor: doctor,
         patient: patient,
