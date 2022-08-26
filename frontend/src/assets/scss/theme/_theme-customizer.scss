@@ -20,7 +20,7 @@
   box-shadow: 0 0 15px 3px rgba(176, 185, 189, 0.3);
   transition: all 0.3s ease;
   &.open{
-    right: 330px;
+    right: 566px;
     border-radius: 8px 0 0 8px;
     transition: all 0.3s ease;
   }
@@ -56,8 +56,8 @@
   position: fixed;
   height: calc(100vh);
   top: 80px;
-  width: 330px;
-  right: -330px;
+  width: 566px;
+  right: -566px;
   background-color: $white;
   z-index: 999;
   font-family: $font-nunito;
