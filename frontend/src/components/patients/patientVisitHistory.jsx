@@ -59,7 +59,8 @@ const PatientVisitHistory = (props) => {
   useEffect(() => {
     if (
       (id !== 0 && visitsStatus !== LOADED) ||
-      (id !== 0 && visitStatus === SUCCEEDED)
+      (id !== 0 && visitStatus === SUCCEEDED) ||
+      (id !== patient.id && patientStatus === LOADED)
     ) {
       dispatch(patientGetVisitsWatcher(id));
     }
