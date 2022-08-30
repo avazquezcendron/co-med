@@ -222,7 +222,7 @@ const PatientQuickAdd = (props) => {
               className="form-control"
               name="healthInsurances.0.cardNumber"
               id="healthInsuranceId"
-              type="number"
+              type="text"
               ref={register({ required: false })}
             />
             <span style={{ color: 'red' }}>

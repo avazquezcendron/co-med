@@ -65,7 +65,7 @@ const PatientSchema = mongoose.Schema(
       {
         admissionDate: Date,
         plan: { type: healthInsurancePlanSchema },
-        cardNumber: Number,
+        cardNumber: String,
         healthInsuranceCompany: {
           type: mongoose.Schema.Types.ObjectId,
           ref: 'HealthInsuranceCompany',

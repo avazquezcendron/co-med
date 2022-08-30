@@ -632,7 +632,7 @@ const PatientPersonalData = ({ history, showAvatar }) => {
                       className="form-control"
                       name="healthInsurances.0.cardNumber"
                       id="healthInsuranceId"
-                      type="number"
+                      type="text"
                       defaultValue={
                         patient?.healthInsurances &&
                         patient?.healthInsurances.length > 0
