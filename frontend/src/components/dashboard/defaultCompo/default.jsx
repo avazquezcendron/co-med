@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, Fragment } from 'react';
 import { Navigation, Users, Calendar } from 'react-feather';
 import { translate } from 'react-switch-lang';
-import { Chart } from 'react-google-charts';
+import ApexCharts from 'react-apexcharts';
 import CountUp from 'react-countup';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -17,6 +17,7 @@ import {
   appointmentsInitialize,
 } from '../../../redux/appointments/actions';
 import { LOADED, SUCCEEDED } from '../../../redux/statusTypes';
+import * as entityService from '../../../services/entity.service';
 import Agenda from '../../agenda/agenda';
 
 // var Knob = require('knob'); // browserify require
@@ -39,6 +40,10 @@ const Default = (props) => {
     props.t('December'),
   ];
 
+  
+  const { status: patientStatus } = useSelector(
+    (store) => store.Patient
+  );
   const { patients, status: patientsStatus } = useSelector(
     (store) => store.Patients
   );
@@ -57,6 +62,8 @@ const Default = (props) => {
   const [currentMonthAppointments, setCurrentMonthAppointments] = useState([]);
   const [currentDayAppointments, setCurrentDayAppointments] = useState([]);
   const [currentDayPatients, setCurrentDayPatients] = useState([]);
+  const [apexPatientisPerHIChart, setApexPatientisPerHIChart] = useState({ options: {}, series: []});
+  const [apexPatientisPerAgeChart, setApexPatientisPerAgeChart] = useState({ options: {}, series: []});
 
   useEffect(() => {
     dispatch(patientGetAllWatcher());
@@ -112,7 +119,7 @@ const Default = (props) => {
   //     .getElementById('appAvailMonth')
   //     .appendChild(appointmentsAvailablesMonth);
   // }, []);
-
+ 
   useEffect(() => {
     if (appointmentsStatus === SUCCEEDED) {
       dispatch(getAppointmentsWatcher(loggedUser.user.doctor?.id));
@@ -148,6 +155,103 @@ const Default = (props) => {
       );
     }
   }, [appointmentsStatus]);
+
+  useEffect(() => {
+    if (patientStatus === SUCCEEDED) {
+      dispatch(patientGetAllWatcher());
+    }
+  }, [patientStatus]);
+
+  useEffect(() => {
+    if (patientsStatus === LOADED) {
+      let labelsPatientPerHI = [];
+      let seriesPatientPerHI = [];
+      entityService.getAll('healthInsurance', loggedUser).then((data) => {
+        data?.forEach((healthInsuranceComp) => {
+          const numPatients = patients?.filter(
+            (x) =>
+              x.healthInsurances[0] ?.healthInsuranceCompany.id ===
+                healthInsuranceComp.id
+          ).length;
+          labelsPatientPerHI.push(`${healthInsuranceComp.description} (${numPatients})`);
+          seriesPatientPerHI.push(numPatients);
+        });
+        setApexPatientisPerHIChart({
+          series: seriesPatientPerHI,
+          options: {
+            labels: labelsPatientPerHI,
+            chart: {
+              type: 'donut',
+              height: '100%',
+            },
+            colors: [
+              '#f85370',
+              '#1ea6ec',
+              '#fa9f40',
+              '#c7c3c3',
+              '#66ff78',
+              '#9c437f',
+              '#8795ed',
+              '#544fff',
+              '#51bb25',
+              '#fb740d',
+              '#f8fc00',
+              '#93fc00',
+              '#fb00ff',
+              '#00ffbb',
+              '#f05024',
+              '#6fd9c4',
+              '#4466f2',
+              '#8a5b5b',
+              '#292626',
+            ],
+            responsive: [
+              {
+                breakpoint: 480,
+                options: {
+                  chart: {
+                    width: 300,
+                  },
+                  legend: {
+                    position: 'bottom',
+                  },
+                },
+              },
+            ],
+          },
+        });
+      });
+
+      const seriesPatientPerAge = [patients.filter((x) => x.gender === 'm').length, patients.filter((x) => x.gender === 'f').length, patients.filter((x) => x.gender === 'no-binario')
+        .length];
+      const labelsPatientPerAge = [`Masculino (${seriesPatientPerAge[0]})`, `Femenino (${seriesPatientPerAge[1]})`, `No-binario (${seriesPatientPerAge[2]})`];
+      setApexPatientisPerAgeChart(
+        {
+          series: seriesPatientPerAge,
+          options:  {
+            labels: labelsPatientPerAge,            
+            chart: {
+              type: 'pie',
+            },
+            colors: ['#1ea6ec', '#22af47', '#6c757d'],
+            responsive: [
+              {
+                breakpoint: 480,
+                options: {
+                  chart: {
+                    width: 200,
+                  },
+                  legend: {
+                    position: 'bottom',
+                  },
+                },
+              },
+            ],
+          }
+        }
+      );
+    }
+  }, [patientsStatus]);
 
   useEffect(() => {
     clearInterval(dateRef.current);
@@ -282,8 +386,8 @@ const Default = (props) => {
           </div>
 
           <div className="col-md-4">
-            <div className="card">
-              <div className="cal-date-widget card-body">
+            <div className="card" style={{height: '93%'}}>
+              <div className="cal-date-widget card-body" >
                 <div className="row">
                   <div className="col-md-12">
                     <div className="cal-info text-center">
@@ -353,33 +457,11 @@ const Default = (props) => {
                     <h5>{'Pacientes por género percibido'}</h5>
                   </div>
                   <div className="card-body p-0">
-                    <Chart
-                      width={'100%'}
-                      height={'190px'}
-                      chartType="PieChart"
-                      loader={<div>{'Cargando...'}</div>}
-                      data={[
-                        ['Género', 'Porcentaje'],
-                        [
-                          'Masculino',
-                          patients.filter((x) => x.gender === 'm').length,
-                        ],
-                        [
-                          'Femenino',
-                          patients.filter((x) => x.gender === 'f').length,
-                        ],
-                        [
-                          'No-binario',
-                          patients.filter((x) => x.gender === 'no-binario')
-                            .length,
-                        ],
-                      ]}
-                      options={{
-                        title: '',
-                        colors: ['#1ea6ec', '#22af47', '#6c757d'],
-                        // sliceVisibilityThreshold: 0.2, // 20%
-                      }}
-                      // rootProps={{ 'data-testid': '0' }}
+                  <ApexCharts
+                      options={apexPatientisPerAgeChart.options}
+                      series={apexPatientisPerAgeChart.series}
+                      type="pie"
+                      height="300"
                     />
                   </div>
                 </div>
@@ -388,42 +470,14 @@ const Default = (props) => {
               <div className="col-md-6">
                 <div className="card">
                   <div className="card-header">
-                    <h5>{'Pacientes por edad'}</h5>
+                    <h5>{'Pacientes por Obras Sociales'}</h5>
                   </div>
                   <div className="card-body p-0">
-                    <Chart
-                      width={'100%'}
-                      height={'190px'}
-                      chartType="PieChart"
-                      loader={<div>{'Cargando'}</div>}
-                      data={[
-                        ['Rango Etáreo', 'Cantidad de Pacientes'],
-                        ['0-10', patients.filter((x) => x.age < 11).length],
-                        [
-                          '11-20',
-                          patients.filter((x) => x.age > 10 && x.age < 21)
-                            .length,
-                        ],
-                        [
-                          '21-40',
-                          patients.filter((x) => x.age > 20 && x.age < 41)
-                            .length,
-                        ],
-                        ['+40', patients.filter((x) => x.age > 40).length],
-                      ]}
-                      options={{
-                        title: '',
-                        colors: [
-                          '#4466f2',
-                          '#1ea6ec',
-                          '#22af47',
-                          '#fa9f40',
-                          '#f85370',
-                        ],
-                        // Just add this option
-                        pieHole: 0.4,
-                      }}
-                      // rootProps={{ 'data-testid': '0' }}
+                    <ApexCharts
+                      options={apexPatientisPerHIChart.options}
+                      series={apexPatientisPerHIChart.series}
+                      type="donut"
+                      height="300"
                     />
                   </div>
                 </div>
