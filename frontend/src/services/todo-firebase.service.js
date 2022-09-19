@@ -12,6 +12,7 @@ export const creatTodoList = (note, user) => {
     completed: false,
     assignedTo: note.assignedTo?.username || null,
     assignedBy: `${user.firstName} ${user.lastName}`,
+    createdDate: new Date().toLocaleDateString('es'),
   });
 };
 

@@ -195,7 +195,7 @@ const Todo = (props) => {
                               <div className="task-container">
                                 <h4 className="task-label">{todoData.task}</h4>
                                 {/* <small className="task-label text-muted">Creada por: Juli Llaneza</small> */}
-                                <cite className="text-muted">Creada por: {todoData.assignedBy}</cite>
+                                <cite className="text-muted">{`Creada por: ${todoData.assignedBy} el ${todoData.createdDate}`} </cite>
                                 <span className="task-action-btn">
                                   <span
                                     className="action-box large delete-btn"
