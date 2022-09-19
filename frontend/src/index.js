@@ -44,6 +44,9 @@ import NurseList from './components/nursing/nurseList';
 import NurseProfile from './components/nursing/nurseProfile';
 import NursingService from './components/nursing/nursingService';
 
+// Hospital Rooms Management
+import HospitalRoomsDashboard from './components/hospitalRooms/hospitalRoomsDashboard';
+
 // Agenda
 import Appointments from './components/agenda/appointments';
 
@@ -138,16 +141,17 @@ const Root = () => {
                                         <Fragment>
                                             
                                             <Route exact path={`${process.env.PUBLIC_URL}/settings/user`} component={UserList} />
-                                            {/* <Route exact path={`${process.env.PUBLIC_URL}/settings/appointmentConfig`} component={AppointmentConfigList} /> */}
                                             <Route exact path={`${process.env.PUBLIC_URL}/settings/generalSettings`} component={GeneralSettings} />
                                         
                                             <Route exact path={`${process.env.PUBLIC_URL}/doctor`} component={DoctorList} />
                                             <Route path={`${process.env.PUBLIC_URL}/doctor/:id`} component={DoctorProfile} />
 
+                                            <Route exact path={`${process.env.PUBLIC_URL}/hospitalRooms`} component={HospitalRoomsDashboard} />
+
                                             <Route exact path={`${process.env.PUBLIC_URL}/nursing/nurse`} component={NurseList} />
                                             <Route path={`${process.env.PUBLIC_URL}/nursing/nurse/:id`} component={NurseProfile} />
                                             <Route path={`${process.env.PUBLIC_URL}/nursing/service`} component={NursingService} />
-
+                                            
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/drug`} component={DrugList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/laboratoryType`} component={LaboratoryTypeList} />
                                             <Route exact path={`${process.env.PUBLIC_URL}/catalogues/studyType`} component={StudyTypeList} />

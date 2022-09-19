@@ -2,7 +2,7 @@ import {
     Home,
     Clipboard,
     Users,
-    Settings,FileText, Calendar, Briefcase, Feather
+    Settings,FileText, Calendar, Briefcase, Feather, Monitor
 } from 'react-feather';
 
 export const MENUITEMS = [
@@ -14,6 +14,9 @@ export const MENUITEMS = [
     },
     {
         title: 'Doctores', icon: Users, type: 'link', active: false, bookmark: false, path: '/doctor', onlyAdminAndRecep: true
+    },
+    {
+        title: 'Sala HPSJ', icon: Monitor, type: 'link', active: false, bookmark: false, path: '/hospitalRooms', onlyAdminAndRecep: true
     },
     {
         title: 'Enfermería', icon: Feather, type: 'sub', active: false, bookmark: false, onlyAdminAndRecep: true, children: [
@@ -47,8 +50,6 @@ export const MENUITEMS = [
         title: 'Configuración', icon: Settings, onlyAdminAndRecep: true, type: 'sub', active: false,
         children: [
             { path: '/settings/user', icon: Users, title: 'Usuarios', type: 'link' },
-            // { path: '/settings/form', icon: FileText, title: 'Formularios', type: 'link' },
-            // { path: '/settings/appointmentConfig', icon: FileText, title: 'Turnos', type: 'link' },
             { path: '/settings/generalSettings', icon: FileText, title: 'Conf. Generales', type: 'link' },
         ]
     }
