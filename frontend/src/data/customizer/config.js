@@ -11,9 +11,9 @@ export class ConfigDB {
     },
     color: {
       layout_version: 'light',
-      color: 'color-2',
-      primary_color: '#0288d1',
-      secondary_color: '#26c6da',
+      color: 'color-3',
+      primary_color: '#f9a9f6',
+      secondary_color: '#b764b4',
       mix_layout: 'default',
     },
     router_animation: 'fadeIn',

@@ -186,12 +186,14 @@ const Default = (props) => {
             },
             colors: [
               '#f85370',
-              '#1ea6ec',
+              // '#1ea6ec',
+              '#b764b4',
               '#fa9f40',
               '#c7c3c3',
               '#66ff78',
               '#9c437f',
-              '#8795ed',
+              // '#8795ed',
+              '#f9a9f6',
               '#544fff',
               '#51bb25',
               '#fb740d',
@@ -233,7 +235,8 @@ const Default = (props) => {
             chart: {
               type: 'pie',
             },
-            colors: ['#1ea6ec', '#22af47', '#6c757d'],
+            // colors: ['#1ea6ec', '#22af47', '#6c757d'],
+            colors: ['#f9a9f6', '#b764b4', '#6c757d'],
             responsive: [
               {
                 breakpoint: 480,
