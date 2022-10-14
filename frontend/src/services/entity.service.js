@@ -1,37 +1,22 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import { backendApi } from './axios.service';
+
 export const getAll = async (entity, loggedUser, status = '') => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}${status ? '?status='+status : ''}`, config);
+  const { data } = await backendApi.get(`/${entity}${status ? '?status='+status : ''}`);
   return data;
 };
 
 export const getAllPaginated = async (entity, loggedUser, paginationData) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
   const { page, limit } = paginationData;
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}/getAllPaginated?page=${page}&limit=${limit}`, config);
+  const { data } = await backendApi.get(`/${entity}/getAllPaginated?page=${page}&limit=${limit}`);
   return data;
 };
 
 export const getById = async (entity, id, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/${entity}/${id}`,
-      config
+    const { data } = await backendApi.get(
+      `/${entity}/${id}`
     );
     return data;
   } catch (err) {
@@ -50,12 +35,7 @@ export const getById = async (entity, id, loggedUser) => {
 
 export const save = async (entity, entityData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(`/api/${entity}`, entityData, config);
+    const { data } = await backendApi.post(`/${entity}`, entityData);
     toast.success('Registro dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -77,15 +57,9 @@ export const save = async (entity, entityData, loggedUser) => {
 
 export const update = async (entity, entityData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `/api/${entity}/${entityData.id}`,
-      entityData,
-      config
+    const { data } = await backendApi.put(
+      `/${entity}/${entityData.id}`,
+      entityData
     );
     toast.success('Registro actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -108,13 +82,8 @@ export const update = async (entity, entityData, loggedUser) => {
 
 export const changeStatus = async (entity, id, currentStatus, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/${entity}/${id}/${actionStatus}`, config);
+    const { data } = await backendApi.get(`/${entity}/${id}/${actionStatus}`);
     toast.success('El estado del registro se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -136,12 +105,7 @@ export const changeStatus = async (entity, id, currentStatus, loggedUser) => {
 
 export const deleteEntity = async (entity, id, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.delete(`${process.env.PUBLIC_URL}/api/${entity}/${id}`, config);
+    const { data } = await backendApi.delete(`/${entity}/${id}`);
     toast.success('El registro se ha borrado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });

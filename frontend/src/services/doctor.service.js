@@ -1,6 +1,7 @@
-import axios from 'axios';
-import * as entityService from './entity.service';
 import { toast } from 'react-toastify';
+
+import { backendApi } from './axios.service';
+import * as entityService from './entity.service';
 
 export const getAll = (loggedUser, status = '') => {
   return entityService.getAll('doctor', loggedUser, status);
@@ -24,14 +25,8 @@ export const changeStatus = (id, currentStatus, loggedUser) => {
 
 export const getDoctorsByFilter = async (filter, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/doctor/?status=active&filterBy=${filter}`,
-      config
+    const { data } = await backendApi.get(
+      `/doctor/?status=active&filterBy=${filter}`
     );
     return data;
   } catch (err) {
@@ -48,17 +43,11 @@ export const getDoctorsByFilter = async (filter, loggedUser) => {
 
 export const getDoctorSessions = async (id, startDate, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(
-      `${process.env.PUBLIC_URL}/api/doctor/${id}/sessions`,
+    const { data } = await backendApi.post(
+      `/doctor/${id}/sessions`,
       {
         date: startDate.toLocaleDateString('en'),
-      },
-      config
+      }
     );
     return data;
   } catch (err) {

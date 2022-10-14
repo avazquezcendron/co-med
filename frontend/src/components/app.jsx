@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import Header from './common/header-component/header';
 import Sidebar from './common/sidebar-component/sidebar';
 import RightSidebar from './common/right-sidebar';
@@ -20,8 +20,8 @@ const AppLayout = (props) => {
   }, []);
     
   return (
-    <Fragment>
-      <Loader show={showLoader} />
+    <Suspense fallback={<Loader show={true} />}>
+      {/* <Loader show={showLoader} /> */}
       <div className="page-wrapper">
         <div className="page-body-wrapper">
           <Header />
@@ -33,7 +33,7 @@ const AppLayout = (props) => {
         </div>
       </div>
       <ToastContainer />
-    </Fragment>
+    </Suspense>
   );
 };
 

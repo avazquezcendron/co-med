@@ -1,31 +1,20 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import { backendApi } from './axios.service';
+
 export const getAll = async (doctorId, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
   const filterByDoctor = doctorId ? `?doctorId=${doctorId}` : '';
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/appointment${filterByDoctor}`,
-    config
+  const { data } = await backendApi.get(
+    `/appointment${filterByDoctor}`
   );
   return data;
 };
 
 export const save = async (appointmentData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(
-      `${process.env.PUBLIC_URL}/api/appointment`,
-      appointmentData,
-      config
+    const { data } = await backendApi.post(
+      `/appointment`,
+      appointmentData
     );
     toast.success('Turno dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -48,15 +37,9 @@ export const save = async (appointmentData, loggedUser) => {
 
 export const update = async (appointmentData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `${process.env.PUBLIC_URL}/api/appointment/${appointmentData.id}`,
-      appointmentData,
-      config
+    const { data } = await backendApi.put(
+      `/appointment/${appointmentData.id}`,
+      appointmentData
     );
     toast.success('Turno actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -101,14 +84,8 @@ export const getBussinesHours = async (loggedUser) => {
 
 export const getAppointmentSlotsConfig = async (loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/appointmentConfig/`,
-      config
+    const { data } = await backendApi.get(
+      `/appointmentConfig/`
     );
     return data;
   } catch (err) {

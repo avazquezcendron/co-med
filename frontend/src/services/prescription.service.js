@@ -1,13 +1,8 @@
-import axios from 'axios';
+import { backendApi } from './axios.service';
 import * as entityService from './entity.service';
 
 export const getAll = async (loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/prescription?frequents=true`, config);
+  const { data } = await backendApi.get(`/prescription?frequents=true`);
   return data;
 };
 

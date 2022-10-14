@@ -1,30 +1,15 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import { backendApi } from './axios.service';
+
 export const getAll = async (loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient`,
-    config
-  );
+  const { data } = await backendApi.get(`/patient`);
   return data;
 };
 
 export const getById = async (id, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/patient/${id}`,
-      config
-    );
+    const { data } = await backendApi.get(`/patient/${id}`);
     return data;
   } catch (err) {
     const errorMsg =
@@ -40,16 +25,7 @@ export const getById = async (id, loggedUser) => {
 
 export const save = async (patientData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(
-      `${process.env.PUBLIC_URL}/api/patient`,
-      patientData,
-      config
-    );
+    const { data } = await backendApi.post(`/patient`, patientData);
     toast.success('Paciente dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -69,15 +45,9 @@ export const save = async (patientData, loggedUser) => {
 
 export const update = async (patientData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `${process.env.PUBLIC_URL}/api/patient/${patientData.id}`,
-      patientData,
-      config
+    const { data } = await backendApi.put(
+      `/patient/${patientData.id}`,
+      patientData
     );
     toast.success('Paciente actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -102,15 +72,9 @@ export const updateHealthRecord = async (
   loggedUser
 ) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/healthRecord`,
-      { ...healthRecordData, patientVersion: patient.__v },
-      config
+    const { data } = await backendApi.put(
+      `/patient/${patient.id}/healthRecord`,
+      { ...healthRecordData, patientVersion: patient.__v }
     );
     toast.success('Paciente actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -131,16 +95,8 @@ export const updateHealthRecord = async (
 
 export const changeStatus = async (id, currentStatus, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/patient/${id}/${actionStatus}`,
-      config
-    );
+    const { data } = await backendApi.get(`/patient/${id}/${actionStatus}`);
     toast.success('El estado del paciente se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -160,14 +116,8 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
 
 export const getPatientsByFilter = async (filter, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/patient/?status=active&filterBy=${filter}`,
-      config
+    const { data } = await backendApi.get(
+      `/patient/?status=active&filterBy=${filter}`
     );
     return data;
   } catch (err) {
@@ -182,35 +132,26 @@ export const getPatientsByFilter = async (filter, loggedUser) => {
   }
 };
 
-export const getVisits = async ({ patientId, startDate, endDate }, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
+export const getVisits = async (
+  { patientId, startDate, endDate },
+  loggedUser
+) => {
   let filterDates = '';
   if (startDate && endDate) {
-    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`;
   }
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/visit${filterDates}`,
-    config
+  const { data } = await backendApi.get(
+    `/patient/${patientId}/visit${filterDates}`
   );
   return data;
 };
 
 export const saveVisit = async (patient, visitData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(
-      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/visit`,
-      { ...visitData, patientVersion: patient.__v },
-      config
-    );
+    const { data } = await backendApi.post(`/patient/${patient.id}/visit`, {
+      ...visitData,
+      patientVersion: patient.__v,
+    });
     toast.success('Consulta dada de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -230,16 +171,10 @@ export const saveVisit = async (patient, visitData, loggedUser) => {
 
 export const updateVisit = async (patient, visitData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `${process.env.PUBLIC_URL}/api/patient/${patient.id}/visit`,
-      { ...visitData, patientVersion: patient.__v },
-      config
-    );
+    const { data } = await backendApi.put(`/patient/${patient.id}/visit`, {
+      ...visitData,
+      patientVersion: patient.__v,
+    });
     toast.success('Consulta actualizada con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
@@ -257,50 +192,38 @@ export const updateVisit = async (patient, visitData, loggedUser) => {
   }
 };
 
-export const getPrescriptions = async ({ patientId, startDate, endDate }, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
+export const getPrescriptions = async (
+  { patientId, startDate, endDate },
+  loggedUser
+) => {
   let pagination = '';
   if (pagination) {
-    pagination = `?pagination=${startDate}&endDate=${endDate}`
+    pagination = `?pagination=${startDate}&endDate=${endDate}`;
   }
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/prescription`,
-    config
-  );
+  const { data } = await backendApi.get(`/patient/${patientId}/prescription`);
   return data;
 };
 
-export const getLaboratoryExams = async ({ patientId, startDate, endDate }, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
+export const getLaboratoryExams = async (
+  { patientId, startDate, endDate },
+  loggedUser
+) => {
   let filterDates = '';
   if (startDate && endDate) {
-    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`;
   }
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/laboratoryExam`,
-    config
-  );
+  const { data } = await backendApi.get(`/patient/${patientId}/laboratoryExam`);
   return data;
 };
 
-export const saveLaboratoryExam = async (patient, laboratoryExamData, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.post(
-    `${process.env.PUBLIC_URL}/api/patient/${patient.id}/laboratoryExam`,
-    { ...laboratoryExamData, patientVersion: patient.__v },
-    config
+export const saveLaboratoryExam = async (
+  patient,
+  laboratoryExamData,
+  loggedUser
+) => {
+  const { data } = await backendApi.post(
+    `/patient/${patient.id}/laboratoryExam`,
+    { ...laboratoryExamData, patientVersion: patient.__v }
   );
   toast.success('Examen de laboratorio dado de alta con éxito.', {
     position: toast.POSITION.BOTTOM_RIGHT,
@@ -308,49 +231,35 @@ export const saveLaboratoryExam = async (patient, laboratoryExamData, loggedUser
   return data;
 };
 
-export const getStudy = async ({ patientId, startDate, endDate }, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
+export const getStudy = async (
+  { patientId, startDate, endDate },
+  loggedUser
+) => {
   let filterDates = '';
   if (startDate && endDate) {
-    filterDates = `?startDate=${startDate}&endDate=${endDate}`
+    filterDates = `?startDate=${startDate}&endDate=${endDate}`;
   }
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/studyExam`,
-    config
-  );
+  const { data } = await backendApi.get(`/patient/${patientId}/studyExam`);
   return data;
 };
 
 export const saveStudy = async (patient, studyExamData, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.post(
-    `${process.env.PUBLIC_URL}/api/patient/${patient.id}/studyExam`,
-    { ...studyExamData, patientVersion: patient.__v },
-    config
-  );
+  const { data } = await backendApi.post(`/patient/${patient.id}/studyExam`, {
+    ...studyExamData,
+    patientVersion: patient.__v,
+  });
   toast.success('Estudio complementario dado de alta con éxito.', {
     position: toast.POSITION.BOTTOM_RIGHT,
   });
   return data;
 };
 
-export const getHealthRecordHistory = async ({ patientId, page, limit, filter }, loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  const { data } = await axios.get(
-    `${process.env.PUBLIC_URL}/api/patient/${patientId}/healthRecordHistory?page=${page}&limit=${limit}&filter=${filter}`,
-    config
+export const getHealthRecordHistory = async (
+  { patientId, page, limit, filter },
+  loggedUser
+) => {
+  const { data } = await backendApi.get(
+    `/patient/${patientId}/healthRecordHistory?page=${page}&limit=${limit}&filter=${filter}`
   );
   return data;
 };

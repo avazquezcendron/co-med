@@ -1,32 +1,24 @@
-import axios from 'axios';
 import { toast } from 'react-toastify';
 
+import { backendApi } from './axios.service';
+
 export const getAll = async (loggedUser) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${loggedUser?.token}`,
-    },
-  };
-  return await axios.get(`${process.env.PUBLIC_URL}/api/user`, config);
+  return await backendApi.get(`/user`);
 };
 
 export const save = async (newUserData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/user`, newUserData, config);
+    const { data } = await backendApi.post(
+      `/user`,
+      newUserData
+    );
     toast.success('Usuario dado de alta con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al dar de alta al usuario. Detalle: ${errorMsg}`,
       {
@@ -39,15 +31,9 @@ export const save = async (newUserData, loggedUser) => {
 
 export const update = async (userData, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.put(
-      `${process.env.PUBLIC_URL}/api/user/${userData.id}`,
-      userData,
-      config
+    const { data } = await backendApi.put(
+      `/user/${userData.id}`,
+      userData
     );
     toast.success('Usuario actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
@@ -55,9 +41,7 @@ export const update = async (userData, loggedUser) => {
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
       {
@@ -70,22 +54,17 @@ export const update = async (userData, loggedUser) => {
 
 export const changeStatus = async (id, currentStatus, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
     const actionStatus = currentStatus === 'active' ? 'inactivate' : 'activate';
-    const { data } = await axios.get(`${process.env.PUBLIC_URL}/api/user/${id}/${actionStatus}`, config);
+    const { data } = await backendApi.get(
+      `/user/${id}/${actionStatus}`
+    );
     toast.success('El estado del usuario se ha actualizado con éxito.', {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al actualizar al usuario. Detalle: ${errorMsg}`,
       {
@@ -98,21 +77,13 @@ export const changeStatus = async (id, currentStatus, loggedUser) => {
 
 export const getById = async (id, loggedUser) => {
   try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${loggedUser?.token}`,
-      },
-    };
-    const { data } = await axios.get(
-      `${process.env.PUBLIC_URL}/api/user/${id}`,
-      config
+    const { data } = await backendApi.get(
+      `/user/${id}`
     );
     return data;
   } catch (err) {
     const errorMsg =
-      err.response && err.response.data
-        ? err.response.data
-        : err.message;
+      err.response && err.response.data ? err.response.data : err.message;
     toast.error(
       `Ocurrió un error al intentar obtener los datos del usuario. Detalle: ${errorMsg}`,
       {
@@ -129,13 +100,18 @@ export const login = async (userInfo) => {
         'Content-Type': 'application/json',
       },
     };
-    const { data } = await axios.post(`${process.env.PUBLIC_URL}/api/auth/login`, userInfo, config);
+    const { data } = await backendApi.post(
+      `/auth/login`,
+      userInfo,
+      config
+    );
     toast.success(`Bienvenid@ ${data.user.firstName}!`, {
       position: toast.POSITION.BOTTOM_RIGHT,
     });
     return data;
   } catch (err) {
-    const errorMsg = err.response.status === 401 ? 'Usuario o Contraseña inválidos.' : '';
+    const errorMsg =
+      err.response.status === 401 ? 'Usuario o Contraseña inválidos.' : '';
     toast.error(
       `Error al intentar ingresar al sistema. 
       Detalle: ${errorMsg}`,

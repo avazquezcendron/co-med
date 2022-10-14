@@ -16,7 +16,11 @@ const checkUserAuth = asyncHandler(async (req, res, next) => {
       next()
     } catch (err) {
       res.status(401)
-      res.json('Acceso no autorizado. Contacte al administrador.')
+      if (err.name === 'TokenExpiredError') {
+        res.json('Sesión expirada. Por favor vuelva a loguearse.')
+      } else {
+        res.json('Acceso no autorizado. Contacte al administrador.')
+      }
     }
   }
 
