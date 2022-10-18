@@ -7,6 +7,7 @@ import AppointmentQuickAddComponent from '../common/appointments/appointmentQuic
 
 const ThemeCustomizer = () => {
   const configDB = useSelector((content) => content.Customizer.customizer);
+  const { loggedUser } = useSelector((store) => store.UserLogin);
   const primary_color = localStorage.getItem('primary_color');
   const secondary_color = localStorage.getItem('secondary_color');
   const layout_version = localStorage.getItem('layout_version');
@@ -140,20 +141,22 @@ const ThemeCustomizer = () => {
                 </div>
               </NavLink>
             </NavItem>
-            <NavItem className="nav nav-tabs" id="myTab" role="tablist">
-              <NavLink
-                className={activeTab1 === '2' ? 'active' : ''}
-                onClick={() => setActiveTab1('2')}
-                title="Nuevo Paciente"
-              >
-                <div className="settings color-settings">
-                  <i
-                    className="icofont icofont-ui-user"
-                    onClick={openCustomizer}
-                  ></i>
-                </div>
-              </NavLink>
-            </NavItem>
+            {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
+              <NavItem className="nav nav-tabs" id="myTab" role="tablist">
+                <NavLink
+                  className={activeTab1 === '2' ? 'active' : ''}
+                  onClick={() => setActiveTab1('2')}
+                  title="Nuevo Paciente"
+                >
+                  <div className="settings color-settings">
+                    <i
+                      className="icofont icofont-ui-user"
+                      onClick={openCustomizer}
+                    ></i>
+                  </div>
+                </NavLink>
+              </NavItem>
+            )}
             <NavItem className="nav nav-tabs" id="myTab" role="tablist">
               <NavLink
                 className={activeTab1 === '3' ? 'active' : ''}
@@ -188,11 +191,13 @@ const ThemeCustomizer = () => {
               <TabPane tabId="1">
                 {rightSidebar && activeTab1 === '1' && <Agenda />}
               </TabPane>
-              <TabPane tabId="2">
-                {rightSidebar && activeTab1 === '2' && (
-                  <PatientQuickAdd modalToggle={closeCustomizer} />
-                )}
-              </TabPane>
+              {(loggedUser.user.isAdmin || loggedUser.user.isReceptionist) && (
+                <TabPane tabId="2">
+                  {rightSidebar && activeTab1 === '2' && (
+                    <PatientQuickAdd modalToggle={closeCustomizer} />
+                  )}
+                </TabPane>
+              )}
               <TabPane tabId="3">
                 {rightSidebar && activeTab1 === '3' && (
                   <AppointmentQuickAddComponent
