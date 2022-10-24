@@ -33,7 +33,7 @@ class AppointmentController extends BaseController {
       $expr: {
         $and: [
           {
-            $gt: [{ $month: '$start' }, month],
+            $or: [{ $gt: [{ $month: '$start' }, month] }, { $gt: [{ $year: '$start' }, year] }],
           },
           {
             $gte: [{ $year: '$start' }, year],
