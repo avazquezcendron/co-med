@@ -4,6 +4,9 @@
   "description": "EHR & Clinic Management Web Application",
   "main": "server.js",
   "type": "module",
+  "engines": {
+    "node": "14.17.0"
+  },
   "scripts": {
     "start": "node backend/server",
     "server": "nodemon backend/server",
