@@ -180,7 +180,7 @@ const Sidebar = (props) => {
 
     return (
         <Fragment>
-            <div className="page-sidebar bg-color5">
+            <div className="page-sidebar">
                 <div className="main-header-left d-none d-lg-block">
                     <div className="logo-wrapper compactLogo">
                         <Link to={`${process.env.PUBLIC_URL}/dashboard/default`}>

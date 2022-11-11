@@ -6,7 +6,7 @@ $color1: #405365;
 $color2: #1c1d1e;
 $color3: #0c0c3c;
 $color4: #0747a6;
-$color5: #b764b4;
+$color5: #4d3096;
 @each $bg-name, $bg-color in (color1, $color1), (color2, $color2), (color3, $color3), (color4, $color4),
 	(color5, $color5), (light, $light-color), (dark, #2f3c4e)
 {

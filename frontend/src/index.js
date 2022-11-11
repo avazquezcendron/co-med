@@ -89,10 +89,8 @@ const Root = () => {
         setTranslations({ en, es, pt, fr });
         setDefaultLanguage('es');
         setLanguageCookie();
-        localStorage.removeItem('color');
-        localStorage.removeItem('primary_color');
-        localStorage.removeItem('secondary_color');
-        const color = localStorage.getItem('color') || configDB.data.color.color;
+
+        const color = localStorage.getItem('color')
         const layout = localStorage.getItem('layout_version') || configDB.data.color.layout_version
         document.body.classList.add(layout);
         console.ignoredYellowBox = ['Warning: Each', 'Warning: Failed'];
